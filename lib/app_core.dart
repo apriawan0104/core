@@ -1,5 +1,14 @@
 library app_core;
 
+// Foundation - Domain Entities
+export 'src/foundation/domain/entities/notification/entities.dart';
+
+// Infrastructure - Notification
+export 'src/infrastructure/notification/notification.dart';
+
+// Configuration - DI
+export 'src/configuration/di/locator.dart';
+
 /// A Calculator.
 class Calculator {
   /// Returns [value] plus 1.

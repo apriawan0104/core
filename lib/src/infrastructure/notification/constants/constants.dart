@@ -1,2 +1,3 @@
-export 'firebase_remote_config.constant.dart';
+// Barrel file for notification constants
 export 'notification.constant.dart';
+
