@@ -162,7 +162,7 @@ class NotificationExampleScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               await localService.show(
-                NotificationConfig(
+                const NotificationConfig(
                   id: 1,
                   title: 'Simple Notification',
                   body: 'This is a simple notification',
@@ -177,7 +177,7 @@ class NotificationExampleScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               await localService.show(
-                NotificationConfig(
+                const NotificationConfig(
                   id: 2,
                   title: 'High Priority Notification',
                   body: 'This notification has high priority',
@@ -205,7 +205,7 @@ class NotificationExampleScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               await localService.schedule(
-                config: NotificationConfig(
+                config: const NotificationConfig(
                   id: 10,
                   title: 'Reminder',
                   body: 'This notification was scheduled 10 seconds ago',
@@ -224,7 +224,7 @@ class NotificationExampleScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               await localService.showDaily(
-                config: NotificationConfig(
+                config: const NotificationConfig(
                   id: 11,
                   title: 'Daily Reminder',
                   body: 'Good morning! Start your day!',
@@ -243,7 +243,7 @@ class NotificationExampleScreen extends StatelessWidget {
           ElevatedButton(
             onPressed: () async {
               await localService.showWeekly(
-                config: NotificationConfig(
+                config: const NotificationConfig(
                   id: 12,
                   title: 'Weekly Reminder',
                   body: 'Your weekly report is ready!',

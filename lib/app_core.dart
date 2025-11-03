@@ -9,6 +9,9 @@ export 'src/infrastructure/logging/logging.dart';
 // Infrastructure - Notification
 export 'src/infrastructure/notification/notification.dart';
 
+// Infrastructure - Storage
+export 'src/infrastructure/storage/storage.dart';
+
 // Configuration - DI
 export 'src/configuration/di/locator.dart';
 
