@@ -3,6 +3,9 @@ library app_core;
 // Foundation - Domain Entities
 export 'src/foundation/domain/entities/notification/entities.dart';
 
+// Infrastructure - Logging
+export 'src/infrastructure/logging/logging.dart';
+
 // Infrastructure - Notification
 export 'src/infrastructure/notification/notification.dart';
 
