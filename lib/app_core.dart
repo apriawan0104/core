@@ -4,8 +4,12 @@ library app_core;
 export 'src/errors/errors.dart';
 
 // Foundation - Domain Entities
+export 'src/foundation/domain/entities/background_service/entities.dart';
 export 'src/foundation/domain/entities/network/entities.dart';
 export 'src/foundation/domain/entities/notification/entities.dart';
+
+// Infrastructure - Background Service
+export 'src/infrastructure/background_service/background_service.dart';
 
 // Infrastructure - Logging
 export 'src/infrastructure/logging/logging.dart';

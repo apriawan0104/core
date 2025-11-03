@@ -6,6 +6,14 @@ Flutter core library providing reusable business logic, infrastructure services,
 
 ### Infrastructure Services
 
+- **Background Service** - Run Dart code in background even when app is closed
+  - Generic `BackgroundService` interface (works with flutter_background_service, etc.)
+  - Foreground service mode with notifications (Android)
+  - Background mode without notifications (Android)
+  - iOS background fetch support
+  - Two-way communication between UI and background
+  - Dependency-independent design
+  
 - **Network Service** - HTTP networking with dependency-independent design
   - Generic `HttpClient` interface (works with Dio, http, Chopper, etc.)
   - Type-safe requests with `Either<Failure, Success>`
@@ -133,16 +141,18 @@ void loadUser() async {
 
 ## 📚 Documentation
 
+- **[Background Service Setup Guide](BACKGROUND_SERVICE_SETUP.md)** - Background task execution
 - **[Network Setup Guide](NETWORK_SETUP.md)** - Complete guide for HTTP networking
 - **[Logging Setup Guide](LOGGING_SETUP.md)** - Logging service configuration
 - **[Storage Setup Guide](STORAGE_SETUP.md)** - Local storage usage
 - **[Architecture](ARCHITECTURE.md)** - Architecture overview and principles
-- **[Guidelines](GUIDELINES.md)** - Development guidelines and best practices
+- **[Project Guidelines](PROJECT_GUIDELINES.md)** - Development guidelines and best practices
 
 ## 📖 Examples
 
 Check the `example/` directory for complete working examples:
 
+- `background_service_example.dart` - Background service examples
 - `network_example.dart` - HTTP networking examples
 - `logging_example.dart` - Logging service examples
 - `storage_example.dart` - Storage service examples
@@ -201,6 +211,7 @@ Core dependencies:
 
 - `dartz` - Functional programming
 - `dio` - HTTP client
+- `flutter_background_service` - Background task execution
 - `get_it` - Dependency injection
 - `injectable` - Code generation for DI
 - `hive` - Local storage

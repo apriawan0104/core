@@ -1,6 +1,10 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_background_service/flutter_background_service.dart'
+    as fbs;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
+
+import '../../infrastructure/background_service/background_service.dart';
 
 /// Injectable module for registering third-party/external dependencies
 ///
@@ -21,6 +25,12 @@ abstract class RegisterModule {
   @lazySingleton
   FlutterLocalNotificationsPlugin get flutterLocalNotificationsPlugin =>
       FlutterLocalNotificationsPlugin();
+
+  /// Provides singleton instance of BackgroundService
+  @lazySingleton
+  BackgroundService get backgroundService => FlutterBackgroundServiceImpl(
+        fbs.FlutterBackgroundService(),
+      );
 
   // Note: HttpClient registration example:
   //
