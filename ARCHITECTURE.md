@@ -712,20 +712,6 @@ test/
 
 ---
 
-## 📝 Changelog
-
-### Version 2.0 (Proposed)
-- Restructured from generic `common/` to specific `foundation/`
-- Split `services/` into `infrastructure/` and `application/`
-- Flattened `utilities/` into `extensions/` and `helpers/`
-- Removed redundant `core/` folder
-- Improved clarity and maintainability
-
-### Version 1.0 (Current)
-- Initial structure with `common/`, `services/`, `utilities/`
-
----
-
 **Maintained by**: BUMA Engineering Team  
 **Questions?**: Contact architecture team or create an issue
 
