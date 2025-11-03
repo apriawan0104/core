@@ -1,0 +1,1056 @@
+# BUMA Core - Project Guidelines
+
+## 🎯 Project Overview
+
+**BUMA Core** adalah Flutter core library yang dapat dipakai di semua aplikasi mobile Flutter. Library ini menyediakan business logic, infrastructure services, dan utilities yang reusable dan generic.
+
+**Tujuan**: Membuat core library yang:
+- ✅ Generic dan reusable untuk semua Flutter apps
+- ✅ Tidak perlu diubah untuk setiap app
+- ✅ Mudah di-maintain dan di-test
+- ✅ Mengikuti Clean Architecture principles
+- ✅ **Independent dari dependency apapun - mudah diganti tanpa effort besar**
+
+---
+
+## 🏗️ Architecture Principles
+
+### 1. Dependency Independence - Effortless to Change
+
+**🎯 PRINSIP UTAMA: Core library TIDAK BOLEH terikat ke package/dependency tertentu.**
+
+#### Why This Matters
+
+```dart
+// ❌ VERY BAD: Tightly coupled to Firebase
+class NotificationService {
+  final FirebaseMessaging firebaseMessaging;
+  
+  Future<String> getToken() {
+    return firebaseMessaging.getToken(); // Expose Firebase API
+  }
+  
+  Future<void> subscribe(String topic) {
+    return firebaseMessaging.subscribeToTopic(topic);
+  }
+}
+
+// Problem: 
+// - Kalau mau ganti dari Firebase ke OneSignal? HARUS ubah semua consumer code!
+// - Kalau Firebase breaking changes? All apps affected!
+// - Cannot test without Firebase SDK
+// - Cannot use different provider per app
+```
+
+```dart
+// ✅ EXCELLENT: Dependency Independent Design
+abstract class PushNotificationService {
+  /// Get device token for push notifications
+  Future<Either<Failure, String>> getDeviceToken();
+  
+  /// Subscribe to a notification topic
+  Future<Either<Failure, void>> subscribeToTopic(String topic);
+  
+  /// Stream of incoming messages
+  Stream<PushMessage> get onMessageReceived;
+}
+
+// Implementation 1: Firebase
+class FirebasePushNotificationServiceImpl implements PushNotificationService {
+  final FirebaseMessaging _firebaseMessaging;
+  
+  FirebasePushNotificationServiceImpl(this._firebaseMessaging);
+  
+  @override
+  Future<Either<Failure, String>> getDeviceToken() async {
+    try {
+      final token = await _firebaseMessaging.getToken();
+      if (token == null) {
+        return Left(NotificationFailure('Token is null'));
+      }
+      return Right(token);
+    } catch (e) {
+      return Left(NotificationFailure(e.toString()));
+    }
+  }
+  
+  // ... other methods
+}
+
+// Implementation 2: OneSignal (easy to add!)
+class OneSignalPushNotificationServiceImpl implements PushNotificationService {
+  final OneSignal _oneSignal;
+  
+  OneSignalPushNotificationServiceImpl(this._oneSignal);
+  
+  @override
+  Future<Either<Failure, String>> getDeviceToken() async {
+    try {
+      final status = await _oneSignal.getDeviceState();
+      return Right(status.userId ?? '');
+    } catch (e) {
+      return Left(NotificationFailure(e.toString()));
+    }
+  }
+  
+  // ... other methods
+}
+
+// Consumer app can switch by just changing DI registration:
+// Option A: Use Firebase
+getIt.registerLazySingleton<PushNotificationService>(
+  () => FirebasePushNotificationServiceImpl(FirebaseMessaging.instance),
+);
+
+// Option B: Use OneSignal (NO CODE CHANGES in business logic!)
+getIt.registerLazySingleton<PushNotificationService>(
+  () => OneSignalPushNotificationServiceImpl(OneSignal.shared),
+);
+```
+
+#### The Golden Rules of Dependency Independence
+
+##### Rule 1: Never Expose Third-Party Types
+
+```dart
+// ❌ BAD: Expose Dio types
+abstract class NetworkService {
+  Future<Response> get(String url); // Response from Dio package
+  Future<DioException> post(String url); // DioException exposed!
+}
+
+// ✅ GOOD: Own types only
+abstract class NetworkService {
+  Future<Either<NetworkFailure, NetworkResponse>> get(String url);
+  Future<Either<NetworkFailure, NetworkResponse>> post(String url, {dynamic body});
+}
+
+// Create your own response type
+class NetworkResponse {
+  final int statusCode;
+  final dynamic data;
+  final Map<String, dynamic> headers;
+  
+  NetworkResponse({
+    required this.statusCode,
+    required this.data,
+    required this.headers,
+  });
+}
+```
+
+##### Rule 2: Abstract All External Dependencies
+
+```dart
+// ❌ BAD: Direct usage of Hive
+class StorageService {
+  final Box hiveBox; // Directly using Hive
+  
+  Future<void> save(String key, String value) {
+    return hiveBox.put(key, value);
+  }
+}
+
+// ✅ GOOD: Abstract storage interface
+abstract class LocalStorageService {
+  Future<Either<Failure, void>> save<T>(String key, T value);
+  Future<Either<Failure, T?>> get<T>(String key);
+  Future<Either<Failure, void>> remove(String key);
+  Future<Either<Failure, void>> clear();
+}
+
+// Implementation: Can be Hive, SharedPreferences, SecureStorage, etc.
+class HiveStorageServiceImpl implements LocalStorageService {
+  final Box _box;
+  
+  @override
+  Future<Either<Failure, void>> save<T>(String key, T value) async {
+    try {
+      await _box.put(key, value);
+      return const Right(null);
+    } catch (e) {
+      return Left(StorageFailure(e.toString()));
+    }
+  }
+  
+  // Easy to create SharedPreferencesStorageServiceImpl later!
+}
+```
+
+##### Rule 3: Use Adapter Pattern for Complex Dependencies
+
+```dart
+// ✅ EXCELLENT: Adapter pattern untuk isolate dependency
+abstract class ImageCacheService {
+  Future<Either<Failure, void>> cacheImage(String url);
+  Future<Either<Failure, ImageData>> getImage(String key);
+  Future<Either<Failure, void>> clearCache();
+}
+
+// Adapter for CachedNetworkImage package
+class CachedNetworkImageAdapter implements ImageCacheService {
+  final CachedNetworkImageProvider _provider;
+  
+  CachedNetworkImageAdapter(this._provider);
+  
+  @override
+  Future<Either<Failure, void>> cacheImage(String url) async {
+    try {
+      await _provider.evict();
+      // Convert CachedNetworkImage API to our interface
+      return const Right(null);
+    } catch (e) {
+      return Left(CacheFailure(e.toString()));
+    }
+  }
+}
+
+// Ganti ke FastCachedImage? Just create new adapter!
+class FastCachedImageAdapter implements ImageCacheService {
+  // Different implementation, same interface
+}
+```
+
+##### Rule 4: Configuration Objects Instead of Direct Dependencies
+
+```dart
+// ❌ BAD: Hardcoded dependency initialization
+class AnalyticsService {
+  Future<void> initialize() async {
+    await Firebase.initializeApp(); // Tightly coupled!
+    FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(true);
+  }
+}
+
+// ✅ GOOD: Configuration-driven
+abstract class AnalyticsService {
+  Future<Either<Failure, void>> initialize(AnalyticsConfig config);
+  Future<Either<Failure, void>> logEvent(String name, Map<String, dynamic>? parameters);
+}
+
+class AnalyticsConfig {
+  final bool enabled;
+  final String? apiKey;
+  final Map<String, dynamic>? customProperties;
+  
+  const AnalyticsConfig({
+    required this.enabled,
+    this.apiKey,
+    this.customProperties,
+  });
+}
+
+// Implementation handles specific provider
+class FirebaseAnalyticsServiceImpl implements AnalyticsService {
+  @override
+  Future<Either<Failure, void>> initialize(AnalyticsConfig config) async {
+    try {
+      if (!config.enabled) return const Right(null);
+      
+      await FirebaseAnalytics.instance.setAnalyticsCollectionEnabled(config.enabled);
+      // Use config, not hardcoded values
+      
+      return const Right(null);
+    } catch (e) {
+      return Left(AnalyticsFailure(e.toString()));
+    }
+  }
+}
+
+// PostHog implementation? Same interface!
+class PostHogAnalyticsServiceImpl implements AnalyticsService {
+  @override
+  Future<Either<Failure, void>> initialize(AnalyticsConfig config) async {
+    try {
+      if (!config.enabled) return const Right(null);
+      
+      await Posthog().setup(config.apiKey ?? '');
+      return const Right(null);
+    } catch (e) {
+      return Left(AnalyticsFailure(e.toString()));
+    }
+  }
+}
+```
+
+##### Rule 5: Multiple Implementations Support
+
+**Design interface agar bisa support multiple implementations sekaligus.**
+
+```dart
+// ✅ EXCELLENT: Support multiple providers
+abstract class CloudStorageService {
+  Future<Either<Failure, String>> uploadFile(
+    String path,
+    Uint8List data, {
+    CloudStorageMetadata? metadata,
+  });
+  
+  Future<Either<Failure, Uint8List>> downloadFile(String path);
+  Future<Either<Failure, String>> getDownloadUrl(String path);
+  Future<Either<Failure, void>> deleteFile(String path);
+}
+
+// Firebase Storage implementation
+class FirebaseCloudStorageServiceImpl implements CloudStorageService {
+  final FirebaseStorage _storage;
+  
+  // Implement with Firebase
+}
+
+// AWS S3 implementation
+class S3CloudStorageServiceImpl implements CloudStorageService {
+  final S3Client _s3Client;
+  
+  // Implement with AWS S3
+}
+
+// Supabase Storage implementation
+class SupabaseCloudStorageServiceImpl implements CloudStorageService {
+  final SupabaseClient _supabase;
+  
+  // Implement with Supabase
+}
+
+// App bisa pilih atau bahkan combine!
+getIt.registerFactory<CloudStorageService>(
+  () {
+    if (useFirebase) {
+      return FirebaseCloudStorageServiceImpl(FirebaseStorage.instance);
+    } else if (useAWS) {
+      return S3CloudStorageServiceImpl(s3Client);
+    } else {
+      return SupabaseCloudStorageServiceImpl(supabase);
+    }
+  },
+);
+```
+
+#### Dependency Change Checklist ✅
+
+Saat mengganti dependency, yang perlu diubah HANYA:
+
+1. ☑️ **Create new implementation class**
+   ```dart
+   class NewProviderServiceImpl implements ExistingService {
+     // New implementation
+   }
+   ```
+
+2. ☑️ **Update DI registration**
+   ```dart
+   // Change this one line only
+   getIt.registerLazySingleton<ExistingService>(
+     () => NewProviderServiceImpl(),
+   );
+   ```
+
+3. ☑️ **Update pubspec.yaml**
+   ```yaml
+   # Remove old dependency
+   # Add new dependency
+   ```
+
+**YANG TIDAK PERLU DIUBAH:**
+- ❌ Business logic / use cases
+- ❌ Domain entities
+- ❌ UI/Widgets yang consume service
+- ❌ Test mocks
+- ❌ Other services that depend on this service
+
+#### Real-World Example: Ganti dari Firebase to Supabase
+
+**Before (Firebase):**
+```dart
+// Contract (TIDAK BERUBAH)
+abstract class AuthService {
+  Future<Either<Failure, User>> signIn(String email, String password);
+  Future<Either<Failure, void>> signOut();
+  Stream<AuthState> get authStateChanges;
+}
+
+// Implementation
+class FirebaseAuthServiceImpl implements AuthService {
+  final FirebaseAuth _auth;
+  
+  @override
+  Future<Either<Failure, User>> signIn(String email, String password) async {
+    try {
+      final credential = await _auth.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      return Right(User.fromFirebase(credential.user!));
+    } catch (e) {
+      return Left(AuthFailure(e.toString()));
+    }
+  }
+}
+
+// DI Registration
+getIt.registerLazySingleton<AuthService>(
+  () => FirebaseAuthServiceImpl(FirebaseAuth.instance),
+);
+```
+
+**After (Supabase) - ONLY THESE CHANGED:**
+```dart
+// Contract (SAME - NO CHANGE)
+abstract class AuthService {
+  Future<Either<Failure, User>> signIn(String email, String password);
+  Future<Either<Failure, void>> signOut();
+  Stream<AuthState> get authStateChanges;
+}
+
+// NEW Implementation (new file only)
+class SupabaseAuthServiceImpl implements AuthService {
+  final SupabaseClient _supabase;
+  
+  @override
+  Future<Either<Failure, User>> signIn(String email, String password) async {
+    try {
+      final response = await _supabase.auth.signInWithPassword(
+        email: email,
+        password: password,
+      );
+      return Right(User.fromSupabase(response.user!));
+    } catch (e) {
+      return Left(AuthFailure(e.toString()));
+    }
+  }
+}
+
+// DI Registration (CHANGED - one line)
+getIt.registerLazySingleton<AuthService>(
+  () => SupabaseAuthServiceImpl(Supabase.instance.client),
+);
+
+// pubspec.yaml (CHANGED)
+// dependencies:
+//   # firebase_auth: ^4.0.0  # REMOVED
+//   supabase_flutter: ^2.0.0  # ADDED
+```
+
+**Result:**
+- ✅ Business logic tetap sama
+- ✅ UI code tidak berubah
+- ✅ Tests tetap valid
+- ✅ Migration selesai dalam hitungan menit, bukan hari!
+
+---
+
+### 2. Dependency Inversion Principle (DIP)
+
+**Wajib membungkus (wrap) semua package pihak ketiga dengan abstract class (interface).**
+
+```dart
+// ✅ GOOD: Wrap third-party package dengan interface
+abstract class StorageService {
+  Future<void> save<T>(String key, T value);
+  Future<T?> get<T>(String key);
+}
+
+class HiveStorageServiceImpl implements StorageService {
+  // Implementation menggunakan Hive package
+}
+
+// ❌ BAD: Langsung expose third-party package
+class StorageService {
+  final HiveBox box; // Direct dependency ke Hive
+}
+```
+
+**Kenapa penting?**
+- Consumer app tidak terikat ke package tertentu
+- Mudah switch implementation tanpa ubah consumer code
+- Testable dengan mock implementations
+- Breaking changes di package tidak affect consumer
+
+### 3. Core Library Tetap Generic
+
+**Core library TIDAK boleh contain logic spesifik untuk satu app.**
+
+```dart
+// ✅ GOOD: Generic notification service
+abstract class NotificationService {
+  Future<void> showNotification(String title, String body);
+  Stream<NotificationData> get onNotificationTapped;
+}
+
+// ❌ BAD: App-specific logic di core
+abstract class NotificationService {
+  Future<void> showAbsensiReminder(); // Spesifik untuk satu app
+  Future<void> showPayslipNotification(); // Spesifik untuk satu app
+}
+```
+
+**Guidelines:**
+- Gunakan generic interfaces dan contracts
+- Business logic spesifik app ada di consumer app
+- Core hanya provide building blocks
+
+### 4. Backward Compatible - Hooks Optional
+
+**Semua hooks/callbacks harus optional. App yang tidak butuh bisa skip.**
+
+```dart
+// ✅ GOOD: Optional hooks
+abstract class NotificationService {
+  Future<void> initialize({
+    OnNotificationTappedCallback? onTapped,
+    OnForegroundNotificationCallback? onForeground,
+  });
+}
+
+// ❌ BAD: Required hooks
+abstract class NotificationService {
+  // Memaksa semua app implement callback
+  Future<void> initialize(OnNotificationTappedCallback onTapped);
+}
+```
+
+**Benefits:**
+- App lama tetap jalan tanpa update
+- App baru bisa manfaatkan features baru
+- Gradual migration path
+
+### 5. Flexible - Setiap App Inject Logic Berbeda
+
+**Gunakan strategy pattern dan dependency injection untuk flexibility.**
+
+```dart
+// Core library provide interface
+abstract class NotificationHandler {
+  Future<void> handleNotification(NotificationData data);
+}
+
+// Consumer app inject custom implementation
+class MyAppNotificationHandler implements NotificationHandler {
+  @override
+  Future<void> handleNotification(NotificationData data) {
+    // Custom logic per app
+    if (data.type == 'absensi') {
+      // Navigate to absensi page
+    }
+  }
+}
+
+// Register di DI
+GetIt.instance.registerSingleton<NotificationHandler>(
+  MyAppNotificationHandler()
+);
+```
+
+### 6. Clean - Separation of Concerns
+
+**Follow layered architecture dari ARCHITECTURE.md:**
+
+```
+foundation/domain/     → Pure business entities & use cases
+foundation/data/       → DTOs for API communication
+infrastructure/        → Third-party integrations (wrapped!)
+application/           → App-level services
+configuration/         → Setup & DI
+```
+
+**Dependency Rules:**
+- Domain layer: NO external dependencies
+- Data layer: Can depend on domain
+- Infrastructure: Depends on domain interfaces only
+- Application: Orchestrates domain + infrastructure
+
+### 7. Testable
+
+**Semua services harus mudah di-test di consumer app.**
+
+```dart
+// Interface di core
+abstract class NetworkService {
+  Future<Response> get(String url);
+}
+
+// Consumer app bisa easily mock
+class MockNetworkService implements NetworkService {
+  @override
+  Future<Response> get(String url) async {
+    return Response(data: {'test': 'data'});
+  }
+}
+
+// Test di consumer app
+test('should fetch user data', () {
+  final mockNetwork = MockNetworkService();
+  final repository = UserRepository(mockNetwork);
+  // Test without real network calls
+});
+```
+
+**Guidelines:**
+- All dependencies injected via constructor
+- Use interfaces, not concrete classes
+- No static methods for stateful operations
+- No singletons (except DI container)
+
+---
+
+## 📂 Architecture Structure
+
+Ikuti struktur dari `ARCHITECTURE.md`:
+
+```
+lib/src/
+├── foundation/        → Business logic & domain
+│   ├── data/         → DTOs, models
+│   └── domain/       → Entities, use cases, params
+├── infrastructure/   → 3rd party wrappers
+│   ├── analytics/    → Firebase, PostHog (wrapped)
+│   ├── network/      → Dio (wrapped)
+│   ├── notification/ → FCM (wrapped)
+│   └── storage/      → Hive (wrapped)
+├── application/      → App-level services
+├── configuration/    → DI & environment setup
+├── constants/        → Global constants
+├── errors/           → Exception & failure classes
+├── extensions/       → Dart type extensions
+└── helpers/          → Pure utility functions
+```
+
+**Lihat ARCHITECTURE.md untuk detail lengkap setiap folder!**
+
+---
+
+## 🎯 Best Practices
+
+### DO's ✅
+
+1. **Wrap semua third-party packages**
+   ```dart
+   abstract class YourService { }
+   class YourServiceImpl implements YourService { }
+   ```
+
+2. **Never expose third-party types in public API**
+   ```dart
+   // Use Either<Failure, T> not Future<DioResponse>
+   Future<Either<Failure, Data>> getData();
+   ```
+
+3. **Make everything configurable**
+   ```dart
+   // Support custom configuration
+   Future<void> initialize(YourServiceConfig config);
+   ```
+
+4. **Use dependency injection**
+   ```dart
+   // Constructor injection
+   class MyService {
+     final Dependency dependency;
+     MyService(this.dependency);
+   }
+   ```
+
+5. **Provide clear interfaces**
+   ```dart
+   // Well-documented abstract class
+   abstract class NetworkService {
+     /// Performs GET request to [url]
+     Future<Response> get(String url);
+   }
+   ```
+
+6. **Use Either for error handling**
+   ```dart
+   Future<Either<Failure, Success>> doSomething();
+   ```
+
+7. **Keep domain pure**
+   ```dart
+   // No external dependencies in entities
+   class UserEntity {
+     final String id;
+     final String name;
+   }
+   ```
+
+8. **Design for multiple implementations**
+   ```dart
+   // Interface should support different providers
+   abstract class CloudStorageService {
+     // Works for Firebase, AWS S3, Supabase, etc.
+   }
+   ```
+
+### DON'Ts ❌
+
+1. **Jangan expose third-party types**
+   ```dart
+   // ❌ BAD
+   Future<DioResponse> get(String url);
+   
+   // ✅ GOOD
+   Future<Either<Failure, NetworkResponse>> get(String url);
+   ```
+
+2. **Jangan hardcode app-specific logic**
+   ```dart
+   // ❌ BAD
+   if (appName == 'BUMA Absensi') { }
+   
+   // ✅ GOOD - use callbacks/strategies
+   await onCustomEvent?.call();
+   ```
+
+3. **Jangan use static state**
+   ```dart
+   // ❌ BAD
+   class MyService {
+     static User? currentUser;
+   }
+   
+   // ✅ GOOD
+   class MyService {
+     User? getCurrentUser();
+   }
+   ```
+
+4. **Jangan coupling dengan UI framework**
+   ```dart
+   // ❌ BAD
+   void showDialog(BuildContext context);
+   
+   // ✅ GOOD
+   Stream<Event> get events; // Let consumer handle UI
+   ```
+
+5. **Jangan skip documentation**
+   ```dart
+   // ✅ Document public APIs
+   /// Description of what this does
+   Future<void> doSomething();
+   ```
+
+6. **Jangan import third-party types di interface**
+   ```dart
+   // ❌ BAD
+   abstract class AuthService {
+     Future<FirebaseUser> login(); // Firebase type!
+   }
+   
+   // ✅ GOOD
+   abstract class AuthService {
+     Future<Either<Failure, User>> login(); // Own type!
+   }
+   ```
+
+7. **Jangan hardcode package names di logic**
+   ```dart
+   // ❌ BAD
+   if (packageName == 'firebase_messaging') { }
+   
+   // ✅ GOOD - use polymorphism
+   // Different implementation classes
+   ```
+
+---
+
+## 🔄 Adding New Features
+
+### Checklist untuk Feature Baru:
+
+1. ☑️ **Define interface di layer yang tepat**
+   - Domain logic → `foundation/domain/`
+   - Infrastructure → `infrastructure/{service}/contract/`
+   - Application service → `application/{service}/contract/`
+   - **NEVER expose third-party types in interface!**
+
+2. ☑️ **Create implementation**
+   - Put di folder `impl/` atau `{service}.impl.dart`
+   - Wrap third-party packages dengan interface
+   - **Implementation can use third-party types internally**
+
+3. ☑️ **Add to DI container**
+   - Register di `configuration/di/`
+   - Use factory or singleton appropriately
+   - **Allow easy swapping of implementations**
+
+4. ☑️ **Export via barrel file**
+   - Add to appropriate barrel file
+   - Don't expose internal implementation details
+   - **Only export contracts, not implementations**
+
+5. ☑️ **Document thoroughly**
+   - Add dartdoc comments
+   - Provide usage examples
+   - Document any required setup
+   - **Include migration guide if changing dependencies**
+
+6. ☑️ **Make it configurable**
+   - Support custom configurations
+   - Provide sensible defaults
+   - Allow overrides per app
+
+7. ☑️ **Test compatibility**
+   - Test di minimal satu consumer app
+   - Verify backward compatibility
+   - Check for breaking changes
+   - **Test with different implementations if possible**
+
+8. ☑️ **Verify dependency independence**
+   - Try creating mock implementation
+   - Check if interface has no third-party types
+   - Ensure easy to create alternative implementation
+
+---
+
+## 📝 Naming Conventions
+
+```dart
+// Entities
+user.entity.dart              → class UserEntity
+
+// Models (DTOs)
+user_response.model.dart      → class UserResponseModel
+
+// Use Cases
+get_user_profile.usecase.dart → class GetUserProfileUseCase
+
+// Services (Interfaces) - NEVER include provider name
+network.service.dart          → abstract class NetworkService
+auth.service.dart             → abstract class AuthService
+storage.service.dart          → abstract class StorageService
+
+// Service Implementations - Include provider name
+network.service.impl.dart     → class DioNetworkServiceImpl
+auth.service.impl.dart        → class FirebaseAuthServiceImpl
+storage.service.impl.dart     → class HiveStorageServiceImpl
+// atau
+impl/dio_network.service.dart      → class DioNetworkServiceImpl
+impl/firebase_auth.service.dart    → class FirebaseAuthServiceImpl
+impl/supabase_auth.service.dart    → class SupabaseAuthServiceImpl
+
+// Extensions
+string.extension.dart         → extension StringExtension on String
+
+// Helpers
+date_time.helper.dart         → class DateTimeHelper
+
+// Constants
+api.constant.dart             → class ApiConstants
+```
+
+---
+
+## 🧪 Testing Guidelines
+
+1. **Unit tests untuk business logic**
+   - Test use cases dengan mock dependencies
+   - Test entities dan value objects
+
+2. **Integration tests untuk services**
+   - Test service implementations
+   - Mock third-party packages
+   - **Create fake implementations for testing**
+
+3. **Mock-friendly design**
+   - All dependencies via constructor
+   - Use interfaces for all services
+   - **Easy to create test doubles**
+
+---
+
+## 🔄 Dependency Migration Strategy
+
+### When to Change Dependencies
+
+1. **Performance issues** with current provider
+2. **Cost optimization** - cheaper alternative
+3. **Feature requirements** - need different capabilities
+4. **Platform support** - current provider doesn't support needed platforms
+5. **Deprecation** - current provider is sunset
+6. **Vendor lock-in prevention** - diversify providers
+
+### How to Migrate (Step by Step)
+
+1. **Create new implementation**
+   ```dart
+   // Create new file: impl/new_provider.service.dart
+   class NewProviderServiceImpl implements ExistingService {
+     // Implement interface with new provider
+   }
+   ```
+
+2. **Test new implementation in isolation**
+   ```dart
+   void main() {
+     test('new implementation works', () {
+       final service = NewProviderServiceImpl();
+       // Test all methods
+     });
+   }
+   ```
+
+3. **Update DI registration**
+   ```dart
+   // Old:
+   // getIt.registerLazySingleton<Service>(
+   //   () => OldProviderServiceImpl(),
+   // );
+   
+   // New:
+   getIt.registerLazySingleton<Service>(
+     () => NewProviderServiceImpl(),
+   );
+   ```
+
+4. **Update dependencies in pubspec.yaml**
+   ```yaml
+   # Remove old
+   # Add new
+   ```
+
+5. **Test consumer apps**
+   - Run existing tests (should all pass!)
+   - Test manually
+   - Check for regressions
+
+6. **Gradual rollout** (optional)
+   ```dart
+   // Use feature flag for gradual migration
+   getIt.registerLazySingleton<Service>(
+     () {
+       if (useNewProvider) {
+         return NewProviderServiceImpl();
+       } else {
+         return OldProviderServiceImpl();
+       }
+     },
+   );
+   ```
+
+7. **Remove old implementation** (after stable)
+   - Delete old implementation file
+   - Remove old dependency from pubspec
+   - Clean up imports
+
+### Migration Effort Target
+
+**Goal: Dependency changes should take < 1 hour, not days!**
+
+If migration takes longer, your abstraction needs improvement.
+
+---
+
+## 📚 Key References
+
+- **ARCHITECTURE.md** - Complete architecture documentation
+- **README.md** - Package overview and setup
+- **CHANGELOG.md** - Version history
+- **MIGRATION_GUIDE.md** - Migration guides for breaking changes
+
+---
+
+## ⚠️ Important Notes
+
+1. **Breaking Changes**
+   - Avoid at all costs
+   - If necessary, deprecate first
+   - Provide migration guide
+
+2. **Versioning**
+   - Follow semantic versioning
+   - Update CHANGELOG.md
+   - Tag releases properly
+
+3. **Consumer Apps**
+   - Test changes di multiple apps
+   - Consider different use cases
+   - Maintain backward compatibility
+
+4. **Dependency Updates**
+   - Keep abstractions stable even when dependencies change
+   - Document all dependency changes in CHANGELOG
+   - Test thoroughly before releasing
+
+---
+
+## 📊 Quick Checklist: Is My Code Dependency-Independent?
+
+Before committing, verify:
+
+- [ ] No third-party types in public interfaces
+- [ ] All external packages wrapped with abstract classes
+- [ ] Easy to create alternative implementations
+- [ ] Can mock all dependencies for testing
+- [ ] Configuration-driven, not hardcoded
+- [ ] Implementation details hidden from consumers
+- [ ] DI registration is the only coupling point
+- [ ] Domain layer has zero package dependencies
+- [ ] Infrastructure layer properly abstracts providers
+- [ ] Can change dependencies in < 1 hour
+
+**If you answer "No" to any, refactor before proceeding!**
+
+---
+
+**Remember**: Core library harus **STABLE**, **GENERIC**, **FLEXIBLE**, dan **DEPENDENCY-INDEPENDENT**. Kode yang terlalu spesifik untuk satu app atau terlalu coupled ke satu package tidak boleh ada di sini!
+
+## 🎓 Dependency Independence Examples
+
+### Example 1: HTTP Client
+
+```dart
+// Contract (stable, never changes)
+abstract class HttpClient {
+  Future<Either<NetworkFailure, HttpResponse>> get(
+    String url, {
+    Map<String, String>? headers,
+    Map<String, dynamic>? queryParameters,
+  });
+  
+  Future<Either<NetworkFailure, HttpResponse>> post(
+    String url, {
+    dynamic body,
+    Map<String, String>? headers,
+  });
+}
+
+// Can implement with: Dio, http, Chopper, etc.
+```
+
+### Example 2: Database
+
+```dart
+// Contract (stable, never changes)
+abstract class DatabaseService {
+  Future<Either<DatabaseFailure, void>> insert<T>(String table, T data);
+  Future<Either<DatabaseFailure, List<T>>> query<T>(String table);
+  Future<Either<DatabaseFailure, void>> update<T>(String table, T data);
+  Future<Either<DatabaseFailure, void>> delete(String table, String id);
+}
+
+// Can implement with: Hive, Isar, SQLite, ObjectBox, etc.
+```
+
+### Example 3: Image Picker
+
+```dart
+// Contract (stable, never changes)
+abstract class MediaPickerService {
+  Future<Either<PickerFailure, MediaFile>> pickImage({
+    MediaSource source = MediaSource.gallery,
+    int? maxWidth,
+    int? maxHeight,
+    int? quality,
+  });
+  
+  Future<Either<PickerFailure, List<MediaFile>>> pickMultipleImages();
+}
+
+// Can implement with: image_picker, wechat_assets_picker, etc.
+```
+
+---
+
+**Final Reminder**: If changing a dependency requires touching business logic, **YOU'RE DOING IT WRONG**. Fix the abstraction!
+
