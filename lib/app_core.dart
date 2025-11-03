@@ -8,6 +8,9 @@ export 'src/foundation/domain/entities/background_service/entities.dart';
 export 'src/foundation/domain/entities/network/entities.dart';
 export 'src/foundation/domain/entities/notification/entities.dart';
 
+// Infrastructure - Analytics
+export 'src/infrastructure/analytics/analytics.dart';
+
 // Infrastructure - Background Service
 export 'src/infrastructure/background_service/background_service.dart';
 
