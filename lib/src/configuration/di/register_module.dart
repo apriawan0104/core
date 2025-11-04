@@ -48,4 +48,20 @@ abstract class RegisterModule {
   //     enableLogging: !kReleaseMode,
   //   ),
   // );
+  
+  // Note: ChartService registration example:
+  //
+  // ChartService is NOT auto-registered to keep core library independent
+  // from chart dependencies. Register manually in consumer app if needed.
+  //
+  // First, add to pubspec.yaml:
+  //   syncfusion_flutter_charts: ^31.2.4
+  //
+  // Then register in your DI setup:
+  //
+  // getIt.registerLazySingleton<ChartService>(
+  //   () => SyncfusionChartServiceImpl(),
+  // );
+  //
+  // See CHART_SETUP.md for complete setup guide.
 }

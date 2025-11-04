@@ -39,6 +39,13 @@ Flutter core library providing reusable business logic, infrastructure services,
 - **Responsive Service** - Screen size utilities
   - Flutter ScreenUtil integration
   - Responsive layouts
+  
+- **Chart Service** - Data visualization with charts
+  - Generic `ChartService` interface (works with Syncfusion, fl_chart, etc.)
+  - 30+ chart types (line, column, pie, etc.)
+  - Interactive features (zoom, pan, tooltip)
+  - Sparkline charts for dashboards
+  - Dependency-independent design
 
 ### Domain Layer
 
@@ -142,6 +149,7 @@ void loadUser() async {
 ## 📚 Documentation
 
 - **[Background Service Setup Guide](BACKGROUND_SERVICE_SETUP.md)** - Background task execution
+- **[Chart Setup Guide](CHART_SETUP.md)** - Chart visualization and data display
 - **[Network Setup Guide](NETWORK_SETUP.md)** - Complete guide for HTTP networking
 - **[Logging Setup Guide](LOGGING_SETUP.md)** - Logging service configuration
 - **[Storage Setup Guide](STORAGE_SETUP.md)** - Local storage usage
@@ -153,6 +161,7 @@ void loadUser() async {
 Check the `example/` directory for complete working examples:
 
 - `background_service_example.dart` - Background service examples
+- `chart_example.dart` - Chart visualization examples
 - `network_example.dart` - HTTP networking examples
 - `logging_example.dart` - Logging service examples
 - `storage_example.dart` - Storage service examples
