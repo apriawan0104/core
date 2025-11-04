@@ -1,7 +1,7 @@
 import 'failures.dart';
 
 /// Chart-related failure
-/// 
+///
 /// Represents errors that occur during chart operations such as:
 /// - Invalid chart configuration
 /// - Unsupported chart type
@@ -25,7 +25,8 @@ class ChartFailure extends Failure {
   /// Factory for unsupported chart type error
   factory ChartFailure.unsupportedChartType(String chartType) {
     return ChartFailure(
-      message: 'Chart type "$chartType" is not supported by this implementation',
+      message:
+          'Chart type "$chartType" is not supported by this implementation',
       code: 'CHART_UNSUPPORTED_TYPE',
     );
   }
@@ -54,4 +55,3 @@ class ChartFailure extends Failure {
     );
   }
 }
-
