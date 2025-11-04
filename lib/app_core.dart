@@ -22,6 +22,9 @@ export 'src/infrastructure/chart/chart.dart';
 // Infrastructure - Connectivity
 export 'src/infrastructure/connectivity/connectivity.dart';
 
+// Infrastructure - File Opener
+export 'src/infrastructure/file_opener/file_opener.dart';
+
 // Infrastructure - Logging
 export 'src/infrastructure/logging/logging.dart';
 
