@@ -47,6 +47,15 @@ Flutter core library providing reusable business logic, infrastructure services,
   - Sparkline charts for dashboards
   - Dependency-independent design
 
+- **URL Launcher Service** - Launch URLs, emails, phone calls, and SMS
+  - Generic `UrlLauncherService` interface (works with url_launcher, custom_tabs, etc.)
+  - Web URL launching (external browser, in-app browser)
+  - Email composition with subject, body, CC, BCC
+  - Phone calls and SMS with pre-filled messages
+  - Multiple launch modes (platform default, in-app, external)
+  - Cross-platform support (iOS, Android, Web, Desktop)
+  - Dependency-independent design
+
 ### Domain Layer
 
 - Clean Architecture principles
@@ -153,6 +162,7 @@ void loadUser() async {
 - **[Network Setup Guide](NETWORK_SETUP.md)** - Complete guide for HTTP networking
 - **[Logging Setup Guide](LOGGING_SETUP.md)** - Logging service configuration
 - **[Storage Setup Guide](STORAGE_SETUP.md)** - Local storage usage
+- **[URL Launcher Setup Guide](URL_LAUNCHER_SETUP.md)** - URL launching, emails, phone calls, and SMS
 - **[Architecture](ARCHITECTURE.md)** - Architecture overview and principles
 - **[Project Guidelines](PROJECT_GUIDELINES.md)** - Development guidelines and best practices
 
@@ -166,6 +176,7 @@ Check the `example/` directory for complete working examples:
 - `logging_example.dart` - Logging service examples
 - `storage_example.dart` - Storage service examples
 - `notification_example.dart` - Notification examples
+- `url_launcher_example.dart` - URL launcher examples
 
 ## 🏗️ Architecture
 
@@ -226,6 +237,7 @@ Core dependencies:
 - `hive` - Local storage
 - `firebase_messaging` - Push notifications
 - `logger` - Logging
+- `url_launcher` - URL launching
 
 See `pubspec.yaml` for complete list.
 
