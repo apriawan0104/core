@@ -9,7 +9,7 @@ import 'package:app_core/app_core.dart';
 // import 'package:flutter_background_service/flutter_background_service.dart' as fbs;
 
 /// Example: Background Service Implementation
-/// 
+///
 /// This example demonstrates how to implement and use background service
 /// for running tasks in background even when app is closed.
 
@@ -90,7 +90,7 @@ Future<void> setupBackgroundService() async {
   // );
 
   // Example configuration
-  final config = BackgroundServiceConfig(
+  const config = BackgroundServiceConfig(
     autoStart: true,
     autoStartOnBoot: true,
     isForegroundMode: true, // Recommended for reliability
@@ -203,7 +203,7 @@ class PeriodicSyncExample {
   Future<void> setupPeriodicSync() async {
     print('\n📍 Use Case: Periodic Data Sync');
 
-    final config = BackgroundServiceConfig(
+    const config = BackgroundServiceConfig(
       autoStart: true,
       isForegroundMode: true,
       initialNotificationTitle: 'Data Sync',
@@ -220,7 +220,7 @@ class LocationTrackingExample {
   Future<void> setupLocationTracking() async {
     print('\n📍 Use Case: Location Tracking');
 
-    final config = BackgroundServiceConfig(
+    const config = BackgroundServiceConfig(
       autoStart: true,
       isForegroundMode: true,
       initialNotificationTitle: 'Location Tracking',
@@ -228,7 +228,8 @@ class LocationTrackingExample {
     );
 
     print('⚙️ Config: Continuous location tracking');
-    print('⚙️ Note: Need FOREGROUND_SERVICE_LOCATION permission on Android 14+');
+    print(
+        '⚙️ Note: Need FOREGROUND_SERVICE_LOCATION permission on Android 14+');
   }
 }
 
@@ -237,7 +238,7 @@ class BackgroundDownloadExample {
   Future<void> setupBackgroundDownload() async {
     print('\n📍 Use Case: Background Download');
 
-    final config = BackgroundServiceConfig(
+    const config = BackgroundServiceConfig(
       autoStart: false, // Start manually when download begins
       isForegroundMode: true,
       initialNotificationTitle: 'Downloading',
@@ -254,7 +255,7 @@ class BackgroundPollingExample {
   Future<void> setupBackgroundPolling() async {
     print('\n📍 Use Case: Background API Polling');
 
-    final config = BackgroundServiceConfig(
+    const config = BackgroundServiceConfig(
       autoStart: true,
       isForegroundMode: false, // No notification
       autoStartOnBoot: true,
@@ -312,8 +313,7 @@ class MockBackgroundService implements BackgroundService {
 
   @override
   Stream<BackgroundServiceData?> on(String method) {
-    return _controller.stream
-        .where((data) => data?.method == method);
+    return _controller.stream.where((data) => data?.method == method);
   }
 
   void simulateUpdate(String method, Map<String, dynamic> payload) {
@@ -346,10 +346,10 @@ void main() async {
   await example.checkServiceStatus();
   await example.sendCommand();
   final subscription = example.listenToUpdates();
-  
+
   // Simulate some work
   await Future.delayed(const Duration(seconds: 2));
-  
+
   await example.stopService();
   await subscription?.cancel();
 
@@ -384,4 +384,3 @@ void main() async {
   print('\n✅ All examples completed!');
   print('═══════════════════════════════════════════════════════════\n');
 }
-

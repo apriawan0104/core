@@ -7,7 +7,7 @@ import 'package:get_it/get_it.dart';
 
 // Import the core library
 // In your app, this would be: import 'package:app_core/app_core.dart';
-import '../lib/app_core.dart';
+import 'package:app_core/app_core.dart';
 
 /// Connectivity Service Example
 ///
@@ -33,7 +33,7 @@ void main() async {
   // Setup dependency injection
   await setupDependencies();
 
-  runApp(ConnectivityExampleApp());
+  runApp(const ConnectivityExampleApp());
 }
 
 /// Setup dependencies
@@ -47,7 +47,7 @@ Future<void> setupDependencies() async {
 
   // Initialize the service
   final connectivity = getIt<ConnectivityService>();
-  
+
   // Option 1: Initialize with default settings
   await connectivity.initialize();
 
@@ -71,7 +71,7 @@ Future<void> setupDependencies() async {
 
 /// Main app
 class ConnectivityExampleApp extends StatefulWidget {
-  const ConnectivityExampleApp({Key? key}) : super(key: key);
+  const ConnectivityExampleApp({super.key});
 
   @override
   State<ConnectivityExampleApp> createState() => _ConnectivityExampleAppState();
@@ -129,7 +129,7 @@ class _ConnectivityExampleAppState extends State<ConnectivityExampleApp>
 
 /// Home page with navigation to examples
 class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+  const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -203,7 +203,7 @@ class HomePage extends StatelessWidget {
 
 /// Example 1: Basic Connectivity Check
 class BasicCheckExample extends StatefulWidget {
-  const BasicCheckExample({Key? key}) : super(key: key);
+  const BasicCheckExample({super.key});
 
   @override
   State<BasicCheckExample> createState() => _BasicCheckExampleState();
@@ -297,7 +297,7 @@ class _BasicCheckExampleState extends State<BasicCheckExample> {
 
 /// Example 2: Real-Time Monitoring
 class RealTimeMonitoringExample extends StatefulWidget {
-  const RealTimeMonitoringExample({Key? key}) : super(key: key);
+  const RealTimeMonitoringExample({super.key});
 
   @override
   State<RealTimeMonitoringExample> createState() =>
@@ -308,7 +308,7 @@ class _RealTimeMonitoringExampleState extends State<RealTimeMonitoringExample> {
   final _connectivity = GetIt.instance<ConnectivityService>();
   late StreamSubscription<ConnectivityStatusEntity> _subscription;
   bool _isOnline = false;
-  List<String> _events = [];
+  final List<String> _events = [];
 
   @override
   void initState() {
@@ -444,7 +444,7 @@ class _RealTimeMonitoringExampleState extends State<RealTimeMonitoringExample> {
 
 /// Example 3: Offline Banner
 class OfflineBannerExample extends StatelessWidget {
-  const OfflineBannerExample({Key? key}) : super(key: key);
+  const OfflineBannerExample({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -452,18 +452,18 @@ class OfflineBannerExample extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Offline Banner'),
       ),
-      body: Column(
+      body: const Column(
         children: [
           // Offline banner
-          const OfflineBanner(),
+          OfflineBanner(),
           // Content
           Expanded(
             child: Center(
               child: Padding(
-                padding: const EdgeInsets.all(24.0),
+                padding: EdgeInsets.all(24.0),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  children: const [
+                  children: [
                     Icon(Icons.info_outline, size: 64, color: Colors.blue),
                     SizedBox(height: 16),
                     Text(
@@ -484,7 +484,7 @@ class OfflineBannerExample extends StatelessWidget {
 
 /// Offline banner widget
 class OfflineBanner extends StatelessWidget {
-  const OfflineBanner({Key? key}) : super(key: key);
+  const OfflineBanner({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -504,9 +504,9 @@ class OfflineBanner extends StatelessWidget {
             width: double.infinity,
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             color: Colors.red,
-            child: Row(
+            child: const Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
+              children: [
                 Icon(Icons.wifi_off, color: Colors.white, size: 20),
                 SizedBox(width: 8),
                 Text(
@@ -528,7 +528,7 @@ class OfflineBanner extends StatelessWidget {
 
 /// Example 4: Custom Endpoints
 class CustomEndpointsExample extends StatefulWidget {
-  const CustomEndpointsExample({Key? key}) : super(key: key);
+  const CustomEndpointsExample({super.key});
 
   @override
   State<CustomEndpointsExample> createState() => _CustomEndpointsExampleState();
@@ -625,7 +625,7 @@ class _CustomEndpointsExampleState extends State<CustomEndpointsExample> {
 
 /// Example 5: Retry Logic
 class RetryLogicExample extends StatefulWidget {
-  const RetryLogicExample({Key? key}) : super(key: key);
+  const RetryLogicExample({super.key});
 
   @override
   State<RetryLogicExample> createState() => _RetryLogicExampleState();
@@ -685,11 +685,11 @@ class _RetryLogicExampleState extends State<RetryLogicExample> {
     await _connectivity.onConnectivityChanged
         .firstWhere((status) => status.isConnected)
         .timeout(
-          const Duration(seconds: 30),
-          onTimeout: () {
-            throw TimeoutException('Connection timeout');
-          },
-        );
+      const Duration(seconds: 30),
+      onTimeout: () {
+        throw TimeoutException('Connection timeout');
+      },
+    );
 
     setState(() {
       _status = 'Connected! Fetching data...';
@@ -770,4 +770,3 @@ class _RetryLogicExampleState extends State<RetryLogicExample> {
     );
   }
 }
-

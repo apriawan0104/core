@@ -213,10 +213,12 @@ class NotificationExampleScreen extends StatelessWidget {
                 scheduledDate: DateTime.now().add(const Duration(seconds: 10)),
               );
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Notification scheduled for 10 seconds')),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Notification scheduled for 10 seconds')),
+                );
+              }
             },
             child: const Text('Schedule in 10 Seconds'),
           ),
@@ -232,10 +234,12 @@ class NotificationExampleScreen extends StatelessWidget {
                 time: DateTime(2024, 1, 1, 9, 0), // 9:00 AM daily
               );
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text('Daily notification at 9:00 AM set')),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Daily notification at 9:00 AM set')),
+                );
+              }
             },
             child: const Text('Set Daily at 9:00 AM'),
           ),
@@ -252,11 +256,13 @@ class NotificationExampleScreen extends StatelessWidget {
                 time: DateTime(2024, 1, 1, 10, 0), // Monday 10:00 AM
               );
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                    content: Text(
-                        'Weekly notification every Monday at 10:00 AM set')),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text(
+                          'Weekly notification every Monday at 10:00 AM set')),
+                );
+              }
             },
             child: const Text('Set Weekly on Monday 10:00 AM'),
           ),
@@ -276,10 +282,12 @@ class NotificationExampleScreen extends StatelessWidget {
                   await localService.getPendingNotificationRequests();
               print('📋 Pending notifications: ${pending.length}');
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text('${pending.length} pending notifications')),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('${pending.length} pending notifications')),
+                );
+              }
             },
             child: const Text('Check Pending Notifications'),
           ),
@@ -289,10 +297,12 @@ class NotificationExampleScreen extends StatelessWidget {
               final active = await localService.getActiveNotifications();
               print('🔔 Active notifications: ${active.length}');
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text('${active.length} active notifications')),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                      content: Text('${active.length} active notifications')),
+                );
+              }
             },
             child: const Text('Check Active Notifications'),
           ),
@@ -301,9 +311,11 @@ class NotificationExampleScreen extends StatelessWidget {
             onPressed: () async {
               await localService.cancelAll();
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('All notifications cancelled')),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('All notifications cancelled')),
+                );
+              }
             },
             child: const Text('Cancel All Notifications'),
           ),
@@ -323,12 +335,14 @@ class NotificationExampleScreen extends StatelessWidget {
               print('🔑 FCM Token: $token');
 
               // Copy to clipboard or show dialog
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Token: ${token?.substring(0, 20)}...'),
-                  duration: const Duration(seconds: 3),
-                ),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Token: ${token?.substring(0, 20)}...'),
+                    duration: const Duration(seconds: 3),
+                  ),
+                );
+              }
             },
             child: const Text('Get FCM Token'),
           ),
@@ -337,11 +351,13 @@ class NotificationExampleScreen extends StatelessWidget {
             onPressed: () async {
               final enabled = await localService.areNotificationsEnabled();
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Notifications enabled: $enabled'),
-                ),
-              );
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text('Notifications enabled: $enabled'),
+                  ),
+                );
+              }
             },
             child: const Text('Check Notification Permission'),
           ),

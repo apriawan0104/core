@@ -18,6 +18,7 @@
 /// 1. Make sure you've set up the platform-specific configuration (see QUICK_START.md)
 /// 2. Register the services in your DI container
 /// 3. Use the WebViewExamplePage widget in your app
+library;
 
 import 'package:app_core/app_core.dart';
 import 'package:flutter/material.dart';
@@ -48,7 +49,7 @@ void main() {
 }
 
 class WebViewExampleApp extends StatelessWidget {
-  const WebViewExampleApp({Key? key}) : super(key: key);
+  const WebViewExampleApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -64,7 +65,7 @@ class WebViewExampleApp extends StatelessWidget {
 }
 
 class WebViewExamplePage extends StatefulWidget {
-  const WebViewExamplePage({Key? key}) : super(key: key);
+  const WebViewExamplePage({super.key});
 
   @override
   State<WebViewExamplePage> createState() => _WebViewExamplePageState();
@@ -105,7 +106,7 @@ class _WebViewExamplePageState extends State<WebViewExamplePage> {
       _cookieService = getIt<WebViewCookieService>();
 
       // Configure webview
-      final config = WebViewConfig(
+      const config = WebViewConfig(
         javaScriptEnabled: true,
         zoomEnabled: true,
         backgroundColor: 0xFFFFFFFF,
@@ -317,7 +318,7 @@ class _WebViewExamplePageState extends State<WebViewExamplePage> {
   }
 
   Future<void> _loadLocalHtml() async {
-    final html = '''
+    const html = '''
     <!DOCTYPE html>
     <html>
     <head>
@@ -672,7 +673,7 @@ class _WebViewExamplePageState extends State<WebViewExamplePage> {
               color: Colors.grey[100],
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.1),
+                  color: Colors.black.withValues(alpha: 0.1),
                   blurRadius: 4,
                   offset: const Offset(0, -2),
                 ),

@@ -143,37 +143,37 @@ class SimpleLineChartExample extends StatelessWidget {
   Widget build(BuildContext context) {
     final chartService = getIt<ChartService>();
 
-    final config = ChartConfig(
+    const config = ChartConfig(
       title: 'Monthly Sales',
       series: [
         ChartSeries(
           name: 'Sales',
           type: ChartType.line,
           dataPoints: [
-            const ChartDataPoint(x: 'Jan', y: 35),
-            const ChartDataPoint(x: 'Feb', y: 28),
-            const ChartDataPoint(x: 'Mar', y: 34),
-            const ChartDataPoint(x: 'Apr', y: 32),
-            const ChartDataPoint(x: 'May', y: 40),
-            const ChartDataPoint(x: 'Jun', y: 45),
+            ChartDataPoint(x: 'Jan', y: 35),
+            ChartDataPoint(x: 'Feb', y: 28),
+            ChartDataPoint(x: 'Mar', y: 34),
+            ChartDataPoint(x: 'Apr', y: 32),
+            ChartDataPoint(x: 'May', y: 40),
+            ChartDataPoint(x: 'Jun', y: 45),
           ],
           showDataLabels: true,
           color: '#2196F3',
         ),
       ],
-      primaryXAxis: const ChartAxisConfig(
+      primaryXAxis: ChartAxisConfig(
         type: AxisType.category,
       ),
-      primaryYAxis: const ChartAxisConfig(
+      primaryYAxis: ChartAxisConfig(
         type: AxisType.numeric,
         minimum: 0,
         maximum: 50,
       ),
-      legendConfig: const ChartLegendConfig(
+      legendConfig: ChartLegendConfig(
         isVisible: true,
         position: LegendPosition.bottom,
       ),
-      tooltipConfig: const ChartTooltipConfig(
+      tooltipConfig: ChartTooltipConfig(
         enable: true,
       ),
     );
@@ -200,14 +200,14 @@ class MultipleSeriesChartExample extends StatelessWidget {
   Widget build(BuildContext context) {
     final chartService = getIt<ChartService>();
 
-    final config = ChartConfig(
+    const config = ChartConfig(
       title: 'Sales vs Revenue',
       series: [
         ChartSeries(
           name: 'Sales',
           type: ChartType.column,
           color: '#2196F3',
-          dataPoints: const [
+          dataPoints: [
             ChartDataPoint(x: 'Q1', y: 35),
             ChartDataPoint(x: 'Q2', y: 28),
             ChartDataPoint(x: 'Q3', y: 34),
@@ -219,7 +219,7 @@ class MultipleSeriesChartExample extends StatelessWidget {
           type: ChartType.line,
           color: '#4CAF50',
           lineWidth: 3,
-          dataPoints: const [
+          dataPoints: [
             ChartDataPoint(x: 'Q1', y: 40),
             ChartDataPoint(x: 'Q2', y: 35),
             ChartDataPoint(x: 'Q3', y: 38),
@@ -227,11 +227,11 @@ class MultipleSeriesChartExample extends StatelessWidget {
           ],
         ),
       ],
-      legendConfig: const ChartLegendConfig(
+      legendConfig: ChartLegendConfig(
         isVisible: true,
         position: LegendPosition.bottom,
       ),
-      tooltipConfig: const ChartTooltipConfig(enable: true),
+      tooltipConfig: ChartTooltipConfig(enable: true),
     );
 
     final result = chartService.buildCartesianChart(config);
@@ -251,13 +251,13 @@ class PieChartExample extends StatelessWidget {
   Widget build(BuildContext context) {
     final chartService = getIt<ChartService>();
 
-    final config = ChartConfig(
+    const config = ChartConfig(
       title: 'Market Share',
       series: [
         ChartSeries(
           name: 'Share',
           type: ChartType.pie,
-          dataPoints: const [
+          dataPoints: [
             ChartDataPoint(x: 'Product A', y: 45),
             ChartDataPoint(x: 'Product B', y: 30),
             ChartDataPoint(x: 'Product C', y: 15),
@@ -266,7 +266,7 @@ class PieChartExample extends StatelessWidget {
           showDataLabels: true,
         ),
       ],
-      legendConfig: const ChartLegendConfig(
+      legendConfig: ChartLegendConfig(
         isVisible: true,
         position: LegendPosition.right,
       ),
@@ -289,14 +289,14 @@ class ColumnChartExample extends StatelessWidget {
   Widget build(BuildContext context) {
     final chartService = getIt<ChartService>();
 
-    final config = ChartConfig(
+    const config = ChartConfig(
       title: 'Team Performance',
       series: [
         ChartSeries(
           name: 'Score',
           type: ChartType.column,
           color: '#FF9800',
-          dataPoints: const [
+          dataPoints: [
             ChartDataPoint(x: 'Team A', y: 85),
             ChartDataPoint(x: 'Team B', y: 92),
             ChartDataPoint(x: 'Team C', y: 78),
@@ -306,15 +306,15 @@ class ColumnChartExample extends StatelessWidget {
           showDataLabels: true,
         ),
       ],
-      primaryXAxis: const ChartAxisConfig(
+      primaryXAxis: ChartAxisConfig(
         type: AxisType.category,
       ),
-      primaryYAxis: const ChartAxisConfig(
+      primaryYAxis: ChartAxisConfig(
         type: AxisType.numeric,
         minimum: 0,
         maximum: 100,
       ),
-      tooltipConfig: const ChartTooltipConfig(enable: true),
+      tooltipConfig: ChartTooltipConfig(enable: true),
     );
 
     final result = chartService.buildCartesianChart(config);
@@ -408,14 +408,14 @@ class StackedAreaChartExample extends StatelessWidget {
   Widget build(BuildContext context) {
     final chartService = getIt<ChartService>();
 
-    final config = ChartConfig(
+    const config = ChartConfig(
       title: 'Stacked Revenue Sources',
       series: [
         ChartSeries(
           name: 'Product Sales',
           type: ChartType.stackedArea,
           color: '#2196F3',
-          dataPoints: const [
+          dataPoints: [
             ChartDataPoint(x: 'Jan', y: 20),
             ChartDataPoint(x: 'Feb', y: 25),
             ChartDataPoint(x: 'Mar', y: 22),
@@ -426,7 +426,7 @@ class StackedAreaChartExample extends StatelessWidget {
           name: 'Services',
           type: ChartType.stackedArea,
           color: '#4CAF50',
-          dataPoints: const [
+          dataPoints: [
             ChartDataPoint(x: 'Jan', y: 15),
             ChartDataPoint(x: 'Feb', y: 18),
             ChartDataPoint(x: 'Mar', y: 20),
@@ -437,7 +437,7 @@ class StackedAreaChartExample extends StatelessWidget {
           name: 'Subscriptions',
           type: ChartType.stackedArea,
           color: '#FF9800',
-          dataPoints: const [
+          dataPoints: [
             ChartDataPoint(x: 'Jan', y: 10),
             ChartDataPoint(x: 'Feb', y: 12),
             ChartDataPoint(x: 'Mar', y: 15),
@@ -445,14 +445,14 @@ class StackedAreaChartExample extends StatelessWidget {
           ],
         ),
       ],
-      primaryXAxis: const ChartAxisConfig(
+      primaryXAxis: ChartAxisConfig(
         type: AxisType.category,
       ),
-      legendConfig: const ChartLegendConfig(
+      legendConfig: ChartLegendConfig(
         isVisible: true,
         position: LegendPosition.bottom,
       ),
-      tooltipConfig: const ChartTooltipConfig(enable: true),
+      tooltipConfig: ChartTooltipConfig(enable: true),
     );
 
     final result = chartService.buildCartesianChart(config);
@@ -487,9 +487,8 @@ class ReusableSalesChart extends StatelessWidget {
         ChartSeries(
           name: 'Sales',
           type: chartType,
-          dataPoints: data
-              .map((d) => ChartDataPoint(x: d.month, y: d.amount))
-              .toList(),
+          dataPoints:
+              data.map((d) => ChartDataPoint(x: d.month, y: d.amount)).toList(),
           showDataLabels: true,
         ),
       ],
@@ -619,4 +618,3 @@ class _ChartWithLoadingExampleState extends State<ChartWithLoadingExample> {
     );
   }
 }
-

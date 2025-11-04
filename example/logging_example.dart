@@ -1,4 +1,4 @@
-// ignore_for_file: unused_local_variable
+// ignore_for_file: unused_local_variable, avoid_print
 
 import 'package:app_core/app_core.dart';
 import 'package:get_it/get_it.dart';
@@ -348,4 +348,3 @@ class UserRepository {
     }
   }
 }
-

@@ -4,7 +4,6 @@ import 'dart:io';
 
 import 'package:app_core/app_core.dart';
 import 'package:dartz/dartz.dart' hide State;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 
@@ -660,9 +659,8 @@ class _PathProviderHomePageState extends State<PathProviderHomePage> {
       );
     }
 
-    final summary = directories.entries
-        .map((e) => '${e.key}: ${e.value}')
-        .join('\n\n');
+    final summary =
+        directories.entries.map((e) => '${e.key}: ${e.value}').join('\n\n');
 
     _updateStatus(
       'Found ${directories.length} directories:\n\n$summary',
@@ -835,4 +833,3 @@ class FileManagerService {
     );
   }
 }
-

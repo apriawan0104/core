@@ -217,7 +217,7 @@ Future<void> customConfigurationExample() async {
   final urlLauncher = getIt<UrlLauncherService>();
 
   // Custom web view configuration
-  final customConfig = UrlLaunchConfig(
+  const customConfig = UrlLaunchConfig(
     mode: UrlLaunchMode.inAppBrowserView,
     enableJavaScript: true,
     enableDomStorage: true,
@@ -225,7 +225,7 @@ Future<void> customConfigurationExample() async {
       'Authorization': 'Bearer token123',
       'Custom-Header': 'value',
     },
-    webViewConfiguration: const WebViewConfiguration(
+    webViewConfiguration: WebViewConfiguration(
       showTitle: true,
       toolbarColor: '#FF5722',
       enableZoom: false,
