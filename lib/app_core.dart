@@ -33,6 +33,9 @@ export 'src/infrastructure/responsive/responsive.dart';
 // Infrastructure - Storage
 export 'src/infrastructure/storage/storage.dart';
 
+// Infrastructure - WebView
+export 'src/infrastructure/webview/webview.dart';
+
 // Configuration - DI
 export 'src/configuration/di/locator.dart';
 
