@@ -317,8 +317,8 @@ class PostHogAnalyticsServiceImpl implements AnalyticsService {
       // PostHog doesn't have a clear all method
       // This is a limitation - we can't clear all properties
       // App should track registered keys if they need to clear all
-      return Left(
-        const AnalyticsFailure(
+      return const Left(
+        AnalyticsFailure(
           message:
               'PostHog does not support clearing all super properties. Use removeSuperProperty() for specific keys.',
           code: 'not_supported',

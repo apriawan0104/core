@@ -41,7 +41,7 @@ class SyncfusionChartServiceImpl implements ChartService {
       final chart = sf.SfCartesianChart(
         title: config.title != null
             ? sf.ChartTitle(text: config.title!)
-            : sf.ChartTitle(text: ''),
+            : const sf.ChartTitle(text: ''),
         primaryXAxis: _buildXAxis(config.primaryXAxis),
         primaryYAxis: _buildYAxis(config.primaryYAxis),
         legend: _buildLegend(config.legendConfig),
@@ -106,7 +106,7 @@ class SyncfusionChartServiceImpl implements ChartService {
       final chart = sf.SfCircularChart(
         title: config.title != null
             ? sf.ChartTitle(text: config.title!)
-            : sf.ChartTitle(text: ''),
+            : const sf.ChartTitle(text: ''),
         legend: _buildLegend(config.legendConfig),
         tooltipBehavior: _buildTooltipBehavior(config.tooltipConfig),
         backgroundColor: config.backgroundColor != null
@@ -150,7 +150,7 @@ class SyncfusionChartServiceImpl implements ChartService {
       final chart = sf.SfPyramidChart(
         title: config.title != null
             ? sf.ChartTitle(text: config.title!)
-            : sf.ChartTitle(text: ''),
+            : const sf.ChartTitle(text: ''),
         legend: _buildLegend(config.legendConfig),
         tooltipBehavior: _buildTooltipBehavior(config.tooltipConfig),
         backgroundColor: config.backgroundColor != null
@@ -194,7 +194,7 @@ class SyncfusionChartServiceImpl implements ChartService {
       final chart = sf.SfFunnelChart(
         title: config.title != null
             ? sf.ChartTitle(text: config.title!)
-            : sf.ChartTitle(text: ''),
+            : const sf.ChartTitle(text: ''),
         legend: _buildLegend(config.legendConfig),
         tooltipBehavior: _buildTooltipBehavior(config.tooltipConfig),
         backgroundColor: config.backgroundColor != null
@@ -343,7 +343,7 @@ class SyncfusionChartServiceImpl implements ChartService {
 
   sf.ChartAxis _buildXAxis(ChartAxisConfig? config) {
     if (config == null) {
-      return sf.CategoryAxis();
+      return const sf.CategoryAxis();
     }
 
     return switch (config.type) {
@@ -390,7 +390,7 @@ class SyncfusionChartServiceImpl implements ChartService {
 
   sf.ChartAxis _buildYAxis(ChartAxisConfig? config) {
     if (config == null) {
-      return sf.NumericAxis();
+      return const sf.NumericAxis();
     }
 
     // Y-axis typically numeric or logarithmic
