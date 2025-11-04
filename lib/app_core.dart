@@ -6,6 +6,7 @@ export 'src/errors/errors.dart';
 // Foundation - Domain Entities
 export 'src/foundation/domain/entities/background_service/entities.dart';
 export 'src/foundation/domain/entities/chart/entities.dart';
+export 'src/foundation/domain/entities/connectivity/entities.dart';
 export 'src/foundation/domain/entities/network/entities.dart';
 export 'src/foundation/domain/entities/notification/entities.dart';
 
@@ -17,6 +18,9 @@ export 'src/infrastructure/background_service/background_service.dart';
 
 // Infrastructure - Chart
 export 'src/infrastructure/chart/chart.dart';
+
+// Infrastructure - Connectivity
+export 'src/infrastructure/connectivity/connectivity.dart';
 
 // Infrastructure - Logging
 export 'src/infrastructure/logging/logging.dart';
