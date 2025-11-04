@@ -7,5 +7,6 @@ export 'chart_failure.dart';
 export 'connectivity_failure.dart';
 export 'failures.dart';
 export 'network_failure.dart';
+export 'path_provider_failure.dart';
 export 'url_launcher_failure.dart';
 export 'webview_failure.dart';

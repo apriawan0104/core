@@ -31,6 +31,9 @@ export 'src/infrastructure/network/network.dart';
 // Infrastructure - Notification
 export 'src/infrastructure/notification/notification.dart';
 
+// Infrastructure - Path Provider
+export 'src/infrastructure/path_provider/path_provider.dart';
+
 // Infrastructure - Responsive
 export 'src/infrastructure/responsive/responsive.dart';
 
