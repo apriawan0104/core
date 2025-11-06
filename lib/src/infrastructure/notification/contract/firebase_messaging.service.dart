@@ -1,3 +1,6 @@
+import 'package:dartz/dartz.dart';
+
+import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 
 /// Callback for when notification is tapped
@@ -19,6 +22,29 @@ typedef OnBackgroundNotificationCallback = Future<void> Function(
 ///
 /// This interface wraps firebase_messaging package following DIP principle.
 /// Consumer apps should inject their own implementations or use the default impl.
+///
+/// **Features:**
+/// - Push notification support
+/// - Topic subscription
+/// - Token management
+/// - Permission handling
+/// - Error handling with Either<Failure, Success>
+///
+/// Example:
+/// ```dart
+/// final fcmService = getIt<FirebaseMessagingService>();
+///
+/// final result = await fcmService.initialize(
+///   onNotificationTapped: (notification) async {
+///     print('Tapped: ${notification.title}');
+///   },
+/// );
+///
+/// result.fold(
+///   (failure) => print('Error: $failure'),
+///   (_) => print('Initialized successfully'),
+/// );
+/// ```
 abstract class FirebaseMessagingService {
   /// Initialize Firebase Messaging service
   ///
@@ -26,7 +52,9 @@ abstract class FirebaseMessagingService {
   /// [onForegroundNotification] - Optional callback for foreground notifications
   /// [onBackgroundNotification] - Optional callback for background notifications
   /// [autoInitEnabled] - Enable/disable auto-initialization (default: true)
-  Future<void> initialize({
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> initialize({
     OnNotificationTappedCallback? onNotificationTapped,
     OnForegroundNotificationCallback? onForegroundNotification,
     OnBackgroundNotificationCallback? onBackgroundNotification,
@@ -35,8 +63,8 @@ abstract class FirebaseMessagingService {
 
   /// Request notification permissions (iOS only)
   ///
-  /// Returns true if permission granted
-  Future<bool> requestPermission({
+  /// Returns Either<NotificationFailure, bool> - true if permission granted
+  Future<Either<NotificationFailure, bool>> requestPermission({
     bool alert = true,
     bool announcement = false,
     bool badge = true,
@@ -48,26 +76,33 @@ abstract class FirebaseMessagingService {
 
   /// Get FCM token
   ///
-  /// Returns the Firebase Cloud Messaging token
-  Future<String?> getToken();
+  /// Returns Either<NotificationFailure, String> with the FCM token
+  Future<Either<NotificationFailure, String>> getToken();
 
   /// Delete FCM token
-  Future<void> deleteToken();
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> deleteToken();
 
   /// Subscribe to topic
   ///
   /// [topic] - Topic name to subscribe to
-  Future<void> subscribeToTopic(String topic);
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> subscribeToTopic(String topic);
 
   /// Unsubscribe from topic
   ///
   /// [topic] - Topic name to unsubscribe from
-  Future<void> unsubscribeFromTopic(String topic);
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> unsubscribeFromTopic(String topic);
 
   /// Get initial notification (if app was opened from terminated state)
   ///
-  /// Returns the notification data if app was opened from notification
-  Future<NotificationDataEntity?> getInitialNotification();
+  /// Returns Either<NotificationFailure, NotificationDataEntity?> with the notification data
+  Future<Either<NotificationFailure, NotificationDataEntity?>>
+      getInitialNotification();
 
   /// Stream of FCM token changes
   Stream<String> get onTokenRefresh;
@@ -82,11 +117,16 @@ abstract class FirebaseMessagingService {
   bool get isSupported;
 
   /// Set auto-init enabled state
-  Future<void> setAutoInitEnabled(bool enabled);
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> setAutoInitEnabled(bool enabled);
 
   /// Get auto-init enabled state
   bool isAutoInitEnabled();
 
   /// Set delivery metrics export to BigQuery enabled (Android only)
-  Future<void> setDeliveryMetricsExportToBigQuery(bool enabled);
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> setDeliveryMetricsExportToBigQuery(
+      bool enabled);
 }

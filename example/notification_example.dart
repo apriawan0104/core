@@ -34,7 +34,7 @@ Future<void> _initializeNotifications() async {
   // ==============================
   // 1. INITIALIZE FCM
   // ==============================
-  await fcmService.initialize(
+  final fcmInitResult = await fcmService.initialize(
     // Called when user taps notification
     onNotificationTapped: (notification) async {
       print('📱 FCM Notification tapped: ${notification.title}');
@@ -50,7 +50,7 @@ Future<void> _initializeNotifications() async {
       print('🔔 FCM Foreground notification: ${notification.title}');
 
       // Show as local notification so user can see it
-      await localService.show(
+      final showResult = await localService.show(
         NotificationConfig(
           id: DateTime.now().millisecondsSinceEpoch ~/ 1000,
           title: notification.title,
@@ -58,25 +58,45 @@ Future<void> _initializeNotifications() async {
           payload: notification.data?.toString(),
         ),
       );
+      
+      showResult.fold(
+        (failure) => print('❌ Failed to show notification: $failure'),
+        (_) => print('✅ Notification shown'),
+      );
     },
   );
 
+  fcmInitResult.fold(
+    (failure) => print('❌ FCM initialization failed: $failure'),
+    (_) => print('✅ FCM initialized successfully'),
+  );
+
   // Request FCM permission (iOS)
-  final fcmPermissionGranted = await fcmService.requestPermission(
+  final fcmPermissionResult = await fcmService.requestPermission(
     alert: true,
     badge: true,
     sound: true,
   );
 
-  if (fcmPermissionGranted) {
-    // Get FCM token to send to your backend
-    final fcmToken = await fcmService.getToken();
-    print('🔑 FCM Token: $fcmToken');
+  fcmPermissionResult.fold(
+    (failure) => print('❌ FCM permission failed: $failure'),
+    (granted) async {
+      if (granted) {
+        // Get FCM token to send to your backend
+        final tokenResult = await fcmService.getToken();
+        tokenResult.fold(
+          (failure) => print('❌ Failed to get FCM token: $failure'),
+          (token) => print('🔑 FCM Token: $token'),
+        );
 
-    // Subscribe to topics
-    await fcmService.subscribeToTopic('general');
-    await fcmService.subscribeToTopic('announcements');
-  }
+        // Subscribe to topics
+        await fcmService.subscribeToTopic('general');
+        await fcmService.subscribeToTopic('announcements');
+      } else {
+        print('⚠️ FCM permission denied');
+      }
+    },
+  );
 
   // Listen to token refresh
   fcmService.onTokenRefresh.listen((newToken) {
@@ -85,45 +105,72 @@ Future<void> _initializeNotifications() async {
   });
 
   // Check if app was opened from notification
-  final initialNotification = await fcmService.getInitialNotification();
-  if (initialNotification != null) {
-    print('🚀 App opened from notification: ${initialNotification.title}');
-    // Navigate to appropriate screen
-  }
+  final initialNotificationResult = await fcmService.getInitialNotification();
+  initialNotificationResult.fold(
+    (failure) => print('❌ Failed to get initial notification: $failure'),
+    (initialNotification) {
+      if (initialNotification != null) {
+        print('🚀 App opened from notification: ${initialNotification.title}');
+        // Navigate to appropriate screen
+      }
+    },
+  );
 
   // ==============================
   // 2. INITIALIZE LOCAL NOTIFICATIONS
   // ==============================
-  await localService.initialize(
+  final localInitResult = await localService.initialize(
     onNotificationTapped: (notification) async {
       print('📲 Local notification tapped: ${notification.title}');
       // Handle navigation
     },
   );
 
+  localInitResult.fold(
+    (failure) => print('❌ Local notification initialization failed: $failure'),
+    (_) => print('✅ Local notification initialized successfully'),
+  );
+
   // Request local notification permission
-  final localPermissionGranted = await localService.requestPermission(
+  final localPermissionResult = await localService.requestPermission(
     alert: true,
     badge: true,
     sound: true,
   );
 
-  if (localPermissionGranted) {
-    // Create notification channels (Android)
-    await localService.createNotificationChannel(
-      channelId: NotificationConstants.defaultChannelId,
-      channelName: NotificationConstants.defaultChannelName,
-      channelDescription: NotificationConstants.defaultChannelDescription,
-      importance: NotificationImportance.high,
-    );
+  localPermissionResult.fold(
+    (failure) => print('❌ Local permission failed: $failure'),
+    (granted) async {
+      if (granted) {
+        // Create notification channels (Android)
+        final channel1Result = await localService.createNotificationChannel(
+          channelId: NotificationConstants.defaultChannelId,
+          channelName: NotificationConstants.defaultChannelName,
+          channelDescription: NotificationConstants.defaultChannelDescription,
+          importance: NotificationImportance.high,
+        );
+        
+        channel1Result.fold(
+          (failure) => print('❌ Failed to create default channel: $failure'),
+          (_) => print('✅ Default channel created'),
+        );
 
-    await localService.createNotificationChannel(
-      channelId: NotificationConstants.highPriorityChannelId,
-      channelName: NotificationConstants.highPriorityChannelName,
-      channelDescription: NotificationConstants.highPriorityChannelDescription,
-      importance: NotificationImportance.max,
-    );
-  }
+        final channel2Result = await localService.createNotificationChannel(
+          channelId: NotificationConstants.highPriorityChannelId,
+          channelName: NotificationConstants.highPriorityChannelName,
+          channelDescription: NotificationConstants.highPriorityChannelDescription,
+          importance: NotificationImportance.max,
+        );
+        
+        channel2Result.fold(
+          (failure) => print('❌ Failed to create high priority channel: $failure'),
+          (_) => print('✅ High priority channel created'),
+        );
+      } else {
+        print('⚠️ Local notification permission denied');
+      }
+    },
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -161,7 +208,7 @@ class NotificationExampleScreen extends StatelessWidget {
 
           ElevatedButton(
             onPressed: () async {
-              await localService.show(
+              final result = await localService.show(
                 const NotificationConfig(
                   id: 1,
                   title: 'Simple Notification',
@@ -169,6 +216,19 @@ class NotificationExampleScreen extends StatelessWidget {
                   channelId: NotificationConstants.defaultChannelId,
                   channelName: NotificationConstants.defaultChannelName,
                 ),
+              );
+              
+              result.fold(
+                (failure) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${failure.message}')),
+                    );
+                  }
+                },
+                (_) {
+                  print('✅ Notification shown successfully');
+                },
               );
             },
             child: const Text('Show Simple Notification'),
@@ -278,16 +338,28 @@ class NotificationExampleScreen extends StatelessWidget {
 
           ElevatedButton(
             onPressed: () async {
-              final pending =
+              final result =
                   await localService.getPendingNotificationRequests();
-              print('📋 Pending notifications: ${pending.length}');
-
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                      content: Text('${pending.length} pending notifications')),
-                );
-              }
+              
+              result.fold(
+                (failure) {
+                  print('❌ Failed to get pending notifications: $failure');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${failure.message}')),
+                    );
+                  }
+                },
+                (pending) {
+                  print('📋 Pending notifications: ${pending.length}');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          content: Text('${pending.length} pending notifications')),
+                    );
+                  }
+                },
+              );
             },
             child: const Text('Check Pending Notifications'),
           ),
@@ -331,33 +403,57 @@ class NotificationExampleScreen extends StatelessWidget {
 
           ElevatedButton(
             onPressed: () async {
-              final token = await fcmService.getToken();
-              print('🔑 FCM Token: $token');
-
-              // Copy to clipboard or show dialog
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Token: ${token?.substring(0, 20)}...'),
-                    duration: const Duration(seconds: 3),
-                  ),
-                );
-              }
+              final result = await fcmService.getToken();
+              
+              result.fold(
+                (failure) {
+                  print('❌ Failed to get FCM token: $failure');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${failure.message}')),
+                    );
+                  }
+                },
+                (token) {
+                  print('🔑 FCM Token: $token');
+                  // Copy to clipboard or show dialog
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Token: ${token.substring(0, 20)}...'),
+                        duration: const Duration(seconds: 3),
+                      ),
+                    );
+                  }
+                },
+              );
             },
             child: const Text('Get FCM Token'),
           ),
 
           ElevatedButton(
             onPressed: () async {
-              final enabled = await localService.areNotificationsEnabled();
-
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text('Notifications enabled: $enabled'),
-                  ),
-                );
-              }
+              final result = await localService.areNotificationsEnabled();
+              
+              result.fold(
+                (failure) {
+                  print('❌ Failed to check notification permission: $failure');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Error: ${failure.message}')),
+                    );
+                  }
+                },
+                (enabled) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('Notifications enabled: $enabled'),
+                      ),
+                    );
+                  }
+                },
+              );
             },
             child: const Text('Check Notification Permission'),
           ),

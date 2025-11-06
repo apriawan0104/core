@@ -1,7 +1,10 @@
 import 'dart:async';
 
+import 'package:dartz/dartz.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:injectable/injectable.dart';
+
+import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 import 'package:app_core/src/infrastructure/notification/contract/notification.dart';
 
@@ -32,48 +35,59 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
   }) : _firebaseMessaging = firebaseMessaging ?? FirebaseMessaging.instance;
 
   @override
-  Future<void> initialize({
+  Future<Either<NotificationFailure, void>> initialize({
     OnNotificationTappedCallback? onNotificationTapped,
     OnForegroundNotificationCallback? onForegroundNotification,
     OnBackgroundNotificationCallback? onBackgroundNotification,
     bool autoInitEnabled = true,
   }) async {
-    _onNotificationTapped = onNotificationTapped;
-    _onForegroundNotification = onForegroundNotification;
-    _onBackgroundNotification = onBackgroundNotification;
+    try {
+      _onNotificationTapped = onNotificationTapped;
+      _onForegroundNotification = onForegroundNotification;
+      _onBackgroundNotification = onBackgroundNotification;
 
-    // Set auto-init
-    await _firebaseMessaging.setAutoInitEnabled(autoInitEnabled);
+      // Set auto-init
+      await _firebaseMessaging.setAutoInitEnabled(autoInitEnabled);
 
-    // Listen to token refresh
-    _firebaseMessaging.onTokenRefresh.listen((token) {
-      _tokenRefreshController.add(token);
-    });
+      // Listen to token refresh
+      _firebaseMessaging.onTokenRefresh.listen((token) {
+        _tokenRefreshController.add(token);
+      });
 
-    // Handle foreground messages
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-      final notification = _convertToNotificationEntity(message);
-      _foregroundNotificationController.add(notification);
+      // Handle foreground messages
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+        final notification = _convertToNotificationEntity(message);
+        _foregroundNotificationController.add(notification);
 
-      if (_onForegroundNotification != null) {
-        await _onForegroundNotification!(notification);
+        if (_onForegroundNotification != null) {
+          await _onForegroundNotification!(notification);
+        }
+      });
+
+      // Handle notification taps when app is in background
+      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+        final notification = _convertToNotificationEntity(message);
+        _notificationTapController.add(notification);
+
+        if (_onNotificationTapped != null) {
+          await _onNotificationTapped!(notification);
+        }
+      });
+
+      // Handle background messages (if callback provided)
+      if (_onBackgroundNotification != null) {
+        FirebaseMessaging.onBackgroundMessage(
+          _backgroundMessageHandler,
+        );
       }
-    });
 
-    // Handle notification taps when app is in background
-    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
-      final notification = _convertToNotificationEntity(message);
-      _notificationTapController.add(notification);
-
-      if (_onNotificationTapped != null) {
-        await _onNotificationTapped!(notification);
-      }
-    });
-
-    // Handle background messages (if callback provided)
-    if (_onBackgroundNotification != null) {
-      FirebaseMessaging.onBackgroundMessage(
-        _backgroundMessageHandler,
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationInitializationFailure(
+          message: 'Failed to initialize Firebase Messaging: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
       );
     }
   }
@@ -86,7 +100,7 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
   }
 
   @override
-  Future<bool> requestPermission({
+  Future<Either<NotificationFailure, bool>> requestPermission({
     bool alert = true,
     bool announcement = false,
     bool badge = true,
@@ -95,46 +109,117 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
     bool provisional = false,
     bool sound = true,
   }) async {
-    final settings = await _firebaseMessaging.requestPermission(
-      alert: alert,
-      announcement: announcement,
-      badge: badge,
-      carPlay: carPlay,
-      criticalAlert: criticalAlert,
-      provisional: provisional,
-      sound: sound,
-    );
+    try {
+      final settings = await _firebaseMessaging.requestPermission(
+        alert: alert,
+        announcement: announcement,
+        badge: badge,
+        carPlay: carPlay,
+        criticalAlert: criticalAlert,
+        provisional: provisional,
+        sound: sound,
+      );
 
-    return settings.authorizationStatus == AuthorizationStatus.authorized ||
-        settings.authorizationStatus == AuthorizationStatus.provisional;
+      final granted =
+          settings.authorizationStatus == AuthorizationStatus.authorized ||
+              settings.authorizationStatus == AuthorizationStatus.provisional;
+
+      return Right(granted);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationPermissionDeniedFailure(
+          message: 'Failed to request notification permission: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
-  Future<String?> getToken() async {
-    return await _firebaseMessaging.getToken();
+  Future<Either<NotificationFailure, String>> getToken() async {
+    try {
+      final token = await _firebaseMessaging.getToken();
+      if (token == null) {
+        return const Left(
+          NotificationTokenFailure(
+            message: 'FCM token is null',
+          ),
+        );
+      }
+      return Right(token);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationTokenFailure(
+          message: 'Failed to get FCM token: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> deleteToken() async {
-    await _firebaseMessaging.deleteToken();
+  Future<Either<NotificationFailure, void>> deleteToken() async {
+    try {
+      await _firebaseMessaging.deleteToken();
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationTokenFailure(
+          message: 'Failed to delete FCM token: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> subscribeToTopic(String topic) async {
-    await _firebaseMessaging.subscribeToTopic(topic);
+  Future<Either<NotificationFailure, void>> subscribeToTopic(String topic) async {
+    try {
+      await _firebaseMessaging.subscribeToTopic(topic);
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationTopicFailure(
+          message: 'Failed to subscribe to topic "$topic": ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace, 'topic': topic},
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> unsubscribeFromTopic(String topic) async {
-    await _firebaseMessaging.unsubscribeFromTopic(topic);
+  Future<Either<NotificationFailure, void>> unsubscribeFromTopic(String topic) async {
+    try {
+      await _firebaseMessaging.unsubscribeFromTopic(topic);
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationTopicFailure(
+          message: 'Failed to unsubscribe from topic "$topic": ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace, 'topic': topic},
+        ),
+      );
+    }
   }
 
   @override
-  Future<NotificationDataEntity?> getInitialNotification() async {
-    final message = await _firebaseMessaging.getInitialMessage();
-    if (message == null) return null;
+  Future<Either<NotificationFailure, NotificationDataEntity?>>
+      getInitialNotification() async {
+    try {
+      final message = await _firebaseMessaging.getInitialMessage();
+      if (message == null) {
+        return const Right(null);
+      }
 
-    return _convertToNotificationEntity(message);
+      return Right(_convertToNotificationEntity(message));
+    } catch (e, stackTrace) {
+      return Left(
+        UnknownNotificationFailure(
+          message: 'Failed to get initial notification: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
@@ -153,8 +238,19 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
       true; // firebase_messaging supports all major platforms
 
   @override
-  Future<void> setAutoInitEnabled(bool enabled) async {
-    await _firebaseMessaging.setAutoInitEnabled(enabled);
+  Future<Either<NotificationFailure, void>> setAutoInitEnabled(
+      bool enabled) async {
+    try {
+      await _firebaseMessaging.setAutoInitEnabled(enabled);
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        UnknownNotificationFailure(
+          message: 'Failed to set auto-init enabled: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
@@ -163,8 +259,20 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
   }
 
   @override
-  Future<void> setDeliveryMetricsExportToBigQuery(bool enabled) async {
-    await _firebaseMessaging.setDeliveryMetricsExportToBigQuery(enabled);
+  Future<Either<NotificationFailure, void>> setDeliveryMetricsExportToBigQuery(
+      bool enabled) async {
+    try {
+      await _firebaseMessaging.setDeliveryMetricsExportToBigQuery(enabled);
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        UnknownNotificationFailure(
+          message:
+              'Failed to set delivery metrics export: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   /// Convert RemoteMessage to NotificationDataEntity

@@ -69,20 +69,39 @@ Future<void> setupStorage() async {
     instanceName: 'secure',
   );
 
-  // Initialize all storages
-  await getIt<StorageService>(instanceName: 'default').initialize();
-  await getIt<StorageService>(instanceName: 'preferences').initialize();
-  await getIt<StorageService>(instanceName: 'cache').initialize();
-  await getIt<StorageService>(instanceName: 'secure').initialize();
+  // Initialize all storages with error handling
+  final defaultInit = await getIt<StorageService>(instanceName: 'default').initialize();
+  defaultInit.fold(
+    (failure) => print('❌ Failed to initialize default storage: $failure'),
+    (_) => print('✅ Default storage initialized'),
+  );
+
+  final prefInit = await getIt<StorageService>(instanceName: 'preferences').initialize();
+  prefInit.fold(
+    (failure) => print('❌ Failed to initialize preferences storage: $failure'),
+    (_) => print('✅ Preferences storage initialized'),
+  );
+
+  final cacheInit = await getIt<StorageService>(instanceName: 'cache').initialize();
+  cacheInit.fold(
+    (failure) => print('❌ Failed to initialize cache storage: $failure'),
+    (_) => print('✅ Cache storage initialized'),
+  );
+
+  final secureInit = await getIt<StorageService>(instanceName: 'secure').initialize();
+  secureInit.fold(
+    (failure) => print('❌ Failed to initialize secure storage: $failure'),
+    (_) => print('✅ Secure storage initialized'),
+  );
 }
 
-/// Example 1: Basic storage operations.
+/// Example 1: Basic storage operations with Either pattern.
 Future<void> basicStorageExample() async {
-  print('--- Example 1: Basic Storage Operations ---');
+  print('--- Example 1: Basic Storage Operations (with Either) ---');
 
   final storage = getIt<StorageService>(instanceName: 'default');
 
-  // Save different types of data
+  // Save different types of data with error handling
   await storage.save('user_name', 'John Doe');
   await storage.save('user_age', 25);
   await storage.save('is_premium', true);
@@ -90,68 +109,102 @@ Future<void> basicStorageExample() async {
 
   print('✅ Saved user data');
 
-  // Get data with type safety
-  final name = await storage.get<String>('user_name');
-  final age = await storage.get<int>('user_age');
-  final isPremium = await storage.get<bool>('is_premium');
-  final tags = await storage.get<List>('user_tags');
+  // Get data with type safety and error handling
+  final nameResult = await storage.get<String>('user_name');
+  nameResult.fold(
+    (failure) => print('   ❌ Failed to get name: $failure'),
+    (name) => print('   Name: $name'),
+  );
 
-  print('📖 Retrieved data:');
-  print('   Name: $name');
-  print('   Age: $age');
-  print('   Premium: $isPremium');
-  print('   Tags: $tags');
+  final ageResult = await storage.get<int>('user_age');
+  ageResult.fold(
+    (failure) => print('   ❌ Failed to get age: $failure'),
+    (age) => print('   Age: $age'),
+  );
+
+  final isPremiumResult = await storage.get<bool>('is_premium');
+  isPremiumResult.fold(
+    (failure) => print('   ❌ Failed to get premium status: $failure'),
+    (isPremium) => print('   Premium: $isPremium'),
+  );
 
   // Get with default value
-  final theme = await storage.get<String>('theme', defaultValue: 'light');
-  print('   Theme: $theme (default)');
+  final themeResult = await storage.get<String>('theme', defaultValue: 'light');
+  themeResult.fold(
+    (failure) => print('   ❌ Failed to get theme: $failure'),
+    (theme) => print('   Theme: $theme (default)'),
+  );
 
   // Check if key exists
-  final hasToken = await storage.containsKey('token');
-  print('   Has token: $hasToken');
+  final hasTokenResult = await storage.containsKey('token');
+  hasTokenResult.fold(
+    (failure) => print('   ❌ Failed to check token: $failure'),
+    (hasToken) => print('   Has token: $hasToken'),
+  );
 
   // Delete a key
-  await storage.delete('user_age');
-  print('🗑️ Deleted user_age');
+  final deleteResult = await storage.delete('user_age');
+  deleteResult.fold(
+    (failure) => print('🗑️ ❌ Failed to delete user_age: $failure'),
+    (_) => print('🗑️ Deleted user_age'),
+  );
 
   // Verify deletion
-  final deletedAge = await storage.get<int>('user_age');
-  print('   Age after deletion: $deletedAge (should be null)');
+  final deletedAgeResult = await storage.get<int>('user_age');
+  deletedAgeResult.fold(
+    (failure) => print('   ❌ Failed to get deleted age: $failure'),
+    (deletedAge) => print('   Age after deletion: $deletedAge (should be null)'),
+  );
 
   print('');
 }
 
-/// Example 2: Batch operations.
+/// Example 2: Batch operations with Either pattern.
 Future<void> batchOperationsExample() async {
-  print('--- Example 2: Batch Operations ---');
+  print('--- Example 2: Batch Operations (with Either) ---');
 
   final storage = getIt<StorageService>(instanceName: 'default');
 
   // Save multiple values at once
-  await storage.saveAll({
+  final saveAllResult = await storage.saveAll({
     'app_version': '1.0.0',
     'last_login': DateTime.now().toIso8601String(),
     'login_count': 42,
     'notifications_enabled': true,
   });
 
-  print('✅ Batch saved multiple values');
+  saveAllResult.fold(
+    (failure) => print('❌ Batch save failed: $failure'),
+    (_) => print('✅ Batch saved multiple values'),
+  );
 
   // Get all keys
-  final allKeys = await storage.getAllKeys();
-  print('📖 All keys: $allKeys');
+  final allKeysResult = await storage.getAllKeys();
+  allKeysResult.fold(
+    (failure) => print('❌ Failed to get all keys: $failure'),
+    (allKeys) => print('📖 All keys: $allKeys'),
+  );
 
   // Get all entries
-  final allEntries = await storage.getAllEntries();
-  print('📖 All entries: $allEntries');
+  final allEntriesResult = await storage.getAllEntries();
+  allEntriesResult.fold(
+    (failure) => print('❌ Failed to get all entries: $failure'),
+    (allEntries) => print('📖 All entries: $allEntries'),
+  );
 
   // Get storage size
-  final size = await storage.getSize();
-  print('💾 Storage size: $size bytes (${(size / 1024).toStringAsFixed(2)} KB)');
+  final sizeResult = await storage.getSize();
+  sizeResult.fold(
+    (failure) => print('❌ Failed to get storage size: $failure'),
+    (size) => print('💾 Storage size: $size bytes (${(size / 1024).toStringAsFixed(2)} KB)'),
+  );
 
   // Delete multiple keys
-  await storage.deleteAll(['app_version', 'last_login']);
-  print('🗑️ Deleted multiple keys');
+  final deleteResult = await storage.deleteAll(['app_version', 'last_login']);
+  deleteResult.fold(
+    (failure) => print('❌ Failed to delete keys: $failure'),
+    (_) => print('🗑️ Deleted multiple keys'),
+  );
 
   print('');
 }
@@ -358,16 +411,27 @@ Future<void> objectStorageExample() async {
   );
 
   // Save object (will be serialized to JSON)
-  await storage.saveObject('current_user', user.toJson());
-  print('✅ Saved user object');
+  final saveResult = await storage.saveObject('current_user', user.toJson());
+  saveResult.fold(
+    (failure) => print('❌ Failed to save user object: $failure'),
+    (_) => print('✅ Saved user object'),
+  );
 
   // Retrieve object (will be deserialized from JSON)
-  final savedUser = await storage.getObject<Map<String, dynamic>>('current_user');
+  final savedUserResult =
+      await storage.getObject<Map<String, dynamic>>('current_user');
 
-  if (savedUser != null) {
-    final retrievedUser = UserModel.fromJson(savedUser);
-    print('📖 Retrieved user: $retrievedUser');
-  }
+  savedUserResult.fold(
+    (failure) => print('❌ Failed to retrieve user object: $failure'),
+    (savedUser) {
+      if (savedUser != null) {
+        final retrievedUser = UserModel.fromJson(savedUser);
+        print('📖 Retrieved user: $retrievedUser');
+      } else {
+        print('⚠️ User object not found');
+      }
+    },
+  );
 
   print('');
 }

@@ -2,9 +2,12 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 
+import 'package:dartz/dartz.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as fln;
 import 'package:injectable/injectable.dart';
+
+import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 import 'package:app_core/src/infrastructure/notification/contract/notification.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -29,32 +32,43 @@ class LocalNotificationServiceImpl implements LocalNotificationService {
             localNotifications ?? fln.FlutterLocalNotificationsPlugin();
 
   @override
-  Future<void> initialize({
+  Future<Either<NotificationFailure, void>> initialize({
     OnLocalNotificationTappedCallback? onNotificationTapped,
     String? defaultAndroidIcon,
   }) async {
-    _onNotificationTapped = onNotificationTapped;
+    try {
+      _onNotificationTapped = onNotificationTapped;
 
-    const androidSettings = fln.AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
-    );
+      final androidSettings = fln.AndroidInitializationSettings(
+        defaultAndroidIcon ?? '@mipmap/ic_launcher',
+      );
 
-    const iosSettings = fln.DarwinInitializationSettings(
-      requestAlertPermission: false,
-      requestBadgePermission: false,
-      requestSoundPermission: false,
-    );
+      const iosSettings = fln.DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestBadgePermission: false,
+        requestSoundPermission: false,
+      );
 
-    const initSettings = fln.InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-      macOS: iosSettings,
-    );
+      final initSettings = fln.InitializationSettings(
+        android: androidSettings,
+        iOS: iosSettings,
+        macOS: iosSettings,
+      );
 
-    await _localNotifications.initialize(
-      initSettings,
-      onDidReceiveNotificationResponse: _onNotificationResponse,
-    );
+      await _localNotifications.initialize(
+        initSettings,
+        onDidReceiveNotificationResponse: _onNotificationResponse,
+      );
+
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationInitializationFailure(
+          message: 'Failed to initialize local notification: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   /// Handle notification tap
@@ -76,165 +90,271 @@ class LocalNotificationServiceImpl implements LocalNotificationService {
   }
 
   @override
-  Future<bool> requestPermission({
+  Future<Either<NotificationFailure, bool>> requestPermission({
     bool alert = true,
     bool badge = true,
     bool sound = true,
   }) async {
-    // iOS/macOS
-    final iosResult = await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            fln.IOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: alert,
-          badge: badge,
-          sound: sound,
-        );
+    try {
+      // iOS/macOS
+      final iosResult = await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              fln.IOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: alert,
+            badge: badge,
+            sound: sound,
+          );
 
-    final macosResult = await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            fln.MacOSFlutterLocalNotificationsPlugin>()
-        ?.requestPermissions(
-          alert: alert,
-          badge: badge,
-          sound: sound,
-        );
+      final macosResult = await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              fln.MacOSFlutterLocalNotificationsPlugin>()
+          ?.requestPermissions(
+            alert: alert,
+            badge: badge,
+            sound: sound,
+          );
 
-    // Android 13+ (API 33+)
-    final androidResult = await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            fln.AndroidFlutterLocalNotificationsPlugin>()
-        ?.requestNotificationsPermission();
+      // Android 13+ (API 33+)
+      final androidResult = await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              fln.AndroidFlutterLocalNotificationsPlugin>()
+          ?.requestNotificationsPermission();
 
-    return iosResult ?? macosResult ?? androidResult ?? true;
+      final granted = iosResult ?? macosResult ?? androidResult ?? true;
+      return Right(granted);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationPermissionDeniedFailure(
+          message: 'Failed to request notification permission: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> show(NotificationConfig config) async {
-    await _localNotifications.show(
-      config.id,
-      config.title,
-      config.body,
-      _buildNotificationDetails(config),
-      payload: config.payload,
-    );
+  Future<Either<NotificationFailure, void>> show(
+      NotificationConfig config) async {
+    try {
+      await _localNotifications.show(
+        config.id,
+        config.title,
+        config.body,
+        _buildNotificationDetails(config),
+        payload: config.payload,
+      );
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        ShowNotificationFailure(
+          message: 'Failed to show notification: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> schedule({
+  Future<Either<NotificationFailure, void>> schedule({
     required NotificationConfig config,
     required DateTime scheduledDate,
   }) async {
-    await _localNotifications.zonedSchedule(
-      config.id,
-      config.title,
-      config.body,
-      tz.TZDateTime.from(scheduledDate, tz.local),
-      _buildNotificationDetails(config),
-      payload: config.payload,
-      androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          fln.UILocalNotificationDateInterpretation.absoluteTime,
-    );
+    try {
+      await _localNotifications.zonedSchedule(
+        config.id,
+        config.title,
+        config.body,
+        tz.TZDateTime.from(scheduledDate, tz.local),
+        _buildNotificationDetails(config),
+        payload: config.payload,
+        androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            fln.UILocalNotificationDateInterpretation.absoluteTime,
+      );
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        ScheduleNotificationFailure(
+          message: 'Failed to schedule notification: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> periodicallyShow({
+  Future<Either<NotificationFailure, void>> periodicallyShow({
     required NotificationConfig config,
     required RepeatInterval repeatInterval,
   }) async {
-    await _localNotifications.periodicallyShow(
-      config.id,
-      config.title,
-      config.body,
-      _convertRepeatInterval(repeatInterval),
-      _buildNotificationDetails(config),
-      payload: config.payload,
-      androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
-    );
+    try {
+      await _localNotifications.periodicallyShow(
+        config.id,
+        config.title,
+        config.body,
+        _convertRepeatInterval(repeatInterval),
+        _buildNotificationDetails(config),
+        payload: config.payload,
+        androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
+      );
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        ScheduleNotificationFailure(
+          message: 'Failed to schedule periodic notification: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> showDaily({
+  Future<Either<NotificationFailure, void>> showDaily({
     required NotificationConfig config,
     required DateTime time,
   }) async {
-    await _localNotifications.zonedSchedule(
-      config.id,
-      config.title,
-      config.body,
-      _nextInstanceOfTime(time),
-      _buildNotificationDetails(config),
-      payload: config.payload,
-      androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          fln.UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: fln.DateTimeComponents.time,
-    );
+    try {
+      await _localNotifications.zonedSchedule(
+        config.id,
+        config.title,
+        config.body,
+        _nextInstanceOfTime(time),
+        _buildNotificationDetails(config),
+        payload: config.payload,
+        androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            fln.UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: fln.DateTimeComponents.time,
+      );
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        ScheduleNotificationFailure(
+          message: 'Failed to schedule daily notification: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> showWeekly({
+  Future<Either<NotificationFailure, void>> showWeekly({
     required NotificationConfig config,
     required int dayOfWeek,
     required DateTime time,
   }) async {
-    await _localNotifications.zonedSchedule(
-      config.id,
-      config.title,
-      config.body,
-      _nextInstanceOfWeekday(dayOfWeek, time),
-      _buildNotificationDetails(config),
-      payload: config.payload,
-      androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
-      uiLocalNotificationDateInterpretation:
-          fln.UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: fln.DateTimeComponents.dayOfWeekAndTime,
-    );
-  }
-
-  @override
-  Future<void> cancel(int id) async {
-    await _localNotifications.cancel(id);
-  }
-
-  @override
-  Future<void> cancelAll() async {
-    await _localNotifications.cancelAll();
-  }
-
-  @override
-  Future<List<NotificationDataEntity>> getPendingNotificationRequests() async {
-    final requests = await _localNotifications.pendingNotificationRequests();
-
-    return requests.map((request) {
-      return NotificationDataEntity(
-        id: request.id.toString(),
-        title: request.title,
-        body: request.body,
-        data: request.payload != null ? {'payload': request.payload} : null,
+    try {
+      await _localNotifications.zonedSchedule(
+        config.id,
+        config.title,
+        config.body,
+        _nextInstanceOfWeekday(dayOfWeek, time),
+        _buildNotificationDetails(config),
+        payload: config.payload,
+        androidScheduleMode: fln.AndroidScheduleMode.exactAllowWhileIdle,
+        uiLocalNotificationDateInterpretation:
+            fln.UILocalNotificationDateInterpretation.absoluteTime,
+        matchDateTimeComponents: fln.DateTimeComponents.dayOfWeekAndTime,
       );
-    }).toList();
-  }
-
-  @override
-  Future<List<NotificationDataEntity>> getActiveNotifications() async {
-    final notifications = await _localNotifications.getActiveNotifications();
-
-    return notifications.map((notification) {
-      return NotificationDataEntity(
-        id: notification.id.toString(),
-        title: notification.title,
-        body: notification.body,
-        data: notification.payload != null
-            ? {'payload': notification.payload}
-            : null,
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        ScheduleNotificationFailure(
+          message: 'Failed to schedule weekly notification: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
       );
-    }).toList();
+    }
   }
 
   @override
-  Future<void> createNotificationChannel({
+  Future<Either<NotificationFailure, void>> cancel(int id) async {
+    try {
+      await _localNotifications.cancel(id);
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        CancelNotificationFailure(
+          message: 'Failed to cancel notification: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace, 'id': id},
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<NotificationFailure, void>> cancelAll() async {
+    try {
+      await _localNotifications.cancelAll();
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        CancelNotificationFailure(
+          message: 'Failed to cancel all notifications: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<NotificationFailure, List<NotificationDataEntity>>>
+      getPendingNotificationRequests() async {
+    try {
+      final requests = await _localNotifications.pendingNotificationRequests();
+
+      final notifications = requests.map((request) {
+        return NotificationDataEntity(
+          id: request.id.toString(),
+          title: request.title,
+          body: request.body,
+          data: request.payload != null ? {'payload': request.payload} : null,
+        );
+      }).toList();
+
+      return Right(notifications);
+    } catch (e, stackTrace) {
+      return Left(
+        UnknownNotificationFailure(
+          message:
+              'Failed to get pending notification requests: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<NotificationFailure, List<NotificationDataEntity>>>
+      getActiveNotifications() async {
+    try {
+      final notifications = await _localNotifications.getActiveNotifications();
+
+      final entities = notifications.map((notification) {
+        return NotificationDataEntity(
+          id: notification.id.toString(),
+          title: notification.title,
+          body: notification.body,
+          data: notification.payload != null
+              ? {'payload': notification.payload}
+              : null,
+        );
+      }).toList();
+
+      return Right(entities);
+    } catch (e, stackTrace) {
+      return Left(
+        UnknownNotificationFailure(
+          message: 'Failed to get active notifications: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
+  }
+
+  @override
+  Future<Either<NotificationFailure, void>> createNotificationChannel({
     required String channelId,
     required String channelName,
     String? channelDescription,
@@ -247,54 +367,97 @@ class LocalNotificationServiceImpl implements LocalNotificationService {
     bool enableLights = true,
     int? ledColor,
   }) async {
-    final androidChannel = fln.AndroidNotificationChannel(
-      channelId,
-      channelName,
-      description: channelDescription,
-      importance: _convertImportance(importance),
-      playSound: playSound,
-      sound:
-          sound != null ? fln.RawResourceAndroidNotificationSound(sound) : null,
-      enableVibration: enableVibration,
-      vibrationPattern: vibrationPattern != null
-          ? Int64List.fromList(vibrationPattern)
-          : null,
-      enableLights: enableLights,
-      ledColor: ledColor != null ? Color(ledColor) : null,
-    );
+    try {
+      final androidChannel = fln.AndroidNotificationChannel(
+        channelId,
+        channelName,
+        description: channelDescription,
+        importance: _convertImportance(importance),
+        playSound: playSound,
+        sound: sound != null
+            ? fln.RawResourceAndroidNotificationSound(sound)
+            : null,
+        enableVibration: enableVibration,
+        vibrationPattern: vibrationPattern != null
+            ? Int64List.fromList(vibrationPattern)
+            : null,
+        enableLights: enableLights,
+        ledColor: ledColor != null ? Color(ledColor) : null,
+      );
 
-    await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            fln.AndroidFlutterLocalNotificationsPlugin>()
-        ?.createNotificationChannel(androidChannel);
+      await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              fln.AndroidFlutterLocalNotificationsPlugin>()
+          ?.createNotificationChannel(androidChannel);
+
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationChannelFailure(
+          message: 'Failed to create notification channel: ${e.toString()}',
+          details: {
+            'error': e,
+            'stackTrace': stackTrace,
+            'channelId': channelId
+          },
+        ),
+      );
+    }
   }
 
   @override
-  Future<void> deleteNotificationChannel(String channelId) async {
-    await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            fln.AndroidFlutterLocalNotificationsPlugin>()
-        ?.deleteNotificationChannel(channelId);
+  Future<Either<NotificationFailure, void>> deleteNotificationChannel(
+      String channelId) async {
+    try {
+      await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              fln.AndroidFlutterLocalNotificationsPlugin>()
+          ?.deleteNotificationChannel(channelId);
+
+      return const Right(null);
+    } catch (e, stackTrace) {
+      return Left(
+        NotificationChannelFailure(
+          message: 'Failed to delete notification channel: ${e.toString()}',
+          details: {
+            'error': e,
+            'stackTrace': stackTrace,
+            'channelId': channelId
+          },
+        ),
+      );
+    }
   }
 
   @override
-  Future<bool> areNotificationsEnabled() async {
-    final android = await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            fln.AndroidFlutterLocalNotificationsPlugin>()
-        ?.areNotificationsEnabled();
+  Future<Either<NotificationFailure, bool>> areNotificationsEnabled() async {
+    try {
+      final android = await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              fln.AndroidFlutterLocalNotificationsPlugin>()
+          ?.areNotificationsEnabled();
 
-    final ios = await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            fln.IOSFlutterLocalNotificationsPlugin>()
-        ?.checkPermissions();
+      final ios = await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              fln.IOSFlutterLocalNotificationsPlugin>()
+          ?.checkPermissions();
 
-    final macos = await _localNotifications
-        .resolvePlatformSpecificImplementation<
-            fln.MacOSFlutterLocalNotificationsPlugin>()
-        ?.checkPermissions();
+      final macos = await _localNotifications
+          .resolvePlatformSpecificImplementation<
+              fln.MacOSFlutterLocalNotificationsPlugin>()
+          ?.checkPermissions();
 
-    return android ?? ios?.isEnabled ?? macos?.isEnabled ?? false;
+      final enabled = android ?? ios?.isEnabled ?? macos?.isEnabled ?? false;
+      return Right(enabled);
+    } catch (e, stackTrace) {
+      return Left(
+        UnknownNotificationFailure(
+          message:
+              'Failed to check if notifications are enabled: ${e.toString()}',
+          details: {'error': e, 'stackTrace': stackTrace},
+        ),
+      );
+    }
   }
 
   @override

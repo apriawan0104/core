@@ -1,3 +1,6 @@
+import 'package:dartz/dartz.dart';
+
+import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 
 /// Notification importance level (Android)
@@ -205,20 +208,47 @@ typedef OnLocalNotificationTappedCallback = Future<void> Function(
 ///
 /// This interface wraps flutter_local_notifications package following DIP principle.
 /// Consumer apps should inject their own implementations or use the default impl.
+///
+/// **Features:**
+/// - Local notification display
+/// - Schedule notifications
+/// - Periodic notifications
+/// - Notification channels (Android)
+/// - Error handling with Either<Failure, Success>
+///
+/// Example:
+/// ```dart
+/// final localService = getIt<LocalNotificationService>();
+///
+/// final result = await localService.show(
+///   NotificationConfig(
+///     id: 1,
+///     title: 'Hello',
+///     body: 'Test notification',
+///   ),
+/// );
+///
+/// result.fold(
+///   (failure) => print('Error: $failure'),
+///   (_) => print('Notification shown'),
+/// );
+/// ```
 abstract class LocalNotificationService {
   /// Initialize local notification service
   ///
   /// [onNotificationTapped] - Optional callback when user taps notification
   /// [defaultAndroidIcon] - Default icon for Android notifications
-  Future<void> initialize({
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> initialize({
     OnLocalNotificationTappedCallback? onNotificationTapped,
     String? defaultAndroidIcon,
   });
 
   /// Request notification permissions
   ///
-  /// Returns true if permission granted
-  Future<bool> requestPermission({
+  /// Returns Either<NotificationFailure, bool> - true if permission granted
+  Future<Either<NotificationFailure, bool>> requestPermission({
     bool alert = true,
     bool badge = true,
     bool sound = true,
@@ -227,13 +257,17 @@ abstract class LocalNotificationService {
   /// Show a notification immediately
   ///
   /// [config] - Configuration for the notification
-  Future<void> show(NotificationConfig config);
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> show(NotificationConfig config);
 
   /// Schedule a notification for a specific time
   ///
   /// [config] - Configuration for the notification
   /// [scheduledDate] - When to show the notification
-  Future<void> schedule({
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> schedule({
     required NotificationConfig config,
     required DateTime scheduledDate,
   });
@@ -242,7 +276,9 @@ abstract class LocalNotificationService {
   ///
   /// [config] - Configuration for the notification
   /// [repeatInterval] - How often to repeat
-  Future<void> periodicallyShow({
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> periodicallyShow({
     required NotificationConfig config,
     required RepeatInterval repeatInterval,
   });
@@ -251,7 +287,9 @@ abstract class LocalNotificationService {
   ///
   /// [config] - Configuration for the notification
   /// [time] - Time of day to show notification
-  Future<void> showDaily({
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> showDaily({
     required NotificationConfig config,
     required DateTime time,
   });
@@ -261,7 +299,9 @@ abstract class LocalNotificationService {
   /// [config] - Configuration for the notification
   /// [dayOfWeek] - Day of week (1 = Monday, 7 = Sunday)
   /// [time] - Time of day to show notification
-  Future<void> showWeekly({
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> showWeekly({
     required NotificationConfig config,
     required int dayOfWeek,
     required DateTime time,
@@ -270,16 +310,26 @@ abstract class LocalNotificationService {
   /// Cancel a specific notification
   ///
   /// [id] - Notification ID to cancel
-  Future<void> cancel(int id);
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> cancel(int id);
 
   /// Cancel all notifications
-  Future<void> cancelAll();
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> cancelAll();
 
   /// Get list of pending notification requests
-  Future<List<NotificationDataEntity>> getPendingNotificationRequests();
+  ///
+  /// Returns Either<NotificationFailure, List<NotificationDataEntity>>
+  Future<Either<NotificationFailure, List<NotificationDataEntity>>>
+      getPendingNotificationRequests();
 
   /// Get list of active notifications
-  Future<List<NotificationDataEntity>> getActiveNotifications();
+  ///
+  /// Returns Either<NotificationFailure, List<NotificationDataEntity>>
+  Future<Either<NotificationFailure, List<NotificationDataEntity>>>
+      getActiveNotifications();
 
   /// Create a notification channel (Android 8.0+)
   ///
@@ -287,7 +337,9 @@ abstract class LocalNotificationService {
   /// [channelName] - User-visible channel name
   /// [channelDescription] - User-visible channel description
   /// [importance] - Channel importance level
-  Future<void> createNotificationChannel({
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> createNotificationChannel({
     required String channelId,
     required String channelName,
     String? channelDescription,
@@ -304,10 +356,15 @@ abstract class LocalNotificationService {
   /// Delete a notification channel (Android 8.0+)
   ///
   /// [channelId] - Channel ID to delete
-  Future<void> deleteNotificationChannel(String channelId);
+  ///
+  /// Returns Either<NotificationFailure, void>
+  Future<Either<NotificationFailure, void>> deleteNotificationChannel(
+      String channelId);
 
   /// Check if notifications are enabled
-  Future<bool> areNotificationsEnabled();
+  ///
+  /// Returns Either<NotificationFailure, bool>
+  Future<Either<NotificationFailure, bool>> areNotificationsEnabled();
 
   /// Stream of notification taps
   Stream<NotificationDataEntity> get onNotificationTap;
