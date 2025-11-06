@@ -44,18 +44,26 @@ Future<void> measureInitializationTime() async {
   );
 
   final storage = getIt<StorageService>(instanceName: 'perf_regular');
-  await storage.initialize();
+  final initResult = await storage.initialize();
+
+  initResult.fold(
+    (failure) => print('❌ Failed to initialize: $failure'),
+    (_) => print('✅ Regular box initialized'),
+  );
 
   stopwatch.stop();
 
   print('⏱️ Regular box initialization: ${stopwatch.elapsedMilliseconds}ms');
 
   // Add some data
-  await storage.saveAll({
+  final saveResult = await storage.saveAll({
     for (int i = 0; i < 100; i++) 'key_$i': 'value_$i',
   });
 
-  print('✅ Added 100 entries');
+  saveResult.fold(
+    (failure) => print('❌ Failed to save data: $failure'),
+    (_) => print('✅ Added 100 entries'),
+  );
 
   // Measure lazy box
   stopwatch.reset();
@@ -70,7 +78,12 @@ Future<void> measureInitializationTime() async {
   );
 
   final lazyStorage = getIt<StorageService>(instanceName: 'perf_lazy');
-  await lazyStorage.initialize();
+  final lazyInitResult = await lazyStorage.initialize();
+
+  lazyInitResult.fold(
+    (failure) => print('❌ Failed to initialize lazy box: $failure'),
+    (_) => print('✅ Lazy box initialized'),
+  );
 
   stopwatch.stop();
 
@@ -96,12 +109,18 @@ Future<void> compareRegularVsLazyBox() async {
     await regularStorage.save('item_$i', 'data_$i' * 100); // ~500 bytes each
   }
 
-  final regularSize = await regularStorage.getSize();
-  print('📦 Regular Box:');
-  print('   Size: ${(regularSize / 1024).toStringAsFixed(2)} KB');
-  print('   Entries: 1000');
-  print('   All data loaded in memory: YES');
-  print('   Memory footprint: ~${(regularSize / 1024).toStringAsFixed(2)} KB');
+  final regularSizeResult = await regularStorage.getSize();
+  regularSizeResult.fold(
+    (failure) => print('❌ Failed to get size: $failure'),
+    (regularSize) {
+      print('📦 Regular Box:');
+      print('   Size: ${(regularSize / 1024).toStringAsFixed(2)} KB');
+      print('   Entries: 1000');
+      print('   All data loaded in memory: YES');
+      print(
+          '   Memory footprint: ~${(regularSize / 1024).toStringAsFixed(2)} KB');
+    },
+  );
 
   // Lazy box
   getIt.registerLazySingleton<StorageService>(
@@ -120,15 +139,21 @@ Future<void> compareRegularVsLazyBox() async {
     await lazyStorage.save('item_$i', 'data_$i' * 100);
   }
 
-  final lazySize = await lazyStorage.getSize();
-  print('\n📦 Lazy Box:');
-  print('   Size: ${(lazySize / 1024).toStringAsFixed(2)} KB');
-  print('   Entries: 1000');
-  print('   All data loaded in memory: NO');
-  print(
-      '   Memory footprint: ~${(lazySize / 1024 * 0.01).toStringAsFixed(2)} KB (1% overhead)');
+  final lazySizeResult = await lazyStorage.getSize();
+  lazySizeResult.fold(
+    (failure) => print('❌ Failed to get lazy box size: $failure'),
+    (lazySize) {
+      print('\n📦 Lazy Box:');
+      print('   Size: ${(lazySize / 1024).toStringAsFixed(2)} KB');
+      print('   Entries: 1000');
+      print('   All data loaded in memory: NO');
+      print(
+          '   Memory footprint: ~${(lazySize / 1024 * 0.01).toStringAsFixed(2)} KB (1% overhead)');
 
-  print('\n💡 Verdict: Lazy box saves ~99% memory for large datasets!');
+      print('\n💡 Verdict: Lazy box saves ~99% memory for large datasets!');
+    },
+  );
+
   print('');
 }
 
@@ -209,38 +234,50 @@ Future<void> monitorStorageSize() async {
   await storage.save('large', 'x' * 10000); // 10KB
 
   // Monitor
-  final size = await storage.getSize();
-  final keys = await storage.getAllKeys();
-  final avgSize = keys.isNotEmpty ? size / keys.length : 0;
+  final sizeResult = await storage.getSize();
+  final keysResult = await storage.getAllKeys();
 
-  print('📊 Storage Statistics:');
-  print('   Total size: ${(size / 1024).toStringAsFixed(2)} KB');
-  print('   Number of entries: ${keys.length}');
-  print('   Average per entry: ${(avgSize / 1024).toStringAsFixed(2)} KB');
+  sizeResult.fold(
+    (failure) => print('❌ Failed to get storage size: $failure'),
+    (size) {
+      keysResult.fold(
+        (failure) => print('❌ Failed to get keys: $failure'),
+        (keys) {
+          final avgSize = keys.isNotEmpty ? size / keys.length : 0;
 
-  // Provide recommendations
-  print('\n💡 Recommendations:');
+          print('📊 Storage Statistics:');
+          print('   Total size: ${(size / 1024).toStringAsFixed(2)} KB');
+          print('   Number of entries: ${keys.length}');
+          print(
+              '   Average per entry: ${(avgSize / 1024).toStringAsFixed(2)} KB');
 
-  if (size > 5 * 1024 * 1024) {
-    // > 5MB
-    print('   ⚠️ Box is large (> 5MB)');
-    print('   → Consider using lazy box');
-    print('   → Implement periodic cleanup');
-    print('   → Use expiration for cache data');
-  } else if (size > 1 * 1024 * 1024) {
-    // > 1MB
-    print('   ⚠️ Box is getting large (> 1MB)');
-    print('   → Monitor growth');
-    print('   → Consider lazy box if continues growing');
-  } else {
-    print('   ✅ Box size is optimal');
-    print('   → Current setup is good');
-  }
+          // Provide recommendations
+          print('\n💡 Recommendations:');
 
-  if (keys.length > 1000) {
-    print('   ⚠️ Many entries (${keys.length})');
-    print('   → Consider lazy box for better memory usage');
-  }
+          if (size > 5 * 1024 * 1024) {
+            // > 5MB
+            print('   ⚠️ Box is large (> 5MB)');
+            print('   → Consider using lazy box');
+            print('   → Implement periodic cleanup');
+            print('   → Use expiration for cache data');
+          } else if (size > 1 * 1024 * 1024) {
+            // > 1MB
+            print('   ⚠️ Box is getting large (> 1MB)');
+            print('   → Monitor growth');
+            print('   → Consider lazy box if continues growing');
+          } else {
+            print('   ✅ Box size is optimal');
+            print('   → Current setup is good');
+          }
+
+          if (keys.length > 1000) {
+            print('   ⚠️ Many entries (${keys.length})');
+            print('   → Consider lazy box for better memory usage');
+          }
+        },
+      );
+    },
+  );
 
   print('');
 }
@@ -300,16 +337,26 @@ Future<void> performanceBestPractices() async {
     for (int i = 0; i < 100; i++) 'bad_$i',
   ]);
 
-  final sizeBeforeCompact = await storage.getSize();
+  final sizeBeforeResult = await storage.getSize();
   await storage.compact();
-  final sizeAfterCompact = await storage.getSize();
+  final sizeAfterResult = await storage.getSize();
 
-  print(
-      '   Size before compact: ${(sizeBeforeCompact / 1024).toStringAsFixed(2)} KB');
-  print(
-      '   Size after compact: ${(sizeAfterCompact / 1024).toStringAsFixed(2)} KB');
-  print(
-      '   ⚡ Freed: ${((sizeBeforeCompact - sizeAfterCompact) / 1024).toStringAsFixed(2)} KB');
+  sizeBeforeResult.fold(
+    (failure) => print('❌ Failed to get size before compact: $failure'),
+    (sizeBeforeCompact) {
+      sizeAfterResult.fold(
+        (failure) => print('❌ Failed to get size after compact: $failure'),
+        (sizeAfterCompact) {
+          print(
+              '   Size before compact: ${(sizeBeforeCompact / 1024).toStringAsFixed(2)} KB');
+          print(
+              '   Size after compact: ${(sizeAfterCompact / 1024).toStringAsFixed(2)} KB');
+          print(
+              '   ⚡ Freed: ${((sizeBeforeCompact - sizeAfterCompact) / 1024).toStringAsFixed(2)} KB');
+        },
+      );
+    },
+  );
 
   print('');
 }
@@ -347,25 +394,41 @@ Future<void> cleanupStrategiesExample() async {
   // Cleanup expired items
   print('\n🧹 Cleaning up expired items...');
 
-  final keys = await storage.getAllKeys();
-  int deletedCount = 0;
+  final keysResult = await storage.getAllKeys();
 
-  for (final key in keys) {
-    if (await storage.isExpired(key)) {
-      print('   Deleting expired: $key');
-      await storage.delete(key);
-      deletedCount++;
-    }
-  }
+  await keysResult.fold(
+    (failure) async => print('❌ Failed to get keys: $failure'),
+    (keys) async {
+      int deletedCount = 0;
 
-  print('✅ Deleted $deletedCount expired items');
+      for (final key in keys) {
+        final expiredResult = await storage.isExpired(key);
+        await expiredResult.fold(
+          (failure) async =>
+              print('❌ Failed to check expiration for $key: $failure'),
+          (isExpired) async {
+            if (isExpired) {
+              print('   Deleting expired: $key');
+              await storage.delete(key);
+              deletedCount++;
+            }
+          },
+        );
+      }
+
+      print('✅ Deleted $deletedCount expired items');
+    },
+  );
 
   // Compact
   await storage.compact();
   print('✅ Compacted storage');
 
-  final remainingKeys = await storage.getAllKeys();
-  print('📊 Remaining items: ${remainingKeys.length}');
+  final remainingKeysResult = await storage.getAllKeys();
+  remainingKeysResult.fold(
+    (failure) => print('❌ Failed to get remaining keys: $failure'),
+    (remainingKeys) => print('📊 Remaining items: ${remainingKeys.length}'),
+  );
 
   print('');
 }

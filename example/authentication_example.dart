@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'package:app_core/app_core.dart';
 
 /// Example demonstrating authentication service usage with multiple providers.
@@ -66,7 +68,8 @@ Future<void> _googleSignInExample() async {
 
       if (credentials.token != null) {
         print('\n  Token Info:');
-        print('  - Has Access Token: ${credentials.token!.accessToken.isNotEmpty}');
+        print(
+            '  - Has Access Token: ${credentials.token!.accessToken.isNotEmpty}');
         print('  - Has ID Token: ${credentials.token!.idToken != null}');
         print('  - Token Valid: ${credentials.token!.isValid}');
       }
@@ -195,7 +198,8 @@ Future<void> _azureSignInExample() async {
       if (credentials.token != null) {
         print('\n  Token Info:');
         print('  - Token Type: ${credentials.token!.tokenType}');
-        print('  - Has Access Token: ${credentials.token!.accessToken.isNotEmpty}');
+        print(
+            '  - Has Access Token: ${credentials.token!.accessToken.isNotEmpty}');
         print('  - Scopes: ${credentials.token!.scopes?.join(", ")}');
       }
     },
@@ -267,14 +271,14 @@ Future<void> _authStateExample() async {
   await authService.signInWithGoogle();
 
   // Wait a bit for state change
-  await Future.delayed(Duration(seconds: 1));
+  await Future.delayed(const Duration(seconds: 1));
 
   // Sign out
   print('\nSigning out...');
   await authService.signOut();
 
   // Wait a bit for state change
-  await Future.delayed(Duration(seconds: 1));
+  await Future.delayed(const Duration(seconds: 1));
 
   // Clean up
   await subscription.cancel();
