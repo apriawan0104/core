@@ -2,6 +2,7 @@
 library errors;
 
 export 'analytics_failure.dart';
+export 'authentication_failure.dart';
 export 'background_service_failure.dart';
 export 'chart_failure.dart';
 export 'connectivity_failure.dart';

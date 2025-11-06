@@ -13,6 +13,9 @@ export 'src/foundation/domain/entities/notification/entities.dart';
 // Infrastructure - Analytics
 export 'src/infrastructure/analytics/analytics.dart';
 
+// Infrastructure - Authentication
+export 'src/infrastructure/authentication/authentication.dart';
+
 // Infrastructure - Background Service
 export 'src/infrastructure/background_service/background_service.dart';
 
