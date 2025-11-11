@@ -28,6 +28,9 @@ export 'src/infrastructure/connectivity/connectivity.dart';
 // Infrastructure - File Opener
 export 'src/infrastructure/file_opener/file_opener.dart';
 
+// Infrastructure - In-App Update
+export 'src/infrastructure/in_app_update/in_app_update.dart';
+
 // Infrastructure - Logging
 export 'src/infrastructure/logging/logging.dart';
 
