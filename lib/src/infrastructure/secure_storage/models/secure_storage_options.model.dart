@@ -128,6 +128,7 @@ class SecureStorageOptions {
   /// - Not recommended for production!
   factory SecureStorageOptions.development() {
     return const SecureStorageOptions(
+      // ignore: deprecated_member_use_from_same_package
       accessibility: KeychainAccessibility.always,
       useEncryptedSharedPreferences: true,
       iCloudSync: false,
@@ -262,8 +263,11 @@ enum KeychainAccessibility {
   @Deprecated('This is not secure. Use firstUnlock instead.')
   always,
 
+  // ignore: deprecated_member_use_from_same_package
   /// Like [always] but this data will NOT be backed up to iCloud/iTunes.
   ///
+  ///
+  // ignore: deprecated_member_use_from_same_package
   /// **Least Secure + No Backup**: Like [always] but device-only.
   ///
   /// ⚠️ Still not recommended for sensitive data!
@@ -287,4 +291,3 @@ enum KeychainAccessibility {
   /// Maps to: `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`
   passcodeSetThisDeviceOnly,
 }
-

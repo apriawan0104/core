@@ -436,10 +436,12 @@ class FlutterSecureStorageServiceImpl implements SecureStorageService {
         return flutter_secure.KeychainAccessibility.first_unlock;
       case KeychainAccessibility.firstUnlockThisDeviceOnly:
         return flutter_secure.KeychainAccessibility.first_unlock_this_device;
+      // ignore: deprecated_member_use_from_same_package
       case KeychainAccessibility.always:
         // Note: 'always' is deprecated in newer versions
         // Fallback to firstUnlock for compatibility
         return flutter_secure.KeychainAccessibility.first_unlock;
+      // ignore: deprecated_member_use_from_same_package
       case KeychainAccessibility.alwaysThisDeviceOnly:
         // Note: 'alwaysThisDeviceOnly' is deprecated in newer versions
         // Fallback to firstUnlockThisDevice for compatibility
