@@ -141,8 +141,8 @@ class _HttpInspectorOverlayState extends State<HttpInspectorOverlay> {
     bool isDragging = false,
   }) {
     final theme = Theme.of(context);
-    final backgroundColor =
-        widget.backgroundColor ?? theme.colorScheme.secondary.withOpacity(0.9);
+    final backgroundColor = widget.backgroundColor ??
+        theme.colorScheme.secondary.withValues(alpha: 0.9);
 
     return GestureDetector(
       onTap: () => _openInspector(context, service),
@@ -154,7 +154,7 @@ class _HttpInspectorOverlayState extends State<HttpInspectorOverlay> {
           borderRadius: BorderRadius.circular(widget.size / 2),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.3),
+              color: Colors.black.withValues(alpha: 0.3),
               blurRadius: isDragging ? 12 : 8,
               spreadRadius: isDragging ? 2 : 0,
             ),

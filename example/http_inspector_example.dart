@@ -3,10 +3,11 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+// ignore: depend_on_referenced_packages
 import 'package:http/http.dart' as http;
 
 // Import app_core (in real app, this would be: import 'package:app_core/app_core.dart';)
-import '../lib/app_core.dart';
+import 'package:app_core/app_core.dart';
 
 /// HTTP Inspector Example Application
 ///

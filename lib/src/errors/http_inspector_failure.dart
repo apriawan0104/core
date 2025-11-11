@@ -8,12 +8,10 @@ class HttpInspectorFailure extends Failure {
   const HttpInspectorFailure(
     String message, {
     this.stackTrace,
-    String? code,
-    dynamic details,
+    super.code,
+    super.details,
   }) : super(
           message: message,
-          code: code,
-          details: details,
         );
 }
 
@@ -86,4 +84,3 @@ class HttpInspectorClientFailure extends HttpInspectorFailure {
     super.details,
   });
 }
-

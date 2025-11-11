@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, library_private_types_in_public_api
+
 import 'dart:async';
 
 import 'package:app_core/app_core.dart';
@@ -35,7 +37,7 @@ void main() async {
   final updateManager = UpdateManager(GetIt.instance<InAppUpdateService>());
   await updateManager.checkForUpdates();
 
-  runApp(InAppUpdateExampleApp());
+  runApp(const InAppUpdateExampleApp());
 }
 
 /// Setup in-app update service
@@ -59,6 +61,8 @@ Future<void> setupInAppUpdate() async {
 
 /// Example app demonstrating in-app updates
 class InAppUpdateExampleApp extends StatelessWidget {
+  const InAppUpdateExampleApp({super.key});
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -67,13 +71,15 @@ class InAppUpdateExampleApp extends StatelessWidget {
         primarySwatch: Colors.blue,
         useMaterial3: true,
       ),
-      home: InAppUpdateExampleScreen(),
+      home: const InAppUpdateExampleScreen(),
     );
   }
 }
 
 /// Main screen with update controls
 class InAppUpdateExampleScreen extends StatefulWidget {
+  const InAppUpdateExampleScreen({super.key});
+
   @override
   _InAppUpdateExampleScreenState createState() =>
       _InAppUpdateExampleScreenState();
@@ -81,7 +87,8 @@ class InAppUpdateExampleScreen extends StatefulWidget {
 
 class _InAppUpdateExampleScreenState extends State<InAppUpdateExampleScreen>
     with WidgetsBindingObserver {
-  final InAppUpdateService _updateService = GetIt.instance<InAppUpdateService>();
+  final InAppUpdateService _updateService =
+      GetIt.instance<InAppUpdateService>();
   AppUpdateInfo? _updateInfo;
   InstallStatus _installStatus = InstallStatus.unknown;
   bool _isChecking = false;
@@ -170,7 +177,8 @@ class _InAppUpdateExampleScreenState extends State<InAppUpdateExampleScreen>
           setState(() {
             _statusMessage = 'Update available: v${info.availableVersionCode}';
           });
-          _showMessage('Update available! Version: ${info.availableVersionCode}');
+          _showMessage(
+              'Update available! Version: ${info.availableVersionCode}');
         } else {
           setState(() {
             _statusMessage = 'App is up to date';
@@ -331,12 +339,16 @@ class _InAppUpdateExampleScreenState extends State<InAppUpdateExampleScreen>
                       const SizedBox(height: 8),
                       _buildInfoRow(
                           'Update Available', _updateInfo!.isUpdateAvailable),
-                      _buildInfoRow('Available Version',
-                          _updateInfo!.availableVersionCode?.toString() ?? 'N/A'),
+                      _buildInfoRow(
+                          'Available Version',
+                          _updateInfo!.availableVersionCode?.toString() ??
+                              'N/A'),
                       _buildInfoRow('Update Priority',
                           '${_updateInfo!.updatePriority}/5'),
-                      _buildInfoRow('Staleness Days',
-                          _updateInfo!.clientVersionStalenessDays?.toString() ?? 'N/A'),
+                      _buildInfoRow(
+                          'Staleness Days',
+                          _updateInfo!.clientVersionStalenessDays?.toString() ??
+                              'N/A'),
                       _buildInfoRow('Immediate Allowed',
                           _updateInfo!.immediateUpdateAllowed),
                       _buildInfoRow('Flexible Allowed',
@@ -379,7 +391,8 @@ class _InAppUpdateExampleScreenState extends State<InAppUpdateExampleScreen>
                   children: [
                     Row(
                       children: [
-                        Icon(Icons.system_update, color: Colors.orange.shade700),
+                        Icon(Icons.system_update,
+                            color: Colors.orange.shade700),
                         const SizedBox(width: 8),
                         Text(
                           'Immediate Update',
@@ -515,9 +528,7 @@ class _InAppUpdateExampleScreenState extends State<InAppUpdateExampleScreen>
           Text(
             value.toString(),
             style: TextStyle(
-              color: value is bool
-                  ? (value ? Colors.green : Colors.red)
-                  : null,
+              color: value is bool ? (value ? Colors.green : Colors.red) : null,
             ),
           ),
         ],
@@ -541,7 +552,8 @@ class UpdateManager {
         print('❌ Update check failed: ${failure.code} - ${failure.message}');
 
         if (failure.code == 'ERROR_API_NOT_AVAILABLE') {
-          print('ℹ️ App not installed via Play Store (expected in development)');
+          print(
+              'ℹ️ App not installed via Play Store (expected in development)');
         }
       },
       (info) async {
@@ -610,4 +622,3 @@ class UpdateManager {
     });
   }
 }
-

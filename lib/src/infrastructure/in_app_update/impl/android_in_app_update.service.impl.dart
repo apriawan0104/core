@@ -133,7 +133,7 @@ class AndroidInAppUpdateServiceImpl implements InAppUpdateService {
     try {
       // Ensure initialized
       if (!_isInitialized) {
-        return Left(
+        return const Left(
           InAppUpdateFailure(
             message: 'Service not initialized. Call initialize() first.',
             code: 'SERVICE_NOT_INITIALIZED',
@@ -165,7 +165,7 @@ class AndroidInAppUpdateServiceImpl implements InAppUpdateService {
     try {
       // Ensure initialized
       if (!_isInitialized) {
-        return Left(
+        return const Left(
           InAppUpdateFailure(
             message: 'Service not initialized. Call initialize() first.',
             code: 'SERVICE_NOT_INITIALIZED',
@@ -206,7 +206,7 @@ class AndroidInAppUpdateServiceImpl implements InAppUpdateService {
     try {
       // Ensure initialized
       if (!_isInitialized) {
-        return Left(
+        return const Left(
           InAppUpdateFailure(
             message: 'Service not initialized. Call initialize() first.',
             code: 'SERVICE_NOT_INITIALIZED',
@@ -249,7 +249,7 @@ class AndroidInAppUpdateServiceImpl implements InAppUpdateService {
     try {
       // Ensure initialized
       if (!_isInitialized) {
-        return Left(
+        return const Left(
           InAppUpdateFailure(
             message: 'Service not initialized. Call initialize() first.',
             code: 'SERVICE_NOT_INITIALIZED',
@@ -299,7 +299,7 @@ class AndroidInAppUpdateServiceImpl implements InAppUpdateService {
     try {
       // Ensure initialized
       if (!_isInitialized) {
-        return Left(
+        return const Left(
           InAppUpdateFailure(
             message: 'Service not initialized. Call initialize() first.',
             code: 'SERVICE_NOT_INITIALIZED',
