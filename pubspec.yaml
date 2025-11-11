@@ -21,6 +21,7 @@ dependencies:
   flutter_background_service: ^5.1.0
   flutter_local_notifications: ^17.2.3
   flutter_screenutil: ^5.9.3
+  flutter_secure_storage: ^9.2.4
   get_it: ^8.2.0
   google_sign_in: ^6.2.1
   hive: ^2.2.3

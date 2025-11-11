@@ -49,6 +49,9 @@ export 'src/infrastructure/path_provider/path_provider.dart';
 // Infrastructure - Responsive
 export 'src/infrastructure/responsive/responsive.dart';
 
+// Infrastructure - Secure Storage
+export 'src/infrastructure/secure_storage/secure_storage.dart';
+
 // Infrastructure - Storage
 export 'src/infrastructure/storage/storage.dart';
 
