@@ -56,6 +56,14 @@ Flutter core library providing reusable business logic, infrastructure services,
   - Cross-platform support (iOS, Android, Web, Desktop)
   - Dependency-independent design
 
+- **Analytics & Crash Reporting** - Track events and report crashes
+  - Generic `AnalyticsService` interface (works with PostHog, Mixpanel, etc.)
+  - Generic `CrashReporterService` interface (works with Firebase Crashlytics, Sentry, etc.)
+  - Automatic error reporting with `CrashReportingInterceptor`
+  - Simplified error handling with `ErrorHandler`
+  - User tracking and custom properties
+  - Dependency-independent design
+
 ### Domain Layer
 
 - Clean Architecture principles
@@ -65,7 +73,10 @@ Flutter core library providing reusable business logic, infrastructure services,
 
 ### Error Handling
 
-- Functional error handling with `Either<Failure, Success>`
+- Functional error handling with `Either<Failure, Success>` (or `Result<Failure, Success>`)
+- **Automatic Error Reporting** - Network errors auto-reported to Firebase Crashlytics
+- **ErrorHandler** - Simplified error handling with automatic crash reporting
+- **CrashReportingInterceptor** - Auto-report network failures
 - Comprehensive failure types
 - Network-specific errors (ConnectionFailure, TimeoutFailure, etc.)
 
@@ -155,11 +166,47 @@ void loadUser() async {
 }
 ```
 
+### 4. Simplified Error Handling with ErrorHandler (Optional)
+
+```dart
+import 'package:app_core/app_core.dart';
+
+class UserRepository {
+  final HttpClient _httpClient;
+  final ErrorHandler _errorHandler;
+  
+  UserRepository(this._httpClient, this._errorHandler);
+  
+  Future<User?> getUser(String id) async {
+    // Automatic error handling with crash reporting
+    return _errorHandler.handleResult(
+      await _fetchUser(id),
+      reportToCrashlytics: true,
+      context: 'Getting user $id',
+      onError: (failure) async {
+        // Custom error handling
+        print('Failed to get user: ${failure.message}');
+      },
+    );
+  }
+  
+  Future<Either<NetworkFailure, User>> _fetchUser(String id) async {
+    final result = await _httpClient.get<Map<String, dynamic>>('/users/$id');
+    
+    return result.fold(
+      (failure) => Left(failure),
+      (response) => Right(User.fromJson(response.data!)),
+    );
+  }
+}
+```
+
 ## 📚 Documentation
 
 - **[Background Service Setup Guide](BACKGROUND_SERVICE_SETUP.md)** - Background task execution
 - **[Chart Setup Guide](CHART_SETUP.md)** - Chart visualization and data display
 - **[Network Setup Guide](NETWORK_SETUP.md)** - Complete guide for HTTP networking
+- **[Error Reporting Setup Guide](lib/src/infrastructure/analytics/doc/ERROR_REPORTING_SETUP.md)** - Automatic error reporting and crash tracking
 - **[Logging Setup Guide](LOGGING_SETUP.md)** - Logging service configuration
 - **[Storage Setup Guide](STORAGE_SETUP.md)** - Local storage usage
 - **[URL Launcher Setup Guide](URL_LAUNCHER_SETUP.md)** - URL launching, emails, phone calls, and SMS

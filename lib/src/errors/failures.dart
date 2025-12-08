@@ -1,5 +1,8 @@
 /// Base failure class for all errors in the application
-abstract class Failure {
+///
+/// This class can be used directly for generic failures, or extended
+/// for specific failure types (NetworkFailure, StorageFailure, etc.).
+class Failure {
   final String message;
   final String? code;
   final dynamic details;

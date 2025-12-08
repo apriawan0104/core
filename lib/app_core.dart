@@ -10,6 +10,9 @@ export 'src/foundation/domain/entities/connectivity/entities.dart';
 export 'src/foundation/domain/entities/network/entities.dart';
 export 'src/foundation/domain/entities/notification/entities.dart';
 
+// Foundation - Domain Typedefs
+export 'src/foundation/domain/typedef/result.typedef.dart';
+
 // Infrastructure - Analytics
 export 'src/infrastructure/analytics/analytics.dart';
 
@@ -63,6 +66,9 @@ export 'src/infrastructure/webview/webview.dart';
 
 // Configuration - DI
 export 'src/configuration/di/locator.dart';
+
+// Helpers - Utility classes
+export 'src/helpers/helpers.dart';
 
 /// A Calculator.
 class Calculator {
