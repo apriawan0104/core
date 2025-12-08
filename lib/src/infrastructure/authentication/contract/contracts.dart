@@ -4,3 +4,4 @@
 library;
 
 export 'authentication.service.dart';
+export 'token_provider.service.dart';
