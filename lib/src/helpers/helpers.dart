@@ -26,6 +26,29 @@
 /// );
 /// ```
 ///
+/// ### Repository Error Handler
+///
+/// [RepositoryErrorHandler] - Centralized error handling for repository layer
+///
+/// ```dart
+/// // Auto-registered with @lazySingleton in DI
+///
+/// // Use in repositories
+/// @LazySingleton(as: AuthRepository)
+/// class AuthRepositoryImpl implements AuthRepository {
+///   final RepositoryErrorHandler errorHandler;
+///
+///   @override
+///   Future<ValueGuard<void>> signOut() async {
+///     return errorHandler.execute(
+///       operation: () => dataSource.signOut(),
+///       feature: 'authentication',
+///       operationName: 'signOut',
+///     );
+///   }
+/// }
+/// ```
+///
 /// ## Design Philosophy
 ///
 /// All helpers follow these principles:
@@ -37,4 +60,4 @@
 library;
 
 export 'error_handler.helper.dart';
-
+export 'repository_error_handler.dart';

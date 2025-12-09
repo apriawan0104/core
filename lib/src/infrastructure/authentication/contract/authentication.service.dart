@@ -1,6 +1,4 @@
-import 'package:dartz/dartz.dart';
-
-import '../../../errors/failures.dart';
+import '../../../foundation/domain/typedef/value_guard.typedef.dart';
 import '../models/models.dart';
 
 /// Abstract interface for authentication services.
@@ -46,7 +44,7 @@ import '../models/models.dart';
 ///
 /// ## Error Handling
 ///
-/// All methods return `Either<Failure, T>` for consistent error handling:
+/// All methods return `ValueGuard<T>` for consistent error handling:
 /// - Left(AuthenticationFailure) - When authentication operation fails
 /// - Right(value) - When operation succeeds
 abstract class AuthenticationService {
@@ -68,7 +66,7 @@ abstract class AuthenticationService {
   ///   (_) => print('Auth service initialized'),
   /// );
   /// ```
-  Future<Either<Failure, void>> initialize();
+  Future<ValueGuard<void>> initialize();
 
   /// Sign in with Google.
   ///
@@ -87,7 +85,7 @@ abstract class AuthenticationService {
   ///   scopes: ['email', 'profile'],
   /// );
   /// ```
-  Future<Either<Failure, AuthCredentials>> signInWithGoogle({
+  Future<ValueGuard<AuthCredentials>> signInWithGoogle({
     List<String>? scopes,
     String? hostedDomain,
   });
@@ -109,7 +107,7 @@ abstract class AuthenticationService {
   ///   scopes: ['email', 'fullName'],
   /// );
   /// ```
-  Future<Either<Failure, AuthCredentials>> signInWithApple({
+  Future<ValueGuard<AuthCredentials>> signInWithApple({
     List<String>? scopes,
   });
 
@@ -131,7 +129,7 @@ abstract class AuthenticationService {
   ///   tenantId: 'your-tenant-id',
   /// );
   /// ```
-  Future<Either<Failure, AuthCredentials>> signInWithAzure({
+  Future<ValueGuard<AuthCredentials>> signInWithAzure({
     List<String>? scopes,
     String? tenantId,
   });
@@ -156,7 +154,7 @@ abstract class AuthenticationService {
   ///   password: 'securePassword123',
   /// );
   /// ```
-  Future<Either<Failure, AuthCredentials>> signInWithEmailAndPassword({
+  Future<ValueGuard<AuthCredentials>> signInWithEmailAndPassword({
     required String email,
     required String password,
   });
@@ -182,7 +180,7 @@ abstract class AuthenticationService {
   ///   displayName: 'John Doe',
   /// );
   /// ```
-  Future<Either<Failure, AuthCredentials>> signUpWithEmailAndPassword({
+  Future<ValueGuard<AuthCredentials>> signUpWithEmailAndPassword({
     required String email,
     required String password,
     String? displayName,
@@ -200,7 +198,7 @@ abstract class AuthenticationService {
   /// ```dart
   /// await authService.signOut();
   /// ```
-  Future<Either<Failure, void>> signOut();
+  Future<ValueGuard<void>> signOut();
 
   /// Get the currently signed-in user.
   ///
@@ -218,7 +216,7 @@ abstract class AuthenticationService {
   ///   (user) => print(user != null ? 'Signed in' : 'Not signed in'),
   /// );
   /// ```
-  Future<Either<Failure, AuthUser?>> getCurrentUser();
+  Future<ValueGuard<AuthUser?>> getCurrentUser();
 
   /// Stream of authentication state changes.
   ///
@@ -255,7 +253,7 @@ abstract class AuthenticationService {
   ///   (token) => print('Token refreshed'),
   /// );
   /// ```
-  Future<Either<Failure, AuthToken>> refreshToken();
+  Future<ValueGuard<AuthToken>> refreshToken();
 
   /// Get the current authentication token.
   ///
@@ -274,7 +272,7 @@ abstract class AuthenticationService {
   ///   (token) => print('Token: ${token.accessToken}'),
   /// );
   /// ```
-  Future<Either<Failure, AuthToken>> getAuthToken();
+  Future<ValueGuard<AuthToken>> getAuthToken();
 
   /// Check if user is currently signed in.
   ///
@@ -291,7 +289,7 @@ abstract class AuthenticationService {
   ///   (isSignedIn) => print(isSignedIn ? 'Signed in' : 'Not signed in'),
   /// );
   /// ```
-  Future<Either<Failure, bool>> isSignedIn();
+  Future<ValueGuard<bool>> isSignedIn();
 
   /// Delete the current user's account.
   ///
@@ -310,7 +308,7 @@ abstract class AuthenticationService {
   ///   (_) => print('Account deleted'),
   /// );
   /// ```
-  Future<Either<Failure, void>> deleteAccount();
+  Future<ValueGuard<void>> deleteAccount();
 
   /// Update user profile information.
   ///
@@ -328,7 +326,7 @@ abstract class AuthenticationService {
   ///   photoUrl: 'https://example.com/photo.jpg',
   /// );
   /// ```
-  Future<Either<Failure, void>> updateProfile({
+  Future<ValueGuard<void>> updateProfile({
     String? displayName,
     String? photoUrl,
   });
@@ -350,7 +348,7 @@ abstract class AuthenticationService {
   ///   email: 'user@example.com',
   /// );
   /// ```
-  Future<Either<Failure, void>> sendPasswordResetEmail({
+  Future<ValueGuard<void>> sendPasswordResetEmail({
     required String email,
   });
 
@@ -366,7 +364,7 @@ abstract class AuthenticationService {
   /// ```dart
   /// await authService.sendEmailVerification();
   /// ```
-  Future<Either<Failure, void>> sendEmailVerification();
+  Future<ValueGuard<void>> sendEmailVerification();
 
   /// Reload user data from the server.
   ///
@@ -384,7 +382,7 @@ abstract class AuthenticationService {
   ///   (user) => print('User reloaded: ${user.email}'),
   /// );
   /// ```
-  Future<Either<Failure, AuthUser>> reloadUser();
+  Future<ValueGuard<AuthUser>> reloadUser();
 
   /// Link current user with another provider.
   ///
@@ -412,7 +410,7 @@ abstract class AuthenticationService {
   ///   },
   /// );
   /// ```
-  Future<Either<Failure, AuthUser>> linkWithProvider({
+  Future<ValueGuard<AuthUser>> linkWithProvider({
     required AuthProvider provider,
     required AuthCredentials credentials,
   });
@@ -432,10 +430,10 @@ abstract class AuthenticationService {
   /// ```dart
   /// await authService.unlinkProvider(AuthProvider.google);
   /// ```
-  Future<Either<Failure, AuthUser>> unlinkProvider(AuthProvider provider);
+  Future<ValueGuard<AuthUser>> unlinkProvider(AuthProvider provider);
 
   /// Dispose resources used by the authentication service.
   ///
   /// Call this when the service is no longer needed to clean up resources.
-  Future<Either<Failure, void>> dispose();
+  Future<ValueGuard<void>> dispose();
 }

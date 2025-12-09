@@ -46,10 +46,10 @@ class NotificationService {
 // ✅ EXCELLENT: Dependency Independent Design
 abstract class PushNotificationService {
   /// Get device token for push notifications
-  Future<Either<Failure, String>> getDeviceToken();
+  Future<ValueGuard<String>> getDeviceToken();
   
   /// Subscribe to a notification topic
-  Future<Either<Failure, void>> subscribeToTopic(String topic);
+  Future<ValueGuard<void>> subscribeToTopic(String topic);
   
   /// Stream of incoming messages
   Stream<PushMessage> get onMessageReceived;
@@ -62,7 +62,7 @@ class FirebasePushNotificationServiceImpl implements PushNotificationService {
   FirebasePushNotificationServiceImpl(this._firebaseMessaging);
   
   @override
-  Future<Either<Failure, String>> getDeviceToken() async {
+  Future<ValueGuard<String>> getDeviceToken() async {
     try {
       final token = await _firebaseMessaging.getToken();
       if (token == null) {
@@ -84,7 +84,7 @@ class OneSignalPushNotificationServiceImpl implements PushNotificationService {
   OneSignalPushNotificationServiceImpl(this._oneSignal);
   
   @override
-  Future<Either<Failure, String>> getDeviceToken() async {
+  Future<ValueGuard<String>> getDeviceToken() async {
     try {
       final status = await _oneSignal.getDeviceState();
       return Right(status.userId ?? '');
@@ -121,8 +121,8 @@ abstract class NetworkService {
 
 // ✅ GOOD: Own types only
 abstract class NetworkService {
-  Future<Either<NetworkFailure, NetworkResponse>> get(String url);
-  Future<Either<NetworkFailure, NetworkResponse>> post(String url, {dynamic body});
+  Future<ValueGuard<NetworkResponse>> get(String url);
+  Future<ValueGuard<NetworkResponse>> post(String url, {dynamic body});
 }
 
 // Create your own response type
@@ -153,10 +153,10 @@ class StorageService {
 
 // ✅ GOOD: Abstract storage interface
 abstract class LocalStorageService {
-  Future<Either<Failure, void>> save<T>(String key, T value);
-  Future<Either<Failure, T?>> get<T>(String key);
-  Future<Either<Failure, void>> remove(String key);
-  Future<Either<Failure, void>> clear();
+  Future<ValueGuard<void>> save<T>(String key, T value);
+  Future<ValueGuard<T?>> get<T>(String key);
+  Future<ValueGuard<void>> remove(String key);
+  Future<ValueGuard<void>> clear();
 }
 
 // Implementation: Can be Hive, SharedPreferences, SecureStorage, etc.
@@ -164,7 +164,7 @@ class HiveStorageServiceImpl implements LocalStorageService {
   final Box _box;
   
   @override
-  Future<Either<Failure, void>> save<T>(String key, T value) async {
+  Future<ValueGuard<void>> save<T>(String key, T value) async {
     try {
       await _box.put(key, value);
       return const Right(null);
@@ -182,9 +182,9 @@ class HiveStorageServiceImpl implements LocalStorageService {
 ```dart
 // ✅ EXCELLENT: Adapter pattern untuk isolate dependency
 abstract class ImageCacheService {
-  Future<Either<Failure, void>> cacheImage(String url);
-  Future<Either<Failure, ImageData>> getImage(String key);
-  Future<Either<Failure, void>> clearCache();
+  Future<ValueGuard<void>> cacheImage(String url);
+  Future<ValueGuard<ImageData>> getImage(String key);
+  Future<ValueGuard<void>> clearCache();
 }
 
 // Adapter for CachedNetworkImage package
@@ -194,7 +194,7 @@ class CachedNetworkImageAdapter implements ImageCacheService {
   CachedNetworkImageAdapter(this._provider);
   
   @override
-  Future<Either<Failure, void>> cacheImage(String url) async {
+  Future<ValueGuard<void>> cacheImage(String url) async {
     try {
       await _provider.evict();
       // Convert CachedNetworkImage API to our interface
@@ -224,8 +224,8 @@ class AnalyticsService {
 
 // ✅ GOOD: Configuration-driven
 abstract class AnalyticsService {
-  Future<Either<Failure, void>> initialize(AnalyticsConfig config);
-  Future<Either<Failure, void>> logEvent(String name, Map<String, dynamic>? parameters);
+  Future<ValueGuard<void>> initialize(AnalyticsConfig config);
+  Future<ValueGuard<void>> logEvent(String name, Map<String, dynamic>? parameters);
 }
 
 class AnalyticsConfig {
@@ -243,7 +243,7 @@ class AnalyticsConfig {
 // Implementation handles specific provider
 class FirebaseAnalyticsServiceImpl implements AnalyticsService {
   @override
-  Future<Either<Failure, void>> initialize(AnalyticsConfig config) async {
+  Future<ValueGuard<void>> initialize(AnalyticsConfig config) async {
     try {
       if (!config.enabled) return const Right(null);
       
@@ -260,7 +260,7 @@ class FirebaseAnalyticsServiceImpl implements AnalyticsService {
 // PostHog implementation? Same interface!
 class PostHogAnalyticsServiceImpl implements AnalyticsService {
   @override
-  Future<Either<Failure, void>> initialize(AnalyticsConfig config) async {
+  Future<ValueGuard<void>> initialize(AnalyticsConfig config) async {
     try {
       if (!config.enabled) return const Right(null);
       
@@ -280,15 +280,15 @@ class PostHogAnalyticsServiceImpl implements AnalyticsService {
 ```dart
 // ✅ EXCELLENT: Support multiple providers
 abstract class CloudStorageService {
-  Future<Either<Failure, String>> uploadFile(
+  Future<ValueGuard<String>> uploadFile(
     String path,
     Uint8List data, {
     CloudStorageMetadata? metadata,
   });
   
-  Future<Either<Failure, Uint8List>> downloadFile(String path);
-  Future<Either<Failure, String>> getDownloadUrl(String path);
-  Future<Either<Failure, void>> deleteFile(String path);
+  Future<ValueGuard<Uint8List>> downloadFile(String path);
+  Future<ValueGuard<String>> getDownloadUrl(String path);
+  Future<ValueGuard<void>> deleteFile(String path);
 }
 
 // Firebase Storage implementation
@@ -364,8 +364,8 @@ Saat mengganti dependency, yang perlu diubah HANYA:
 ```dart
 // Contract (TIDAK BERUBAH)
 abstract class AuthService {
-  Future<Either<Failure, User>> signIn(String email, String password);
-  Future<Either<Failure, void>> signOut();
+  Future<ValueGuard<User>> signIn(String email, String password);
+  Future<ValueGuard<void>> signOut();
   Stream<AuthState> get authStateChanges;
 }
 
@@ -374,7 +374,7 @@ class FirebaseAuthServiceImpl implements AuthService {
   final FirebaseAuth _auth;
   
   @override
-  Future<Either<Failure, User>> signIn(String email, String password) async {
+  Future<ValueGuard<User>> signIn(String email, String password) async {
     try {
       final credential = await _auth.signInWithEmailAndPassword(
         email: email,
@@ -397,8 +397,8 @@ getIt.registerLazySingleton<AuthService>(
 ```dart
 // Contract (SAME - NO CHANGE)
 abstract class AuthService {
-  Future<Either<Failure, User>> signIn(String email, String password);
-  Future<Either<Failure, void>> signOut();
+  Future<ValueGuard<User>> signIn(String email, String password);
+  Future<ValueGuard<void>> signOut();
   Stream<AuthState> get authStateChanges;
 }
 
@@ -407,7 +407,7 @@ class SupabaseAuthServiceImpl implements AuthService {
   final SupabaseClient _supabase;
   
   @override
-  Future<Either<Failure, User>> signIn(String email, String password) async {
+  Future<ValueGuard<User>> signIn(String email, String password) async {
     try {
       final response = await _supabase.auth.signInWithPassword(
         email: email,
@@ -566,14 +566,14 @@ configuration/         → Setup & DI
 ```dart
 // Interface di core
 abstract class NetworkService {
-  Future<Response> get(String url);
+  Future<ValueGuard<Response>> get(String url);
 }
 
 // Consumer app bisa easily mock
 class MockNetworkService implements NetworkService {
   @override
-  Future<Response> get(String url) async {
-    return Response(data: {'test': 'data'});
+  Future<ValueGuard<Response>> get(String url) async {
+    return Right(Response(data: {'test': 'data'}));
   }
 }
 
@@ -590,6 +590,248 @@ test('should fetch user data', () {
 - Use interfaces, not concrete classes
 - No static methods for stateful operations
 - No singletons (except DI container)
+
+### 8. ValueGuard - Type-Safe Error Handling
+
+**🎯 PRINSIP UTAMA: WAJIB gunakan `ValueGuard<T>` untuk semua operasi yang bisa gagal.**
+
+#### Why ValueGuard?
+
+ValueGuard adalah abstraksi dari `Either<Failure, T>` yang menyediakan:
+- **Type Safety**: Forced explicit handling of success dan failure
+- **Dependency Independence**: Abstraksi dari dartz/fpdart, mudah diganti
+- **Consistency**: Unified error handling pattern di semua apps
+- **No Surprises**: Tidak ada exceptions atau null values yang tidak ditangani
+
+#### Type Definition
+
+```dart
+/// ValueGuard is a type alias for Either<Failure, T>
+typedef ValueGuard<T> = Either<Failure, T>;
+
+// Success
+ValueGuard<User> success = Right(user);
+// atau menggunakan helper
+ValueGuard<User> success = ValueGuards.success(user);
+
+// Failure
+ValueGuard<User> failure = Left(AuthFailure('Invalid credentials'));
+// atau menggunakan helper
+ValueGuard<User> failure = ValueGuards.failure(AuthFailure('Invalid credentials'));
+```
+
+#### Basic Usage
+
+```dart
+// ✅ EXCELLENT: Service interface dengan ValueGuard
+abstract class AuthService {
+  Future<ValueGuard<User>> signIn(String email, String password);
+  Future<ValueGuard<void>> signOut();
+  Future<ValueGuard<User?>> getCurrentUser();
+}
+
+// Implementation
+class FirebaseAuthServiceImpl implements AuthService {
+  @override
+  Future<ValueGuard<User>> signIn(String email, String password) async {
+    // Using ValueGuards helper
+    return ValueGuards.tryCatchAsync(
+      () async {
+        final credential = await _auth.signInWithEmailAndPassword(
+          email: email,
+          password: password,
+        );
+        return User.fromFirebase(credential.user!);
+      },
+      (error, stack) => AuthFailure(error.toString()),
+    );
+  }
+  
+  @override
+  Future<ValueGuard<void>> signOut() async {
+    try {
+      await _auth.signOut();
+      return const Right(null);
+    } catch (e) {
+      return Left(AuthFailure(e.toString()));
+    }
+  }
+}
+```
+
+#### Handling ValueGuard Results
+
+```dart
+// Method 1: Using fold (recommended)
+final result = await authService.signIn(email, password);
+result.fold(
+  (failure) => showError(failure.message),
+  (user) => navigateToHome(user),
+);
+
+// Method 2: Using extensions
+if (result.isSuccess) {
+  final user = result.valueOrNull!;
+  print('Welcome ${user.name}');
+} else {
+  final failure = result.failureOrNull!;
+  print('Error: ${failure.message}');
+}
+
+// Method 3: Get value with default
+final user = result.getOrElse(User.guest());
+
+// Method 4: Get value or compute fallback
+final user = result.getOrElseCompute(
+  (failure) {
+    logger.warn('Using guest: ${failure.message}');
+    return User.guest();
+  },
+);
+```
+
+#### ValueGuards Helper Methods
+
+```dart
+// 1. Success/Failure
+ValueGuard<String> success = ValueGuards.success('Hello');
+ValueGuard<String> failure = ValueGuards.failure(NetworkFailure('Error'));
+
+// 2. From nullable
+ValueGuard<User> result = ValueGuards.fromNullable(
+  user,
+  () => NotFoundFailure('User not found'),
+);
+
+// 3. Try-catch wrapper
+ValueGuard<Map> result = ValueGuards.tryCatch(
+  () => jsonDecode(jsonString),
+  (error, stack) => ParseFailure(error.toString()),
+);
+
+// 4. Async try-catch
+ValueGuard<Data> result = await ValueGuards.tryCatchAsync(
+  () => api.fetchData(),
+  (error, stack) => NetworkFailure(error.toString()),
+);
+
+// 5. From condition
+ValueGuard<String> result = ValueGuards.fromCondition(
+  email.contains('@'),
+  () => email,
+  () => ValidationFailure('Invalid email'),
+);
+
+// 6. Combine multiple results
+final results = await ValueGuards.allAsync([
+  getUser('1'),
+  getUser('2'),
+  getUser('3'),
+]);
+// Returns success only if ALL succeed
+// Returns first failure if any fail
+```
+
+#### Transformation & Chaining
+
+```dart
+// Map successful value
+ValueGuard<int> length = nameResult.mapValue((name) => name.length);
+
+// Map failure
+ValueGuard<User> customError = userResult.mapFailure(
+  (failure) => CustomFailure(failure.message),
+);
+
+// FlatMap for chaining
+ValueGuard<Profile> profile = userResult.flatMap(
+  (user) => getProfile(user.id),
+);
+
+// Async flatMap
+ValueGuard<Profile> profile = await userResult.flatMapAsync(
+  (user) => profileService.getProfile(user.id),
+);
+
+// Side effects
+result
+  .onSuccess((user) => analytics.logLogin(user.id))
+  .onFailure((failure) => logger.error(failure.message));
+```
+
+#### Best Practices with ValueGuard
+
+##### ✅ DO's
+
+```dart
+// 1. Use ValueGuard for ALL fallible operations
+Future<ValueGuard<Data>> fetchData();
+
+// 2. Handle both cases explicitly
+result.fold(
+  (failure) => handleError(failure),
+  (data) => handleSuccess(data),
+);
+
+// 3. Use helper methods
+final result = ValueGuards.tryCatchAsync(...);
+
+// 4. Chain operations safely
+final profile = await userResult.flatMapAsync(
+  (user) => getProfile(user.id),
+);
+
+// 5. Provide meaningful fallbacks
+final user = result.getOrElse(User.guest());
+```
+
+##### ❌ DON'Ts
+
+```dart
+// 1. ❌ DON'T throw exceptions in services
+Future<User> getUser() async {
+  throw Exception('Error'); // BAD!
+}
+
+// 2. ❌ DON'T return nullable for errors
+Future<User?> getUser(); // BAD!
+
+// 3. ❌ DON'T ignore failures without reason
+final user = result.valueOrNull; // BAD unless justified
+
+// 4. ❌ DON'T use Either<Failure, T> directly in new code
+Future<Either<Failure, User>> getUser(); // Use ValueGuard<User> instead
+
+// 5. ❌ DON'T use valueOrThrow unless absolutely necessary
+final user = result.valueOrThrow; // Only for critical failures
+```
+
+#### Migration from Either<Failure, T>
+
+If your code currently uses `Either<Failure, T>`, migration is effortless:
+
+```dart
+// Before
+Future<Either<Failure, User>> getUser(String id);
+
+// After (just change the type)
+Future<ValueGuard<User>> getUser(String id);
+
+// Implementation code stays EXACTLY the same!
+return Right(user);  // Still works
+return Left(failure); // Still works
+```
+
+#### Why "ValueGuard" instead of "Result"?
+
+Meskipun `Result` adalah naming standard di industry (Rust, Swift, Kotlin), kita menggunakan `ValueGuard` karena:
+
+1. **Consistency**: Apps yang sudah jalan sudah pakai `ValueGuard`
+2. **Backward Compatibility**: Menghindari breaking changes
+3. **Semantic Clarity**: Nama menekankan bahwa value "dijaga" dari errors
+4. **Zero Migration Effort**: Tidak perlu refactor existing code
+
+> **Note**: File `result.typedef.dart` juga tersedia sebagai alternative, tapi `ValueGuard` adalah standard untuk project ini.
 
 ---
 
@@ -631,8 +873,8 @@ lib/src/
 
 2. **Never expose third-party types in public API**
    ```dart
-   // Use Either<Failure, T> not Future<DioResponse>
-   Future<Either<Failure, Data>> getData();
+   // Use ValueGuard<T> not Future<DioResponse>
+   Future<ValueGuard<Data>> getData();
    ```
 
 3. **Make everything configurable**
@@ -659,9 +901,9 @@ lib/src/
    }
    ```
 
-6. **Use Either for error handling**
+6. **Use ValueGuard for error handling**
    ```dart
-   Future<Either<Failure, Success>> doSomething();
+   Future<ValueGuard<Success>> doSomething();
    ```
 
 7. **Keep domain pure**
@@ -689,7 +931,7 @@ lib/src/
    Future<DioResponse> get(String url);
    
    // ✅ GOOD
-   Future<Either<Failure, NetworkResponse>> get(String url);
+   Future<ValueGuard<NetworkResponse>> get(String url);
    ```
 
 2. **Jangan hardcode app-specific logic**
@@ -739,7 +981,7 @@ lib/src/
    
    // ✅ GOOD
    abstract class AuthService {
-     Future<Either<Failure, User>> login(); // Own type!
+     Future<ValueGuard<User>> login(); // Own type!
    }
    ```
 
@@ -1002,13 +1244,13 @@ Before committing, verify:
 ```dart
 // Contract (stable, never changes)
 abstract class HttpClient {
-  Future<Either<NetworkFailure, HttpResponse>> get(
+  Future<ValueGuard<HttpResponse>> get(
     String url, {
     Map<String, String>? headers,
     Map<String, dynamic>? queryParameters,
   });
   
-  Future<Either<NetworkFailure, HttpResponse>> post(
+  Future<ValueGuard<HttpResponse>> post(
     String url, {
     dynamic body,
     Map<String, String>? headers,
@@ -1023,10 +1265,10 @@ abstract class HttpClient {
 ```dart
 // Contract (stable, never changes)
 abstract class DatabaseService {
-  Future<Either<DatabaseFailure, void>> insert<T>(String table, T data);
-  Future<Either<DatabaseFailure, List<T>>> query<T>(String table);
-  Future<Either<DatabaseFailure, void>> update<T>(String table, T data);
-  Future<Either<DatabaseFailure, void>> delete(String table, String id);
+  Future<ValueGuard<void>> insert<T>(String table, T data);
+  Future<ValueGuard<List<T>>> query<T>(String table);
+  Future<ValueGuard<void>> update<T>(String table, T data);
+  Future<ValueGuard<void>> delete(String table, String id);
 }
 
 // Can implement with: Hive, Isar, SQLite, ObjectBox, etc.
@@ -1037,14 +1279,14 @@ abstract class DatabaseService {
 ```dart
 // Contract (stable, never changes)
 abstract class MediaPickerService {
-  Future<Either<PickerFailure, MediaFile>> pickImage({
+  Future<ValueGuard<MediaFile>> pickImage({
     MediaSource source = MediaSource.gallery,
     int? maxWidth,
     int? maxHeight,
     int? quality,
   });
   
-  Future<Either<PickerFailure, List<MediaFile>>> pickMultipleImages();
+  Future<ValueGuard<List<MediaFile>>> pickMultipleImages();
 }
 
 // Can implement with: image_picker, wechat_assets_picker, etc.

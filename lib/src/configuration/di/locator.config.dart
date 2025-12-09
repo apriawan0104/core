@@ -9,6 +9,8 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:app_core/src/configuration/di/register_module.dart' as _i514;
+import 'package:app_core/src/infrastructure/background_service/background_service.dart'
+    as _i567;
 import 'package:app_core/src/infrastructure/notification/contract/notification.dart'
     as _i386;
 import 'package:app_core/src/infrastructure/notification/impl/firebase_messaging.service.impl.dart'
@@ -41,6 +43,8 @@ extension GetItInjectableX on _i174.GetIt {
         () => registerModule.firebaseMessaging);
     gh.lazySingleton<_i163.FlutterLocalNotificationsPlugin>(
         () => registerModule.flutterLocalNotificationsPlugin);
+    gh.lazySingleton<_i567.BackgroundService>(
+        () => registerModule.backgroundService);
     gh.lazySingleton<_i297.ResponsiveService>(
         () => _i969.ResponsiveServiceImpl());
     gh.lazySingleton<_i386.LocalNotificationService>(() =>
