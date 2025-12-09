@@ -2,6 +2,34 @@
 
 Flutter core library providing reusable business logic, infrastructure services, and utilities for all BUMA mobile applications.
 
+## 🆕 New: Repository Error Handler
+
+**Centralized error handling for all repository operations across BUMA apps!**
+
+```dart
+import 'package:buma_core_plus/buma_core_plus.dart';
+
+@override
+Future<ValueGuard<void>> signOut() async {
+  return errorHandler.execute(
+    operation: () => dataSource.signOut(),
+    feature: 'authentication',
+    operationName: 'signOut',
+  );
+}
+```
+
+**Features:**
+- ✅ Dual-path error handling (User + Crashlytics)
+- ✅ Smart error filtering (user errors vs system errors)
+- ✅ Automatic user-friendly messages
+- ✅ 70% code reduction in repositories
+- ✅ Reusable across all BUMA apps
+
+📖 **[Read Full Guide](REPOSITORY_ERROR_HANDLER.md)**
+
+---
+
 ## 🎯 Features
 
 ### Infrastructure Services
@@ -101,7 +129,7 @@ flutter pub get
 ### 1. Setup Dependency Injection
 
 ```dart
-import 'package:app_core/app_core.dart';
+import 'package:buma_core_plus/buma_core_plus.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
@@ -122,7 +150,7 @@ void setupDI() {
 ### 2. Use in Repository
 
 ```dart
-import 'package:app_core/app_core.dart';
+import 'package:buma_core_plus/buma_core_plus.dart';
 import 'package:dartz/dartz.dart';
 
 class UserRepository {
@@ -169,7 +197,7 @@ void loadUser() async {
 ### 4. Simplified Error Handling with ErrorHandler (Optional)
 
 ```dart
-import 'package:app_core/app_core.dart';
+import 'package:buma_core_plus/buma_core_plus.dart';
 
 class UserRepository {
   final HttpClient _httpClient;
