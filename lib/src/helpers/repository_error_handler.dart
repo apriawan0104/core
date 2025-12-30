@@ -6,7 +6,7 @@ import '../infrastructure/analytics/contract/crash_reporter.service.dart';
 /// Repository Error Handler - Centralized error handling for all BUMA apps
 ///
 /// This service provides centralized error handling for all repository operations
-/// across all applications using buma_core_plus.
+/// across all applications using app_core.
 ///
 /// Features:
 /// 1. Dual-path error handling (User feedback + Crashlytics monitoring)

@@ -7,7 +7,7 @@ Flutter core library providing reusable business logic, infrastructure services,
 **Centralized error handling for all repository operations across BUMA apps!**
 
 ```dart
-import 'package:buma_core_plus/buma_core_plus.dart';
+import 'package:app_core/app_core.dart';
 
 @override
 Future<ValueGuard<void>> signOut() async {
@@ -129,7 +129,7 @@ flutter pub get
 ### 1. Setup Dependency Injection
 
 ```dart
-import 'package:buma_core_plus/buma_core_plus.dart';
+import 'package:app_core/app_core.dart';
 import 'package:get_it/get_it.dart';
 
 final getIt = GetIt.instance;
@@ -150,7 +150,7 @@ void setupDI() {
 ### 2. Use in Repository
 
 ```dart
-import 'package:buma_core_plus/buma_core_plus.dart';
+import 'package:app_core/app_core.dart';
 import 'package:dartz/dartz.dart';
 
 class UserRepository {
@@ -197,7 +197,7 @@ void loadUser() async {
 ### 4. Simplified Error Handling with ErrorHandler (Optional)
 
 ```dart
-import 'package:buma_core_plus/buma_core_plus.dart';
+import 'package:app_core/app_core.dart';
 
 class UserRepository {
   final HttpClient _httpClient;

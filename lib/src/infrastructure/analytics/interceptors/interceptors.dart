@@ -21,4 +21,3 @@
 library;
 
 export 'crash_reporting.interceptor.dart';
-

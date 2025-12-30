@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/infrastructure/secure_storage/models/models.dart';
 
@@ -261,4 +260,3 @@ abstract class SecureStorageService {
     SecureStorageOptions? options,
   });
 }
-

@@ -4,7 +4,6 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:flutter/foundation.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
 import 'package:app_core/src/errors/errors.dart';
 import '../constants/storage.constant.dart';
 import '../contract/storage.service.dart';

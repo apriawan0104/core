@@ -1,7 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart'
     as flutter_secure;
-
 import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/infrastructure/secure_storage/contract/contracts.dart';
 import 'package:app_core/src/infrastructure/secure_storage/models/models.dart';

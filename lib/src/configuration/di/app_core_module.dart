@@ -5,18 +5,20 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:injectable/injectable.dart';
 
 import '../../infrastructure/background_service/background_service.dart';
+import '../../infrastructure/logging/logging.dart';
+import '../../infrastructure/secure_storage/secure_storage.dart';
+import '../../infrastructure/storage/storage.dart';
 
 /// Injectable module for registering third-party/external dependencies
 ///
-/// This module registers instances of external libraries that are needed
-/// by our services but don't have @injectable annotations themselves.
+/// This module registers instances of external libraries and core services
+/// that are needed by consumer apps.
 ///
 /// Note: HttpClient is NOT registered here because it requires configuration
 /// (baseUrl, headers, etc.) that varies per consumer app.
 /// Each consumer app must register HttpClient manually in their DI setup.
-/// See example in: example/network_example.dart
 @module
-abstract class RegisterModule {
+abstract class AppCoreModule {
   /// Provides singleton instance of FirebaseMessaging
   @lazySingleton
   FirebaseMessaging get firebaseMessaging => FirebaseMessaging.instance;
@@ -31,6 +33,19 @@ abstract class RegisterModule {
   BackgroundService get backgroundService => FlutterBackgroundServiceImpl(
         fbs.FlutterBackgroundService(),
       );
+
+  /// Provides singleton instance of SecureStorageService
+  @lazySingleton
+  SecureStorageService get secureStorageService =>
+      FlutterSecureStorageServiceImpl();
+
+  /// Provides singleton instance of StorageService
+  @lazySingleton
+  StorageService get storageService => HiveStorageServiceImpl();
+
+  /// Provides singleton instance of LogService
+  @lazySingleton
+  LogService get logService => const ConsoleLogServiceImpl();
 
   // Note: HttpClient registration example:
   //
@@ -48,7 +63,7 @@ abstract class RegisterModule {
   //     enableLogging: !kReleaseMode,
   //   ),
   // );
-  
+
   // Note: ChartService registration example:
   //
   // ChartService is NOT auto-registered to keep core library independent

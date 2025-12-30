@@ -1,13 +1,11 @@
+//@GeneratedMicroModule;AppCorePackageModule;package:app_core/src/configuration/di/locator.module.dart
 // GENERATED CODE - DO NOT MODIFY BY HAND
-
-// **************************************************************************
-// InjectableConfigGenerator
-// **************************************************************************
-
 // ignore_for_file: type=lint
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'dart:async' as _i687;
+
 import 'package:app_core/src/configuration/di/app_core_module.dart' as _i512;
 import 'package:app_core/src/helpers/repository_error_handler.dart' as _i158;
 import 'package:app_core/src/infrastructure/analytics/contract/crash_reporter.service.dart'
@@ -31,20 +29,12 @@ import 'package:app_core/src/infrastructure/storage/storage.dart' as _i1014;
 import 'package:firebase_messaging/firebase_messaging.dart' as _i892;
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as _i163;
-import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
-extension GetItInjectableX on _i174.GetIt {
+class AppCorePackageModule extends _i526.MicroPackageModule {
 // initializes the registration of main-scope dependencies inside of GetIt
-  _i174.GetIt initBumaCore({
-    String? environment,
-    _i526.EnvironmentFilter? environmentFilter,
-  }) {
-    final gh = _i526.GetItHelper(
-      this,
-      environment,
-      environmentFilter,
-    );
+  @override
+  _i687.FutureOr<void> init(_i526.GetItHelper gh) {
     final appCoreModule = _$AppCoreModule();
     gh.lazySingleton<_i892.FirebaseMessaging>(
         () => appCoreModule.firebaseMessaging);
@@ -66,7 +56,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i386.FirebaseMessagingService>(() =>
         _i1038.FirebaseMessagingServiceImpl(
             firebaseMessaging: gh<_i892.FirebaseMessaging>()));
-    return this;
   }
 }
 

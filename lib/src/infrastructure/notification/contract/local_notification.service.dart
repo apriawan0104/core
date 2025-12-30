@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-
 import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 

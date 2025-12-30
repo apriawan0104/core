@@ -5,10 +5,10 @@ import 'package:app_core/src/infrastructure/url_launcher/contract/contracts.dart
 import 'package:app_core/src/infrastructure/url_launcher/models/models.dart';
 
 /// Implementation of [UrlLauncherService] using the url_launcher package
-/// 
+///
 /// This implementation wraps the url_launcher package to provide
 /// dependency-independent URL launching capabilities.
-/// 
+///
 /// To switch to a different provider (e.g., custom_tabs, webview_flutter),
 /// simply create a new implementation of [UrlLauncherService] and update
 /// the DI registration.
@@ -32,7 +32,7 @@ class UrlLauncherServiceImpl implements UrlLauncherService {
   /// Helper to encode query parameters properly
   String? _encodeQueryParameters(Map<String, String> params) {
     if (params.isEmpty) return null;
-    
+
     return params.entries
         .map((e) =>
             '${Uri.encodeComponent(e.key)}=${Uri.encodeComponent(e.value)}')
@@ -47,7 +47,7 @@ class UrlLauncherServiceImpl implements UrlLauncherService {
     try {
       // Parse URL
       final uri = Uri.parse(url);
-      
+
       // Convert launch mode
       final mode = _convertLaunchMode(config.mode);
 
@@ -139,7 +139,7 @@ class UrlLauncherServiceImpl implements UrlLauncherService {
       );
 
       final launched = await url_launcher.launchUrl(uri);
-      
+
       if (!launched) {
         return Left(UrlLauncherFailure.cannotLaunch(uri.toString()));
       }
@@ -159,7 +159,7 @@ class UrlLauncherServiceImpl implements UrlLauncherService {
     try {
       final uri = Uri(scheme: 'tel', path: phoneNumber);
       final launched = await url_launcher.launchUrl(uri);
-      
+
       if (!launched) {
         return Left(UrlLauncherFailure.cannotLaunch(uri.toString()));
       }
@@ -183,9 +183,9 @@ class UrlLauncherServiceImpl implements UrlLauncherService {
         path: phoneNumber,
         queryParameters: message != null ? {'body': message} : null,
       );
-      
+
       final launched = await url_launcher.launchUrl(uri);
-      
+
       if (!launched) {
         return Left(UrlLauncherFailure.cannotLaunch(uri.toString()));
       }
@@ -208,4 +208,3 @@ class UrlLauncherServiceImpl implements UrlLauncherService {
     }
   }
 }
-

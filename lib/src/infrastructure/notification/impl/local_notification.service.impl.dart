@@ -6,7 +6,6 @@ import 'package:dartz/dartz.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as fln;
 import 'package:injectable/injectable.dart';
-
 import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 import 'package:app_core/src/infrastructure/notification/contract/notification.dart';

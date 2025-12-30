@@ -20,5 +20,22 @@ final getIt = GetIt.instance;
 ///   runApp(MyApp());
 /// }
 /// ```
-@InjectableInit()
-void configureDependencies() => getIt.init();
+@InjectableInit(initializerName: 'initBumaCore')
+void configureDependencies() => getIt.initBumaCore();
+
+/// Micro package initialization for external DI registration
+///
+/// Injectable will auto-generate BumaCorePlusPackageModule class.
+/// This is the SIMPLE & RECOMMENDED way! ⭐
+///
+/// Usage in consumer app:
+/// ```dart
+/// @InjectableInit(
+///   externalPackageModulesBefore: [
+///     ExternalModule(BumaCorePlusPackageModule),
+///   ],
+/// )
+/// Future<void> configureDependencies() async => getIt.init();
+/// ```
+@microPackageInit
+void initMicroPackage() {}

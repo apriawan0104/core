@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:app_core/src/errors/webview_failure.dart';
 import 'package:app_core/src/infrastructure/webview/constants/constants.dart';
 import 'package:app_core/src/infrastructure/webview/contract/contracts.dart';

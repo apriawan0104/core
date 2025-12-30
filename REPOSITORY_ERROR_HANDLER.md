@@ -6,7 +6,7 @@
 
 **Location**: `lib/src/helpers/repository_error_handler.dart`
 
-**Package**: `buma_core_plus`
+**Package**: `app_core`
 
 ---
 
@@ -39,7 +39,7 @@ User sees: "Please check your internet connection"
 ### Basic Usage
 
 ```dart
-import 'package:buma_core_plus/buma_core_plus.dart';
+import 'package:app_core/app_core.dart';
 
 @LazySingleton(as: AuthRepository)
 class AuthRepositoryImpl implements AuthRepository {
@@ -217,7 +217,7 @@ Future<ValueGuard<void>> signOut() async {
 ### Shell V2
 
 ```dart
-import 'package:buma_core_plus/buma_core_plus.dart';
+import 'package:app_core/app_core.dart';
 
 class AuthRepositoryImpl {
   final RepositoryErrorHandler errorHandler;
@@ -228,7 +228,7 @@ class AuthRepositoryImpl {
 ### Admin Panel (Future App)
 
 ```dart
-import 'package:buma_core_plus/buma_core_plus.dart';
+import 'package:app_core/app_core.dart';
 
 class UserRepositoryImpl {
   final RepositoryErrorHandler errorHandler;
@@ -239,7 +239,7 @@ class UserRepositoryImpl {
 ### Mobile App (Future App)
 
 ```dart
-import 'package:buma_core_plus/buma_core_plus.dart';
+import 'package:app_core/app_core.dart';
 
 class ProductRepositoryImpl {
   final RepositoryErrorHandler errorHandler;
@@ -381,7 +381,7 @@ return Failure(message: error.toString())
 - ✅ Reusable across all apps
 - ✅ 70% code reduction
 
-**Location**: Part of `buma_core_plus` package
+**Location**: Part of `app_core` package
 
 **Usage**: Import and inject via DI, then use in repositories
 

@@ -3,7 +3,6 @@ import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:injectable/injectable.dart';
-
 import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 import 'package:app_core/src/infrastructure/notification/contract/notification.dart';
@@ -65,7 +64,8 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
       });
 
       // Handle notification taps when app is in background
-      FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) async {
+      FirebaseMessaging.onMessageOpenedApp
+          .listen((RemoteMessage message) async {
         final notification = _convertToNotificationEntity(message);
         _notificationTapController.add(notification);
 
@@ -173,7 +173,8 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
   }
 
   @override
-  Future<Either<NotificationFailure, void>> subscribeToTopic(String topic) async {
+  Future<Either<NotificationFailure, void>> subscribeToTopic(
+      String topic) async {
     try {
       await _firebaseMessaging.subscribeToTopic(topic);
       return const Right(null);
@@ -188,7 +189,8 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
   }
 
   @override
-  Future<Either<NotificationFailure, void>> unsubscribeFromTopic(String topic) async {
+  Future<Either<NotificationFailure, void>> unsubscribeFromTopic(
+      String topic) async {
     try {
       await _firebaseMessaging.unsubscribeFromTopic(topic);
       return const Right(null);
@@ -267,8 +269,7 @@ class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
     } catch (e, stackTrace) {
       return Left(
         UnknownNotificationFailure(
-          message:
-              'Failed to set delivery metrics export: ${e.toString()}',
+          message: 'Failed to set delivery metrics export: ${e.toString()}',
           details: {'error': e, 'stackTrace': stackTrace},
         ),
       );
