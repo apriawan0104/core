@@ -158,22 +158,62 @@ class GetCurrentLocationParams {
 - ❌ Simple single parameter (langsung pakai type)
 
 #### `foundation/domain/usecases/`
-**Contains**: Business use cases (business logic)
+**Contains**: Business use cases (business logic) - encapsulates single business operations
 
 ```dart
-// Example: Use Case
-class GetCurrentLocationUseCase extends BaseUseCase<LocationEntity, GetCurrentLocationParams> {
+// Example: Async Use Case
+class GetUserUseCase implements UseCaseAsync<User, GetUserParams> {
+  final UserRepository repository;
+  
+  GetUserUseCase(this.repository);
+  
   @override
-  Future<Either<Failure, LocationEntity>> call(GetCurrentLocationParams params) {
-    // Business logic here
+  Future<Either<Failure, User>> call(GetUserParams params) async {
+    return repository.getUser(params.userId);
+  }
+}
+
+// Example: Sync Use Case (validation, computation)
+class ValidateEmailUseCase implements UseCase<bool, ValidateEmailParams> {
+  @override
+  Either<Failure, bool> call(ValidateEmailParams params) {
+    final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    
+    if (!emailRegex.hasMatch(params.email)) {
+      return Left(ValidationFailure('Invalid email format'));
+    }
+    
+    return const Right(true);
+  }
+}
+
+// Use case without parameters
+class GetCurrentUserUseCase implements UseCaseAsync<User, NoParams> {
+  final AuthRepository repository;
+  
+  GetCurrentUserUseCase(this.repository);
+  
+  @override
+  Future<Either<Failure, User>> call(NoParams params) async {
+    return repository.getCurrentUser();
   }
 }
 ```
 
+**Available Base Classes**:
+- `UseCaseAsync<T, Params>` - For async operations (network, database, I/O)
+- `UseCase<T, Params>` - For sync operations (validation, computation)
+- `NoParams` - For use cases that require no input parameters
+
 **When to use**:
 - ✅ Business logic yang bisa digunakan di berbagai feature
+- ✅ Single responsibility - one use case does one thing
 - ✅ Orchestration beberapa repositories/services
+- ✅ Type-safe error handling dengan Either<Failure, T>
 - ❌ UI logic (tempatkan di controller/cubit)
+- ❌ Direct infrastructure access (use repository abstraction)
+
+**Documentation**: See [Use Case Pattern README](../lib/src/foundation/domain/usecases/README.md) for complete guide
 
 ---
 

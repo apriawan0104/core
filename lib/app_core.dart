@@ -14,6 +14,9 @@ export 'src/foundation/domain/entities/notification/entities.dart';
 export 'src/foundation/domain/typedef/result.typedef.dart';
 export 'src/foundation/domain/typedef/value_guard.typedef.dart';
 
+// Foundation - Domain Use Cases
+export 'src/foundation/domain/usecases/usecases.dart';
+
 // Infrastructure - Analytics
 export 'src/infrastructure/analytics/analytics.dart';
 
