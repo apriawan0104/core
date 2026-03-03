@@ -4,4 +4,3 @@
 library;
 
 export 'firebase_crashlytics.service.impl.dart';
-export 'posthog_analytics.service.impl.dart';
