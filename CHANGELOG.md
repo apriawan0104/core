@@ -1,3 +1,20 @@
+## Unreleased
+
+### Removed
+
+- **HTTP Inspector**: `HttpInspectorService`, `ChuckerHttpInspectorServiceImpl`, its config model, widgets, and `HttpInspectorFailure` are removed from core. Inspection tooling is app-specific, so apps should wire it up directly.
+  - Migration: add `ChuckerDioInterceptor()` to your Dio instance and `ChuckerFlutter.navigatorObserver` to `MaterialApp.navigatorObservers` in the app, typically behind `kDebugMode`.
+- **Dependency**: `chucker_flutter` removed from `pubspec.yaml`.
+- **Chart**: `ChartService`, `SyncfusionChartServiceImpl`, chart entities, and `ChartFailure` are removed. Chart widgets belong in the app that renders them.
+  - Migration: depend on `syncfusion_flutter_charts` (or another chart package) in the app and build the widget there.
+- **AppDynamics**: `AppDynamicsService`, its models, and `AppDynamicsFailure` are removed. The interface was specific to the AppDynamics SDK.
+  - Migration: initialize `appdynamics_agent` in the app that holds the AppDynamics license.
+- **WebView**: `WebViewService`, `WebViewCookieService`, their Flutter implementations, and `WebViewFailure` are removed. The service still required `webview_flutter`'s `WebViewWidget` and `WebViewController` in the app.
+  - Migration: use `webview_flutter` directly, or a shared widget such as `BaseWebViewWidget` where several screens share the same loading and error behavior.
+- **In-app update**: `InAppUpdateService`, `AndroidInAppUpdateServiceImpl`, and `InAppUpdateFailure` are removed. The flow is Google Play only, and the prompt policy differs per app.
+  - Migration: depend on `in_app_update` in the Android app and call `InAppUpdate.checkForUpdate()` there.
+- **Dependencies**: `appdynamics_agent`, `syncfusion_flutter_charts`, `in_app_update`, `webview_flutter`, `webview_flutter_android`, and `webview_flutter_wkwebview` removed from `pubspec.yaml`.
+
 ## 0.0.1
 
 * Initial release of BUMA Core library

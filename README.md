@@ -68,13 +68,6 @@ Future<ValueGuard<void>> signOut() async {
   - Flutter ScreenUtil integration
   - Responsive layouts
   
-- **Chart Service** - Data visualization with charts
-  - Generic `ChartService` interface (works with Syncfusion, fl_chart, etc.)
-  - 30+ chart types (line, column, pie, etc.)
-  - Interactive features (zoom, pan, tooltip)
-  - Sparkline charts for dashboards
-  - Dependency-independent design
-
 - **URL Launcher Service** - Launch URLs, emails, phone calls, and SMS
   - Generic `UrlLauncherService` interface (works with url_launcher, custom_tabs, etc.)
   - Web URL launching (external browser, in-app browser)
@@ -232,7 +225,6 @@ class UserRepository {
 ## 📚 Documentation
 
 - **[Background Service Setup Guide](BACKGROUND_SERVICE_SETUP.md)** - Background task execution
-- **[Chart Setup Guide](CHART_SETUP.md)** - Chart visualization and data display
 - **[Network Setup Guide](NETWORK_SETUP.md)** - Complete guide for HTTP networking
 - **[Error Reporting Setup Guide](lib/src/infrastructure/analytics/doc/ERROR_REPORTING_SETUP.md)** - Automatic error reporting and crash tracking
 - **[Logging Setup Guide](LOGGING_SETUP.md)** - Logging service configuration
@@ -246,7 +238,6 @@ class UserRepository {
 Check the `example/` directory for complete working examples:
 
 - `background_service_example.dart` - Background service examples
-- `chart_example.dart` - Chart visualization examples
 - `network_example.dart` - HTTP networking examples
 - `logging_example.dart` - Logging service examples
 - `storage_example.dart` - Storage service examples
