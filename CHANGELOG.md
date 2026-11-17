@@ -1,5 +1,9 @@
 ## Unreleased
 
+### Added
+
+- **Push engine**: optional audience, sound channel, and tap-callback helpers under the notification module. Payload-to-route resolution stays in each app. `PushNotificationService.initialize` takes `onOpened(Map<String, dynamic> data)`. Existing `FirebaseMessagingService` and `LocalNotificationService` contracts are unchanged. An app uses either the new `PushNotificationService` or `FirebaseMessagingService.initialize`, not both, because each attaches its own FCM listeners.
+
 ### Removed
 
 - **HTTP Inspector**: `HttpInspectorService`, `ChuckerHttpInspectorServiceImpl`, its config model, widgets, and `HttpInspectorFailure` are removed from core. Inspection tooling is app-specific, so apps should wire it up directly.

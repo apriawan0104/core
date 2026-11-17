@@ -9,6 +9,12 @@ Module ini menggunakan:
 - `flutter_local_notifications: ^17.2.3` - Local notifications
 - `timezone: ^0.9.0` - Timezone support untuk scheduled notifications
 
+## Dua jalur, dua README
+
+File ini hanya untuk `FirebaseMessagingService` dan `LocalNotificationService`: token, topic, notifikasi lokal, dan jadwal.
+
+Audience, channel suara, dan callback tap ada di [`../push/README.md`](../push/README.md). App yang membuat `PushNotificationService` tidak mengikuti Quick Start di bawah. Dua jalur itu memasang listener yang sama. Dipakai bersama, banner dan tap bisa jalan dua kali.
+
 ## 🏗️ Architecture
 
 ```
@@ -24,6 +30,8 @@ notification/
 ├── constants/             → Notification constants
 │   ├── notification.constant.dart
 │   └── constants.dart
+├── push/                  → Audience, suara, resolver rute
+│   └── README.md          → Cara pakai dan setup di app
 └── notification.dart      → Main barrel file
 ```
 
@@ -33,19 +41,17 @@ notification/
 
 ```dart
 import 'package:app_core/app_core.dart';
+import 'package:timezone/data/latest.dart' as tz;
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize timezone for scheduled notifications
-  await initializeTimeZones();
-  
-  // Register notification services
-  setupNotificationServices();
-  
-  runApp(MyApp());
+  tz.initializeTimeZones();
+  configureDependencies();
+  runApp(const MyApp());
 }
 ```
+
+`configureDependencies()` mendaftarkan kedua service. Tidak ada fungsi `setupNotificationServices`. `tz.initializeTimeZones()` berasal dari paket `timezone`, dan hanya diperlukan untuk notifikasi terjadwal.
 
 ### 2. Initialize Services
 
@@ -301,10 +307,15 @@ Jika Anda perlu custom behavior, inject custom implementation:
 ```dart
 class MyCustomFCMService implements FirebaseMessagingService {
   @override
-  Future<void> initialize({...}) async {
-    // Your custom implementation
+  Future<Either<NotificationFailure, void>> initialize({
+    OnNotificationTappedCallback? onNotificationTapped,
+    OnForegroundNotificationCallback? onForegroundNotification,
+    OnBackgroundNotificationCallback? onBackgroundNotification,
+    bool autoInitEnabled = true,
+  }) async {
+    return const Right(null);
   }
-  
+
   // Implement other methods...
 }
 
@@ -348,23 +359,17 @@ void main() {
 <manifest>
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-permission android:name="android.permission.VIBRATE"/>
-    
-    <application>
-        <!-- For scheduled exact alarms -->
-        <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
-    </application>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
 </manifest>
 ```
 
-2. For custom notification icons, place them in:
-   - `android/app/src/main/res/drawable/`
+`SCHEDULE_EXACT_ALARM` untuk notifikasi terjadwal di jalur service generik. Meta-data channel, ikon, dan suara mesin push tidak diatur di sini.
 
-3. For custom sounds, place them in:
-   - `android/app/src/main/res/raw/`
+2. Ikon, channel, dan suara untuk mesin push ada di [`../push/README.md`](../push/README.md).
 
 ### iOS Setup
 
-1. Request permissions at appropriate time (not immediately at launch)
+1. Pada jalur service generik, minta izin saat app siap, bukan di dalam README push. Mesin push meminta izin di `initialize`.
 
 2. Add to `ios/Runner/Info.plist`:
 
@@ -378,28 +383,11 @@ void main() {
 
 3. For custom sounds, place them in `ios/Runner/` and add to Xcode project
 
-### Background Message Handler (Optional)
+### Background message
 
-Untuk handle FCM messages di background, register static handler:
+Handler background untuk audience dan pesan data-only ada di [`../push/README.md`](../push/README.md). Jangan daftarkan `FirebaseMessaging.onBackgroundMessage` lagi di app yang memakai `PushNotificationService`. FCM hanya menerima satu handler.
 
-```dart
-// Must be top-level function
-@pragma('vm:entry-point')
-Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
-  print('Background message: ${message.messageId}');
-}
-
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
-  
-  // Register background handler
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  
-  runApp(MyApp());
-}
-```
+Di jalur service generik, implementasi bawaan tidak memproses pesan background. App yang tetap di jalur ini mendaftarkan handler top-level sendiri, dan tidak membuat `PushNotificationService`.
 
 ## 📚 Reference
 
@@ -426,9 +414,9 @@ void main() async {
 
 ## 💡 Best Practices
 
-1. **Always request permission at appropriate time** - Don't request immediately at app launch
+1. **Minta izin di saat yang dipilih app** pada jalur service generik. Mesin push meminta izin di dalam `initialize`. Itu dijelaskan di README push.
 2. **Create notification channels early** - Before showing any notifications (Android)
-3. **Handle both FCM and local notifications** - Show local notification for foreground FCM messages
+3. **Pada jalur ini, tampilkan notifikasi lokal untuk pesan foreground.** Mesin push sudah melakukan itu sendiri. Jangan menambah `localService.show` lagi bila `PushNotificationService` yang menangani pesan.
 4. **Test on real devices** - Emulators may not receive FCM properly
 5. **Provide meaningful notification content** - Users should understand what the notification is about
 6. **Use notification IDs wisely** - Same ID will update existing notification
