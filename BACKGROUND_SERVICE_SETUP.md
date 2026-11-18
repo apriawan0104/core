@@ -1,5 +1,7 @@
 # Background Service Setup Guide
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Complete setup guide for implementing background service in your Flutter app using BUMA Core.
 
 ## 📋 Table of Contents
@@ -262,8 +264,9 @@ import 'package:app_core/app_core.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Setup DI
-  await configureDependencies();
+  getIt.registerLazySingleton<BackgroundService>(
+    () => FlutterBackgroundServiceImpl.instance(),
+  );
   
   // Get background service from DI
   final backgroundService = getIt<BackgroundService>();

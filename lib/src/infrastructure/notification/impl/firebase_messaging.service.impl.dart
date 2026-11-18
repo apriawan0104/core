@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:dartz/dartz.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:injectable/injectable.dart';
 import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 import 'package:app_core/src/infrastructure/notification/contract/notification.dart';
@@ -10,7 +9,6 @@ import 'package:app_core/src/infrastructure/notification/contract/notification.d
 /// Default implementation of FirebaseMessagingService
 ///
 /// Wraps firebase_messaging package following DIP principle
-@LazySingleton(as: FirebaseMessagingService)
 class FirebaseMessagingServiceImpl implements FirebaseMessagingService {
   final FirebaseMessaging _firebaseMessaging;
 

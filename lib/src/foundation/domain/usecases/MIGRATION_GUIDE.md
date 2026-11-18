@@ -1,5 +1,7 @@
 # Migration Guide: Legacy to New Use Case Pattern
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Panduan untuk migrate dari pattern use case lama ke pattern baru yang menggunakan `UseCaseAsync` dan `UseCase`.
 
 ## 📋 Overview

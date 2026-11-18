@@ -13,6 +13,10 @@
 ///
 /// Example usage:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // 1. Register in DI
 /// getIt.registerLazySingleton<SecureStorageService>(
 ///   () => FlutterSecureStorageServiceImpl(

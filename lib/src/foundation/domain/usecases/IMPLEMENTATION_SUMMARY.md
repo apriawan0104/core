@@ -1,5 +1,7 @@
 # Use Case Implementation Summary
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 ## ✅ What Has Been Implemented
 
 Implementasi lengkap Use Case pattern untuk BUMA Core library telah selesai dibuat.

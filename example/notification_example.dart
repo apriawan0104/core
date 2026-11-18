@@ -2,12 +2,16 @@
 
 import 'package:app_core/app_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:timezone/data/latest.dart' as tz;
+
+/// The app owns its locator. `app_core` does not export one.
+final getIt = GetIt.instance;
 
 /// Example demonstrating notification module usage
 ///
 /// This example shows:
-/// 1. Setting up notification services using injectable
+/// 1. Registering notification services on the app locator
 /// 2. Initializing FCM and local notifications
 /// 3. Handling notification callbacks
 /// 4. Showing, scheduling, and managing notifications
@@ -17,8 +21,12 @@ void main() async {
   // Initialize timezone for scheduled notifications
   tz.initializeTimeZones();
 
-  // Setup all services in DI container using injectable
-  configureDependencies();
+  getIt.registerLazySingleton<FirebaseMessagingService>(
+    () => FirebaseMessagingServiceImpl(),
+  );
+  getIt.registerLazySingleton<LocalNotificationService>(
+    () => LocalNotificationServiceImpl(),
+  );
 
   // Initialize notifications
   await _initializeNotifications();

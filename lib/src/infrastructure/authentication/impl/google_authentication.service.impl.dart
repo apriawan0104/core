@@ -23,6 +23,10 @@ import '../models/models.dart';
 /// ## Usage Example
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Register in DI container
 /// getIt.registerLazySingleton<AuthenticationService>(
 ///   () => GoogleAuthenticationServiceImpl(

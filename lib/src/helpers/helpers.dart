@@ -10,6 +10,10 @@
 /// [ErrorHandler] - Unified error handling with automatic crash reporting
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Setup in DI
 /// getIt.registerLazySingleton<ErrorHandler>(
 ///   () => ErrorHandler(
@@ -31,10 +35,14 @@
 /// [RepositoryErrorHandler] - Centralized error handling for repository layer
 ///
 /// ```dart
-/// // Auto-registered with @lazySingleton in DI
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
 ///
-/// // Use in repositories
-/// @LazySingleton(as: AuthRepository)
+/// getIt.registerLazySingleton<RepositoryErrorHandler>(
+///   () => RepositoryErrorHandler(getIt<CrashReporterService>()),
+/// );
+///
 /// class AuthRepositoryImpl implements AuthRepository {
 ///   final RepositoryErrorHandler errorHandler;
 ///

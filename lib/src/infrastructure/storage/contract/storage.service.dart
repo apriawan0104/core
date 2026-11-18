@@ -21,6 +21,10 @@ import 'package:app_core/src/errors/errors.dart';
 ///
 /// Example usage:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final storage = getIt<StorageService>();
 ///
 /// // Initialize

@@ -1,12 +1,10 @@
 import 'package:flutter/widgets.dart';
-import '../../../configuration/di/locator.dart';
-import '../contract/contracts.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart' show ScreenUtil;
 
 /// Extension methods for convenient screen adaptation using numbers.
 ///
-/// These extensions provide a more intuitive way to work with screen-adapted
-/// dimensions, similar to the flutter_screenutil package's extension methods,
-/// but using the abstracted ScreenUtilService through dependency injection.
+/// These extensions read the ScreenUtil instance configured by ScreenUtilInit
+/// or by ResponsiveService.init.
 ///
 /// Example usage:
 /// ```dart
@@ -24,23 +22,23 @@ extension ScreenUtilExtension on num {
   /// Adapt width based on design size.
   ///
   /// Example: `100.w` returns width adapted for current screen.
-  double get w => getIt<ResponsiveService>().setWidth(this);
+  double get w => ScreenUtil().setWidth(this);
 
   /// Adapt height based on design size.
   ///
   /// Example: `200.h` returns height adapted for current screen.
-  double get h => getIt<ResponsiveService>().setHeight(this);
+  double get h => ScreenUtil().setHeight(this);
 
   /// Adapt size based on the smaller of width or height ratio.
   ///
   /// Useful for creating square elements or consistent border radius.
   /// Example: `50.r` returns size adapted based on minimum ratio.
-  double get r => getIt<ResponsiveService>().radius(this);
+  double get r => ScreenUtil().radius(this);
 
   /// Adapt font size based on design size.
   ///
   /// Example: `14.sp` returns font size adapted for current screen.
-  double get sp => getIt<ResponsiveService>().setSp(this);
+  double get sp => ScreenUtil().setSp(this);
 
   /// Returns the minimum of the number's sp value and the number itself.
   ///
@@ -58,13 +56,13 @@ extension ScreenPercentageExtension on num {
   ///
   /// Example: `0.5.sw` returns 50% of screen width (0.5 * screenWidth).
   /// Example: `1.sw` returns full screen width.
-  double get sw => this * getIt<ResponsiveService>().screenWidth;
+  double get sw => this * ScreenUtil().screenWidth;
 
   /// Returns multiple of screen height.
   ///
   /// Example: `0.5.sh` returns 50% of screen height (0.5 * screenHeight).
   /// Example: `1.sh` returns full screen height.
-  double get sh => this * getIt<ResponsiveService>().screenHeight;
+  double get sh => this * ScreenUtil().screenHeight;
 }
 
 /// Extension methods for creating spacing widgets.
@@ -96,7 +94,7 @@ extension EdgeInsetsExtension on EdgeInsets {
   ///
   /// Example: `EdgeInsets.all(16).w` adapts all edges using width ratio.
   EdgeInsets get w {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return EdgeInsets.only(
       left: service.setWidth(left),
       top: service.setWidth(top),
@@ -109,7 +107,7 @@ extension EdgeInsetsExtension on EdgeInsets {
   ///
   /// Example: `EdgeInsets.symmetric(vertical: 20).h` adapts using height ratio.
   EdgeInsets get h {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return EdgeInsets.only(
       left: service.setHeight(left),
       top: service.setHeight(top),
@@ -122,7 +120,7 @@ extension EdgeInsetsExtension on EdgeInsets {
   ///
   /// Example: `EdgeInsets.all(12).r` adapts all edges using radius ratio.
   EdgeInsets get r {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return EdgeInsets.only(
       left: service.radius(left),
       top: service.radius(top),
@@ -138,7 +136,7 @@ extension BorderRadiusExtension on BorderRadius {
   ///
   /// Example: `BorderRadius.circular(8).w`.
   BorderRadius get w {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return BorderRadius.only(
       topLeft: Radius.circular(service.setWidth(topLeft.x)),
       topRight: Radius.circular(service.setWidth(topRight.x)),
@@ -151,7 +149,7 @@ extension BorderRadiusExtension on BorderRadius {
   ///
   /// Example: `BorderRadius.circular(8).h`.
   BorderRadius get h {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return BorderRadius.only(
       topLeft: Radius.circular(service.setHeight(topLeft.x)),
       topRight: Radius.circular(service.setHeight(topRight.x)),
@@ -164,7 +162,7 @@ extension BorderRadiusExtension on BorderRadius {
   ///
   /// Example: `BorderRadius.circular(8).r`.
   BorderRadius get r {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return BorderRadius.only(
       topLeft: Radius.circular(service.radius(topLeft.x)),
       topRight: Radius.circular(service.radius(topRight.x)),
@@ -179,17 +177,17 @@ extension RadiusExtension on Radius {
   /// Adapts Radius value using width ratio.
   ///
   /// Example: `Radius.circular(16).w`.
-  Radius get w => Radius.circular(getIt<ResponsiveService>().setWidth(x));
+  Radius get w => Radius.circular(ScreenUtil().setWidth(x));
 
   /// Adapts Radius value using height ratio.
   ///
   /// Example: `Radius.circular(16).h`.
-  Radius get h => Radius.circular(getIt<ResponsiveService>().setHeight(x));
+  Radius get h => Radius.circular(ScreenUtil().setHeight(x));
 
   /// Adapts Radius value using radius (minimum ratio).
   ///
   /// Example: `Radius.circular(16).r`.
-  Radius get r => Radius.circular(getIt<ResponsiveService>().radius(x));
+  Radius get r => Radius.circular(ScreenUtil().radius(x));
 }
 
 /// Extension methods for adapting BoxConstraints.
@@ -198,7 +196,7 @@ extension BoxConstraintsExtension on BoxConstraints {
   ///
   /// Example: `BoxConstraints(maxWidth: 200, minHeight: 100).w`.
   BoxConstraints get w {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return BoxConstraints(
       minWidth: service.setWidth(minWidth),
       maxWidth: service.setWidth(maxWidth),
@@ -211,7 +209,7 @@ extension BoxConstraintsExtension on BoxConstraints {
   ///
   /// Example: `BoxConstraints(maxWidth: 200, minHeight: 100).h`.
   BoxConstraints get h {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return BoxConstraints(
       minWidth: service.setHeight(minWidth),
       maxWidth: service.setHeight(maxWidth),
@@ -224,7 +222,7 @@ extension BoxConstraintsExtension on BoxConstraints {
   ///
   /// Example: `BoxConstraints(maxWidth: 200, minHeight: 100).r`.
   BoxConstraints get r {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return BoxConstraints(
       minWidth: service.radius(minWidth),
       maxWidth: service.radius(maxWidth),
@@ -276,7 +274,7 @@ class REdgeInsets extends EdgeInsets {
 
   /// Adapts all values using radius ratio.
   EdgeInsets get r {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return EdgeInsets.fromLTRB(
       service.radius(left),
       service.radius(top),
@@ -287,7 +285,7 @@ class REdgeInsets extends EdgeInsets {
 
   /// Adapts all values using width ratio.
   EdgeInsets get w {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return EdgeInsets.fromLTRB(
       service.setWidth(left),
       service.setWidth(top),
@@ -298,7 +296,7 @@ class REdgeInsets extends EdgeInsets {
 
   /// Adapts all values using height ratio.
   EdgeInsets get h {
-    final service = getIt<ResponsiveService>();
+    final service = ScreenUtil();
     return EdgeInsets.fromLTRB(
       service.setHeight(left),
       service.setHeight(top),

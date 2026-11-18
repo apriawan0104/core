@@ -1,5 +1,7 @@
 # Push engine
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Mesin push yang dipakai semua app. App mengisi nilai dan perilaku miliknya sendiri. `app_core` tidak mengenal nama modul, nama halaman, format rute, atau router app.
 
 Token, topic, notifikasi lokal, dan jadwal tanpa audience ada di [`../doc/README.md`](../doc/README.md). File ini hanya untuk `PushNotificationService`.
@@ -290,7 +292,7 @@ final body = buildFcmMessageFor(
 
 1. **Satu jalur listener.** App yang membuat `PushNotificationService` tidak memanggil `FirebaseMessagingService.initialize` dan tidak memanggil `LocalNotificationService.initialize`. Keduanya memasang `onMessage` / `onMessageOpenedApp` atau callback tap plugin. Dipakai bersama, banner dan `onOpened` bisa jalan dua kali. App yang tidak membuat `PushNotificationService` tidak tersentuh. Signature method lama tidak berubah.
 
-2. **Service baru tidak di-init oleh GetIt.** `configureDependencies()` tidak memanggil mesin push. App yang tidak meng-construct `PushNotificationService` tidak masuk ke alur ini.
+2. **Service baru tidak didaftarkan otomatis.** App yang tidak meng-construct `PushNotificationService` tidak masuk ke alur ini.
 
 3. **Router dan format payload tetap di app.** Core tidak mengimpor `go_router` dan tidak mengenal `layout`, `RouteName`, `path`, atau `query`.
 

@@ -1,5 +1,7 @@
 # Notification Module
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Abstraction layer untuk Firebase Cloud Messaging dan Local Notifications, mengikuti Dependency Inversion Principle.
 
 ## 📦 Package Dependencies
@@ -46,12 +48,17 @@ import 'package:timezone/data/latest.dart' as tz;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   tz.initializeTimeZones();
-  configureDependencies();
+  getIt.registerLazySingleton<FirebaseMessagingService>(
+    () => FirebaseMessagingServiceImpl(),
+  );
+  getIt.registerLazySingleton<LocalNotificationService>(
+    () => LocalNotificationServiceImpl(),
+  );
   runApp(const MyApp());
 }
 ```
 
-`configureDependencies()` mendaftarkan kedua service. Tidak ada fungsi `setupNotificationServices`. `tz.initializeTimeZones()` berasal dari paket `timezone`, dan hanya diperlukan untuk notifikasi terjadwal.
+App yang mendaftarkan kedua service. `app_core` tidak men-generate registrasi. `tz.initializeTimeZones()` berasal dari paket `timezone`, dan hanya diperlukan untuk notifikasi terjadwal.
 
 ### 2. Initialize Services
 

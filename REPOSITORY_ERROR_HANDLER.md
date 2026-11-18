@@ -1,5 +1,7 @@
 # Repository Error Handler
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 ## 📚 Overview
 
 `RepositoryErrorHandler` is a centralized error handling service for all repository operations across BUMA applications.
@@ -41,7 +43,8 @@ User sees: "Please check your internet connection"
 ```dart
 import 'package:app_core/app_core.dart';
 
-@LazySingleton(as: AuthRepository)
+// Register once in the app locator:
+// getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(...));
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
   final RepositoryErrorHandler errorHandler;

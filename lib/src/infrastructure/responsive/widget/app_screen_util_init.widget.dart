@@ -3,21 +3,11 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../configuration/di/locator.dart';
-import '../contract/contracts.dart';
-
-/// A wrapper widget for ScreenUtilInit that follows Dependency Inversion Principle.
-///
-/// This widget initializes the screen utility service through dependency injection
-/// instead of directly depending on the concrete ScreenUtilInit from flutter_screenutil.
-///
-/// The widget uses [ScreenUtilService] from the DI container (GetIt) to initialize
-/// screen adaptation, maintaining loose coupling and following clean architecture principles.
+/// A wrapper widget for [ScreenUtilInit].
 ///
 /// Example:
 /// ```dart
 /// void main() {
-///   configureDependencies(); // Setup DI
 ///   runApp(
 ///     AppScreenUtilInit(
 ///       designSize: const Size(360, 690),
@@ -44,6 +34,7 @@ class AppScreenUtilInit extends StatelessWidget {
     this.designSize = const Size(360, 690),
     this.minTextAdapt = false,
     this.splitScreenMode = false,
+    this.useInheritedMediaQuery = false,
     this.fontSizeResolver = FontSizeResolvers.width,
     this.child,
   });
@@ -66,6 +57,13 @@ class AppScreenUtilInit extends StatelessWidget {
   /// Default is false.
   final bool splitScreenMode;
 
+  /// When true, scale against the [MediaQuery] above this widget.
+  ///
+  /// The default reads the Flutter view, which is the full browser window on
+  /// web. Pass true when an ancestor already constrains that query to a
+  /// smaller frame.
+  final bool useInheritedMediaQuery;
+
   /// Function to resolve font sizes.
   ///
   /// This determines how font sizes are calculated during adaptation.
@@ -85,23 +83,23 @@ class AppScreenUtilInit extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Use ScreenUtilInit from flutter_screenutil but wrapped with our abstraction
+    if (useInheritedMediaQuery) {
+      ScreenUtil.configure(
+        data: MediaQuery.of(context),
+        designSize: designSize,
+        minTextAdapt: minTextAdapt,
+        splitScreenMode: splitScreenMode,
+        fontSizeResolver: fontSizeResolver,
+      );
+      return builder?.call(context, child) ?? child ?? const SizedBox.shrink();
+    }
+
     return ScreenUtilInit(
       designSize: designSize,
       minTextAdapt: minTextAdapt,
       splitScreenMode: splitScreenMode,
       fontSizeResolver: fontSizeResolver,
       builder: (context, child) {
-        // Initialize our service through DI
-        // This ensures our abstraction is also initialized
-        getIt<ResponsiveService>().init(
-          context,
-          designSize: designSize,
-          minTextAdapt: minTextAdapt,
-          splitScreenMode: splitScreenMode,
-        );
-
-        // Call the provided builder
         return builder?.call(context, child) ?? const SizedBox.shrink();
       },
       child: child,

@@ -1,5 +1,7 @@
 # Background Service
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Background service infrastructure untuk menjalankan Dart code di background, bahkan ketika aplikasi ditutup atau diminimize.
 
 ## 🎯 Overview
@@ -142,16 +144,16 @@ import flutter_background_service_ios
 
 #### 1. Register Service in DI
 
-```dart
-// configuration/di/register_module.dart
-import 'package:flutter_background_service/flutter_background_service.dart' as fbs;
+Daftarkan di locator milik app. `app_core` tidak men-generate registrasi.
 
-@module
-abstract class RegisterModule {
-  @lazySingleton
-  BackgroundService get backgroundService => FlutterBackgroundServiceImpl(
-    fbs.FlutterBackgroundService(),
+```dart
+import 'package:app_core/app_core.dart';
+
+void main() {
+  getIt.registerLazySingleton<BackgroundService>(
+    () => FlutterBackgroundServiceImpl.instance(),
   );
+  runApp(const MyApp());
 }
 ```
 
@@ -192,8 +194,9 @@ void onBackgroundStart(ServiceInstance service) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // Setup DI
-  await configureDependencies();
+  getIt.registerLazySingleton<BackgroundService>(
+    () => FlutterBackgroundServiceImpl.instance(),
+  );
   
   // Get service
   final service = getIt<BackgroundService>();

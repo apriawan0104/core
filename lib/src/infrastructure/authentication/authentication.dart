@@ -17,6 +17,10 @@
 /// ## Quick Start
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // 1. Register in DI container
 /// getIt.registerLazySingleton<AuthenticationService>(
 ///   () => GoogleAuthenticationServiceImpl(
@@ -50,6 +54,10 @@
 /// To switch authentication providers, just change the DI registration:
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // From Google
 /// getIt.registerLazySingleton<AuthenticationService>(
 ///   () => GoogleAuthenticationServiceImpl(...),

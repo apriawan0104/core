@@ -29,6 +29,10 @@ import '../models/models.dart';
 /// ## Usage Example
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Get access token for API request
 /// final tokenProvider = getIt<TokenProviderService>();
 ///
@@ -196,6 +200,10 @@ abstract class TokenProviderService {
   ///
   /// Example:
   /// ```dart
+  /// import 'package:get_it/get_it.dart';
+  /// 
+  /// final getIt = GetIt.instance;
+  ///
   /// // On logout
   /// Future<void> logout() async {
   ///   final authService = getIt<AuthenticationService>();

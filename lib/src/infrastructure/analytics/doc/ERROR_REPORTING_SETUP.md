@@ -69,8 +69,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   
-  // Setup DI
-  configureDependencies();
+  getIt.registerLazySingleton<CrashReporterService>(
+    () => FirebaseCrashlyticsServiceImpl(),
+  );
   
   // Setup error handling
   await _setupErrorHandling();
@@ -117,7 +118,7 @@ Future<void> _setupErrorHandling() async {
 Register the required services:
 
 ```dart
-// In your DI setup file (e.g., locator.dart or using injectable)
+// In your app's locator file
 
 import 'package:app_core/app_core.dart';
 import 'package:get_it/get_it.dart';
@@ -415,9 +416,7 @@ getIt.registerLazySingleton<CrashReporterService>(
 
 ```dart
 import 'package:app_core/app_core.dart';
-import 'package:injectable/injectable.dart';
 
-@injectable
 class UserRepository {
   final HttpClient httpClient;
   final ErrorHandler errorHandler;
@@ -495,8 +494,9 @@ Future<void> main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   
-  // Setup DI
-  configureDependencies();
+  getIt.registerLazySingleton<CrashReporterService>(
+    () => FirebaseCrashlyticsServiceImpl(),
+  );
   
   // Setup error handling
   await _setupErrorHandling();

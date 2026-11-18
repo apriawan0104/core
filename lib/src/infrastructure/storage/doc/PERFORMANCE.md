@@ -1,5 +1,7 @@
 # Storage Service Performance Guide
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Guide untuk mengoptimalkan performance storage service di aplikasi Anda.
 
 ## 📊 Performance Characteristics

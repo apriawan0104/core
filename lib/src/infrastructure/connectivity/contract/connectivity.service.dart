@@ -27,6 +27,10 @@ import '../../../foundation/domain/entities/connectivity/entities.dart';
 ///
 /// Example:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final connectivity = getIt<ConnectivityService>();
 ///
 /// // One-time check

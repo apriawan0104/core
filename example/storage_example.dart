@@ -2,7 +2,11 @@
 
 import 'package:app_core/app_core.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+
+/// The app owns its locator. `app_core` does not export one.
+final getIt = GetIt.instance;
 
 /// Example demonstrating storage service usage.
 ///

@@ -30,6 +30,10 @@ import '../contract/storage.service.dart';
 ///
 /// Example usage:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Register in DI container
 /// getIt.registerLazySingleton<StorageService>(
 ///   () => HiveStorageServiceImpl(
@@ -48,6 +52,10 @@ import '../contract/storage.service.dart';
 ///
 /// For encrypted storage:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Generate encryption key (store this securely!)
 /// final encryptionKey = Hive.generateSecureKey();
 ///

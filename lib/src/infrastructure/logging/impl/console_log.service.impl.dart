@@ -21,6 +21,10 @@ import '../contract/log.service.dart';
 ///
 /// Example usage:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Register in DI container
 /// getIt.registerLazySingleton<LogService>(
 ///   () => ConsoleLogServiceImpl(),
@@ -29,6 +33,10 @@ import '../contract/log.service.dart';
 ///
 /// Or with production mode logging enabled:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// getIt.registerLazySingleton<LogService>(
 ///   () => ConsoleLogServiceImpl(logInProduction: true),
 /// );

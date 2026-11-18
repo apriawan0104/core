@@ -298,8 +298,7 @@ Core dependencies:
 - `dartz` - Functional programming
 - `dio` - HTTP client
 - `flutter_background_service` - Background task execution
-- `get_it` - Dependency injection
-- `injectable` - Code generation for DI
+- `get_it` - Service locator. The app owns the instance and registers implementations.
 - `hive` - Local storage
 - `firebase_messaging` - Push notifications
 - `logger` - Logging

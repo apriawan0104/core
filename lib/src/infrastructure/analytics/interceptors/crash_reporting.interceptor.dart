@@ -21,6 +21,10 @@ import '../contract/crash_reporter.service.dart';
 /// ## Usage
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Setup in DI or main.dart
 /// final httpClient = getIt<HttpClient>();
 /// final crashReporter = getIt<CrashReporterService>();

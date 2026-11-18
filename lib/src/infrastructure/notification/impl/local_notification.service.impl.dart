@@ -5,7 +5,6 @@ import 'dart:ui';
 import 'package:dartz/dartz.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     as fln;
-import 'package:injectable/injectable.dart';
 import 'package:app_core/src/errors/errors.dart';
 import 'package:app_core/src/foundation/domain/entities/notification/entities.dart';
 import 'package:app_core/src/infrastructure/notification/contract/notification.dart';
@@ -14,7 +13,6 @@ import 'package:timezone/timezone.dart' as tz;
 /// Default implementation of LocalNotificationService
 ///
 /// Wraps flutter_local_notifications package following DIP principle
-@LazySingleton(as: LocalNotificationService)
 class LocalNotificationServiceImpl implements LocalNotificationService {
   final fln.FlutterLocalNotificationsPlugin _localNotifications;
   final StreamController<NotificationDataEntity> _notificationTapController =

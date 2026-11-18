@@ -1,5 +1,7 @@
 # Responsive Service - Screen Adaptation Module
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 ## 📋 Overview
 
 Modul Responsive Service mengimplementasikan **Dependency Inversion Principle (DIP)** untuk fungsionalitas adaptasi layar di package App Core. Modul ini menyediakan abstraksi untuk screen adaptation yang memisahkan aplikasi dari library konkret (`flutter_screenutil`), menghasilkan kode yang lebih testable, maintainable, dan flexible.
@@ -66,10 +68,6 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
-  // Initialize dependency injection
-  await configureDependencies();
-  
   runApp(const MyApp());
 }
 
@@ -111,7 +109,9 @@ import 'package:app_core/app_core.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await configureDependencies();
+  getIt.registerLazySingleton<ResponsiveService>(
+    () => ResponsiveServiceImpl(),
+  );
   runApp(const MyApp());
 }
 
@@ -873,8 +873,6 @@ setUp(() {
 
 Modul ini menggunakan:
 - `flutter_screenutil: ^5.9.0` - Library untuk screen adaptation
-- `injectable: ^2.5.0` - Dependency injection annotations
-- `get_it: ^8.0.2` - Service locator
 
 ## 📝 Changelog
 

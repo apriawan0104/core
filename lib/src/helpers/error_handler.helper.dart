@@ -25,6 +25,10 @@ import '../infrastructure/logging/contract/log.service.dart';
 /// Register in dependency injection:
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // DI setup
 /// getIt.registerLazySingleton<ErrorHandler>(
 ///   () => ErrorHandler(

@@ -29,6 +29,10 @@ import '../models/models.dart';
 /// ### Usage Example
 /// 
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final fileOpener = getIt<FileOpenerService>();
 /// 
 /// // Open a PDF file

@@ -26,6 +26,10 @@ import '../../../errors/path_provider_failure.dart';
 /// ### Example
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final pathProvider = getIt<PathProviderService>();
 ///
 /// // Get temporary directory

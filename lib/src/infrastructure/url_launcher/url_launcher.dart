@@ -19,6 +19,10 @@
 /// ## Quick Start
 /// 
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // 1. Register service
 /// getIt.registerLazySingleton<UrlLauncherService>(
 ///   () => UrlLauncherServiceImpl(),

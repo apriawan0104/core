@@ -30,6 +30,10 @@ import '../../authentication/contract/contracts.dart';
 /// ## Usage Example
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // 1. Create interceptor with excluded paths
 /// final authInterceptor = AuthInterceptor(
 ///   tokenProvider: getIt<TokenProviderService>(),
@@ -74,6 +78,10 @@ class AuthInterceptor {
   ///
   /// Example:
   /// ```dart
+  /// import 'package:get_it/get_it.dart';
+  /// 
+  /// final getIt = GetIt.instance;
+  ///
   /// final interceptor = AuthInterceptor(
   ///   tokenProvider: getIt<TokenProviderService>(),
   ///   excludedPaths: [

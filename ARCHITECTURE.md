@@ -73,10 +73,6 @@ buma_core/lib/src/
 │   ├── location/               GPS & location permissions
 │   └── version/                App version management
 │
-├── 📁 configuration/           Setup & initialization
-│   ├── di/                     Dependency injection
-│   └── flavor/                 Environment configuration
-│
 ├── 📁 constants/               Global constants
 │   ├── api.cons.dart
 │   ├── firebase.cons.dart
@@ -338,41 +334,7 @@ abstract class LocationService {
 
 ### 4. 📁 `configuration/`
 
-**Purpose**: Setup, initialization, dan configuration management.
-
-#### `configuration/di/`
-**Contains**: Dependency Injection setup (GetIt, Injectable)
-
-```dart
-// Example: DI Module
-@module
-abstract class BumaCoreModule {
-  @singleton
-  NetworkService get networkService => DioNetworkServiceImpl();
-}
-```
-
-**When to use**:
-- ✅ Register services ke DI container
-- ✅ Define dependencies
-- ✅ Module registration
-
-#### `configuration/flavor/`
-**Contains**: Environment configuration (Dev, Staging, Production)
-
-```dart
-// Example: Flavor Config
-class FlavorConfig {
-  final String baseUrl;
-  final String apiKey;
-  final Environment environment;
-}
-```
-
-**When to use**:
-- ✅ Different configuration per environment
-- ✅ Feature flags
-- ✅ Environment-specific settings
+Tidak ada di `app_core`. Setup DI dan flavor adalah tanggung jawab app.
 
 ---
 
@@ -526,7 +488,7 @@ Use this flowchart to decide:
                │
                ├─ App-level service? ─────────────────→ application/
                │
-               ├─ Constant/config? ───────────────────→ constants/ or configuration/
+               ├─ Constant/config? ───────────────────→ constants/
                │
                ├─ Exception/error? ───────────────────→ errors/
                │
@@ -547,8 +509,6 @@ Use this flowchart to decide:
 | Local storage | `infrastructure/storage/` | `HiveStorageService` |
 | File picker | `application/file/` | `FileService` |
 | Location service | `application/location/` | `LocationService` |
-| DI setup | `configuration/di/` | `BumaCoreModule` |
-| Environment config | `configuration/flavor/` | `FlavorConfig` |
 | API endpoint | `constants/` | `ApiConstants` |
 | Custom exception | `errors/exceptions/` | `NetworkException` |
 | String extension | `extensions/` | `StringExtension` |
@@ -721,7 +681,7 @@ abstract class FileService {
 **A:** Tidak! Domain layer harus pure dan tidak boleh depend on infrastructure. Gunakan interfaces/abstract classes di domain, implementasinya di infrastructure.
 
 ### Q: Bagaimana handle service yang butuh dependency injection?
-**A:** Define interface di `application/` atau `infrastructure/`, register implementation di `configuration/di/`.
+**A:** Define interface di `application/` atau `infrastructure/`, register implementation di app (locator milik app).
 
 ### Q: Constants per-feature ditaruh dimana?
 **A:** Jika constant hanya dipakai dalam satu feature, taruh di feature module tersebut, bukan di `buma_core/constants/`.

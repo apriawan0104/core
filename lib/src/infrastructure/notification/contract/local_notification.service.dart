@@ -217,6 +217,10 @@ typedef OnLocalNotificationTappedCallback = Future<void> Function(
 ///
 /// Example:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final localService = getIt<LocalNotificationService>();
 ///
 /// final result = await localService.show(

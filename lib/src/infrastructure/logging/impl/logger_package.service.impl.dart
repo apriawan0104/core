@@ -17,6 +17,10 @@ import '../contract/log.service.dart';
 ///
 /// Example usage:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Register in DI container
 /// getIt.registerLazySingleton<LogService>(
 ///   () => LoggerPackageServiceImpl(
@@ -36,6 +40,10 @@ import '../contract/log.service.dart';
 ///
 /// Or use the default configuration:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// getIt.registerLazySingleton<LogService>(
 ///   () => LoggerPackageServiceImpl.defaultConfig(),
 /// );

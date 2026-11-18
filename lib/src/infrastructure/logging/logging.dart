@@ -21,6 +21,9 @@
 /// ```dart
 /// import 'package:app_core/app_core.dart';
 /// import 'package:logger/logger.dart' as logger_pkg;
+/// import 'package:get_it/get_it.dart';
+///
+/// final getIt = GetIt.instance;
 ///
 /// // Register with default config
 /// getIt.registerLazySingleton<LogService>(
@@ -45,6 +48,10 @@
 ///
 /// Using simple console logging:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// getIt.registerLazySingleton<LogService>(
 ///   () => ConsoleLogServiceImpl(),
 /// );
@@ -114,6 +121,10 @@
 /// DI registration. No changes needed in business logic!
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Before: Using logger package
 /// getIt.registerLazySingleton<LogService>(
 ///   () => LoggerPackageServiceImpl.defaultConfig(),

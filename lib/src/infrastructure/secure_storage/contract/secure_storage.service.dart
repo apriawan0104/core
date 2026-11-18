@@ -35,6 +35,10 @@ import 'package:app_core/src/infrastructure/secure_storage/models/models.dart';
 ///
 /// Example usage:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final secureStorage = getIt<SecureStorageService>();
 ///
 /// // Write secure data

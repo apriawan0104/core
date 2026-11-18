@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import '../foundation/domain/typedef/value_guard.typedef.dart';
 import '../errors/failures.dart';
 import '../infrastructure/analytics/contract/crash_reporter.service.dart';
@@ -24,7 +23,12 @@ import '../infrastructure/analytics/contract/crash_reporter.service.dart';
 ///
 /// Usage in any app:
 /// ```dart
-/// @LazySingleton(as: AuthRepository)
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
+/// // Register once in the app locator:
+/// // getIt.registerLazySingleton<AuthRepository>(() => AuthRepositoryImpl(...));
 /// class AuthRepositoryImpl implements AuthRepository {
 ///   final AuthRemoteDataSource remoteDataSource;
 ///   final RepositoryErrorHandler errorHandler;
@@ -62,7 +66,6 @@ import '../infrastructure/analytics/contract/crash_reporter.service.dart';
 /// - [CrashReporterService] - For error reporting configuration
 /// - [ValueGuard] - For result type
 /// - [ErrorHandlerHelper] - For additional error handling utilities
-@lazySingleton
 class RepositoryErrorHandler {
   /// Crash reporter service for error monitoring
   ///

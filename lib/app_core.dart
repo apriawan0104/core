@@ -55,14 +55,8 @@ export 'src/infrastructure/storage/storage.dart';
 // Infrastructure - URL Launcher
 export 'src/infrastructure/url_launcher/url_launcher.dart';
 
-// Configuration - DI
-export 'src/configuration/di/locator.dart';
-
 // Helpers - Utility classes
 export 'src/helpers/helpers.dart';
-
-// Configuration - DI
-export 'src/configuration/di/di.dart';
 
 /// A Calculator.
 class Calculator {

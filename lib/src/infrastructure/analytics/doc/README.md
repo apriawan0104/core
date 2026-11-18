@@ -1,5 +1,7 @@
 # Analytics Infrastructure
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 This module provides dependency-independent abstractions for analytics tracking and crash reporting in Flutter applications.
 
 ## 📋 Table of Contents

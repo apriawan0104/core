@@ -550,7 +550,6 @@ foundation/domain/     → Pure business entities & use cases
 foundation/data/       → DTOs for API communication
 infrastructure/        → Third-party integrations (wrapped!)
 application/           → App-level services
-configuration/         → Setup & DI
 ```
 
 **Dependency Rules:**
@@ -850,7 +849,6 @@ lib/src/
 │   ├── notification/ → FCM (wrapped)
 │   └── storage/      → Hive (wrapped)
 ├── application/      → App-level services
-├── configuration/    → DI & environment setup
 ├── constants/        → Global constants
 ├── errors/           → Exception & failure classes
 ├── extensions/       → Dart type extensions
@@ -1012,7 +1010,7 @@ lib/src/
    - **Implementation can use third-party types internally**
 
 3. ☑️ **Add to DI container**
-   - Register di `configuration/di/`
+   - Daftarkan di locator milik app (`app_core` tidak punya locator dan tidak men-generate registrasi)
    - Use factory or singleton appropriately
    - **Allow easy swapping of implementations**
 

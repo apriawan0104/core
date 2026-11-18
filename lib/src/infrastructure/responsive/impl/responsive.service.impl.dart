@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:injectable/injectable.dart';
 
 import '../contract/contracts.dart';
 
@@ -9,7 +8,6 @@ import '../contract/contracts.dart';
 /// This implementation wraps the flutter_screenutil package, providing
 /// screen adaptation functionality while maintaining loose coupling through
 /// the abstract service interface.
-@LazySingleton(as: ResponsiveService)
 class ResponsiveServiceImpl implements ResponsiveService {
   @override
   void init(

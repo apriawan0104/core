@@ -17,6 +17,10 @@ import '../../../foundation/domain/entities/network/entities.dart';
 ///
 /// Example:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final client = getIt<HttpClient>();
 ///
 /// final result = await client.get<Map<String, dynamic>>(

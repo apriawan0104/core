@@ -15,6 +15,10 @@
 ///
 /// 1. Register the service in your DI container:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// getIt.registerLazySingleton<PathProviderService>(
 ///   () => PathProviderServiceImpl(),
 /// );
@@ -22,6 +26,10 @@
 ///
 /// 2. Use the service:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final pathProvider = getIt<PathProviderService>();
 ///
 /// final result = await pathProvider.getApplicationDocumentsDirectory();

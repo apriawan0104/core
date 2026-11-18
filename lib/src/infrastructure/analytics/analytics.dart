@@ -94,6 +94,10 @@
 ///
 /// ✅ **Easy to Switch Providers**
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Switch from PostHog to Mixpanel? Just change one line!
 ///
 /// // Before (PostHog)

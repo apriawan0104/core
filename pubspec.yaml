@@ -22,11 +22,9 @@ dependencies:
   flutter_local_notifications: ^17.2.3
   flutter_screenutil: ^5.9.3
   flutter_secure_storage: ^9.2.4
-  get_it: ^8.2.0
   google_sign_in: ^6.2.1
   hive: ^2.2.3
   hive_flutter: ^1.1.0
-  injectable: ^2.5.1
   internet_connection_checker_plus: ^2.9.1
   logger: ^2.6.2
   open_file: ^3.5.10
@@ -40,8 +38,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
-  build_runner: ^2.4.0
-  injectable_generator: ^2.6.2
+  get_it: ^8.2.0 # used by example/ only; app_core lib/ does not import it
   pubspec_checker: ^1.1.0 # for checking pubspec.yaml platform compatibility
 
 # For information on the generic Dart part of this file, see the

@@ -30,6 +30,10 @@ import '../models/models.dart';
 /// ### Example Usage
 ///
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Register in DI
 /// getIt.registerLazySingleton<FileOpenerService>(
 ///   () => OpenFileServiceImpl(),

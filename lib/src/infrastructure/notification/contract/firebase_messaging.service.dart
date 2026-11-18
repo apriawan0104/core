@@ -31,6 +31,10 @@ typedef OnBackgroundNotificationCallback = Future<void> Function(
 ///
 /// Example:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final fcmService = getIt<FirebaseMessagingService>();
 ///
 /// final result = await fcmService.initialize(

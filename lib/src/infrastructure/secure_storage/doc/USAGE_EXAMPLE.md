@@ -1,5 +1,7 @@
 # Secure Storage - Usage Examples
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Comprehensive examples for common use cases and advanced patterns.
 
 ## Table of Contents

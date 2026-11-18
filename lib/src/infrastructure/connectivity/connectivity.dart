@@ -22,6 +22,10 @@
 ///
 /// ### 1. Initialize the service
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// final connectivity = getIt<ConnectivityService>();
 /// await connectivity.initialize();
 /// ```
@@ -95,6 +99,10 @@
 ///
 /// 2. Update DI registration:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// getIt.registerLazySingleton<ConnectivityService>(
 ///   () => CustomConnectivityServiceImpl(),
 /// );

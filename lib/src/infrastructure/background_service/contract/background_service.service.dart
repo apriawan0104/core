@@ -59,6 +59,10 @@ abstract class ServiceInstance {
 ///
 /// Example:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // Configure the service
 /// final service = getIt<BackgroundService>();
 ///

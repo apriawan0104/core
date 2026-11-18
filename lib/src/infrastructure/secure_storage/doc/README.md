@@ -1,5 +1,7 @@
 # Secure Storage Service
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Platform-agnostic secure storage service for storing sensitive data in Flutter applications.
 
 ## 📋 Table of Contents

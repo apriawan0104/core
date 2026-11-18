@@ -382,6 +382,7 @@ class DioHttpClient implements HttpClient {
         case dio.DioExceptionType.connectionTimeout:
         case dio.DioExceptionType.sendTimeout:
         case dio.DioExceptionType.receiveTimeout:
+        case dio.DioExceptionType.transformTimeout:
           return TimeoutFailure(
             message: error.message ?? 'Request timeout',
             details: error,

@@ -28,6 +28,10 @@ import '../contract/contracts.dart';
 ///
 /// Example usage:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// // In DI setup
 /// getIt.registerLazySingleton<ConnectivityService>(
 ///   () => InternetConnectionCheckerPlusServiceImpl(),

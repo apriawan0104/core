@@ -53,6 +53,10 @@ import '../models/crash_report.model.dart';
 ///
 /// 5. Register in dependency injection:
 /// ```dart
+/// import 'package:get_it/get_it.dart';
+/// 
+/// final getIt = GetIt.instance;
+///
 /// getIt.registerLazySingleton<CrashReporterService>(
 ///   () => FirebaseCrashlyticsServiceImpl(),
 /// );

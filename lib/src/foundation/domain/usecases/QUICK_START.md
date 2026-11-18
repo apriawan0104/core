@@ -1,5 +1,7 @@
 # Use Case Quick Start Guide
 
+> Contoh ini memakai `getIt`, yaitu locator milik app. `app_core` tidak mengekspornya. Deklarasikan di app dengan `final getIt = GetIt.instance;` dari `package:get_it`.
+
 Panduan cepat untuk mulai menggunakan Use Case pattern di BUMA Core.
 
 ## 🚀 Quick Start (5 minutes)
