@@ -6,7 +6,7 @@ import 'package:app_core/app_core.dart';
 ///
 /// This example shows how to:
 /// 1. Set up authentication with different providers
-/// 2. Sign in with Google, Apple, or Azure
+/// 2. Sign in with Google or Apple
 /// 3. Handle authentication state
 /// 4. Get auth tokens
 /// 5. Sign out
@@ -23,12 +23,7 @@ void main() async {
 
   print('\n---\n');
 
-  // Example 3: Azure AD Sign In
-  await _azureSignInExample();
-
-  print('\n---\n');
-
-  // Example 4: Auth State Management
+  // Example 3: Auth State Management
   await _authStateExample();
 }
 
@@ -163,88 +158,7 @@ Future<void> _appleSignInExample() async {
   await authService.dispose();
 }
 
-/// Example 3: Azure AD Sign In
-Future<void> _azureSignInExample() async {
-  print('Example 3: Azure AD Sign In\n');
-
-  // Initialize service
-  final authService = AzureAuthenticationServiceImpl(
-    tenantId: 'common', // or your specific tenant ID
-    clientId: 'your-azure-client-id',
-    redirectUri: 'msauth.com.example.app://auth',
-    scopes: ['User.Read', 'Mail.Read'],
-  );
-
-  await authService.initialize();
-  print('✓ Service initialized');
-
-  // Sign in with Azure
-  print('\nAttempting to sign in with Azure AD...');
-  final result = await authService.signInWithAzure(
-    scopes: ['User.Read', 'Mail.Read', 'Calendars.Read'],
-  );
-
-  result.fold(
-    (failure) {
-      print('✗ Sign in failed: ${failure.message}');
-    },
-    (credentials) {
-      print('✓ Sign in successful!');
-      print('  User ID: ${credentials.user.id}');
-      print('  Email: ${credentials.user.email}');
-      print('  Name: ${credentials.user.displayName}');
-      print('  Provider: ${credentials.user.provider.displayName}');
-
-      if (credentials.token != null) {
-        print('\n  Token Info:');
-        print('  - Token Type: ${credentials.token!.tokenType}');
-        print(
-            '  - Has Access Token: ${credentials.token!.accessToken.isNotEmpty}');
-        print('  - Scopes: ${credentials.token!.scopes?.join(", ")}');
-      }
-    },
-  );
-
-  // Get and refresh token
-  print('\nGetting auth token...');
-  final tokenResult = await authService.getAuthToken();
-
-  tokenResult.fold(
-    (failure) => print('✗ Failed to get token: ${failure.message}'),
-    (token) {
-      print('✓ Got auth token');
-      print('  Token Type: ${token.tokenType}');
-      print('  Is Valid: ${token.isValid}');
-      print('  Is Expired: ${token.isExpired}');
-
-      if (token.expiresAt != null) {
-        print('  Expires At: ${token.expiresAt}');
-        print('  Time Until Expiry: ${token.timeUntilExpiry}');
-      }
-    },
-  );
-
-  // Refresh token
-  print('\nRefreshing token...');
-  final refreshResult = await authService.refreshToken();
-
-  refreshResult.fold(
-    (failure) {
-      print('✗ Token refresh failed: ${failure.message}');
-      if (failure is TokenExpiredFailure) {
-        print('  → Refresh token expired, need to sign in again');
-      }
-    },
-    (newToken) {
-      print('✓ Token refreshed successfully');
-      print('  New token is valid: ${newToken.isValid}');
-    },
-  );
-
-  await authService.dispose();
-}
-
-/// Example 4: Auth State Management
+/// Example 3: Auth State Management
 Future<void> _authStateExample() async {
   print('Example 4: Auth State Management\n');
 

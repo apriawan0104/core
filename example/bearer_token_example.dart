@@ -344,15 +344,7 @@ void multipleAuthProvidersExample() {
       //   scopes: ['email', 'profile'],
       // );
 
-      // Example 2: Azure Auth
-      // return AzureAuthenticationServiceImpl(
-      //   tenantId: 'your-tenant-id',
-      //   clientId: 'your-client-id',
-      //   redirectUri: 'your-redirect-uri',
-      //   scopes: ['User.Read'],
-      // );
-
-      // Example 3: Apple Auth
+      // Example 2: Apple Auth
       // return AppleAuthenticationServiceImpl();
 
       // Default: Google Auth

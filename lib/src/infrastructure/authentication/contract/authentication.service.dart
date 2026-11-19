@@ -40,7 +40,6 @@ import '../models/models.dart';
 ///
 /// - [GoogleAuthenticationServiceImpl] - Google Sign In implementation
 /// - [AppleAuthenticationServiceImpl] - Apple Sign In implementation
-/// - [AzureAuthenticationServiceImpl] - Azure AD OAuth implementation
 ///
 /// ## Error Handling
 ///

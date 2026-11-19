@@ -3,12 +3,13 @@
 /// This library provides authentication services for various providers including:
 /// - Google Sign In
 /// - Apple Sign In
-/// - Azure AD OAuth
+///
+/// Azure sign-in untuk mobile ada di package `bspace_auth` (memakai `msal_auth`).
 ///
 /// ## Features
 ///
 /// - **Dependency Independent**: Not tied to any specific authentication provider
-/// - **Multiple Providers**: Support for Google, Apple, and Azure AD
+/// - **Multiple Providers**: Support for Google and Apple
 /// - **Type Safe**: All operations return Either<Failure, Success>
 /// - **Stream Support**: Real-time authentication state changes
 /// - **Token Management**: Automatic token refresh and validation
@@ -68,10 +69,6 @@
 ///   () => AppleAuthenticationServiceImpl(...),
 /// );
 ///
-/// // To Azure (NO CODE CHANGES in business logic!)
-/// getIt.registerLazySingleton<AuthenticationService>(
-///   () => AzureAuthenticationServiceImpl(...),
-/// );
 /// ```
 ///
 /// For detailed documentation, see:

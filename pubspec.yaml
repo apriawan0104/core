@@ -8,7 +8,6 @@ environment:
   flutter: ">=3.24.0"
 
 dependencies:
-  aad_oauth: ^1.0.1
   dartz: ^0.10.1
   dio: ^5.7.0
   equatable: ^2.0.7
