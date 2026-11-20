@@ -3,6 +3,8 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../contract/font_size_scale.enum.dart';
+
 /// A wrapper widget for [ScreenUtilInit].
 ///
 /// Example:
@@ -25,7 +27,7 @@ class AppScreenUtilInit extends StatelessWidget {
   /// - [designSize]: Size of the design draft (default: Size(360, 690))
   /// - [minTextAdapt]: Adapt text by minimum dimension (default: false)
   /// - [splitScreenMode]: Support split screen (default: false)
-  /// - [fontSizeResolver]: Function to resolve font size (default: FontSizeResolvers.width)
+  /// - [fontSizeScale]: How font sizes scale (default: FontSizeScale.width)
   /// - [builder]: Builder function for the widget tree (required)
   /// - [child]: Optional child to pass through builder
   const AppScreenUtilInit({
@@ -35,7 +37,7 @@ class AppScreenUtilInit extends StatelessWidget {
     this.minTextAdapt = false,
     this.splitScreenMode = false,
     this.useInheritedMediaQuery = false,
-    this.fontSizeResolver = FontSizeResolvers.width,
+    this.fontSizeScale = FontSizeScale.width,
     this.child,
   });
 
@@ -64,12 +66,11 @@ class AppScreenUtilInit extends StatelessWidget {
   /// smaller frame.
   final bool useInheritedMediaQuery;
 
-  /// Function to resolve font sizes.
+  /// How font sizes scale from the design draft to the current screen.
   ///
-  /// This determines how font sizes are calculated during adaptation.
-  /// Default is FontSizeResolvers.width which scales based on width.
-  /// Other options include: height, radius, diameter, diagonal.
-  final FontSizeResolver fontSizeResolver;
+  /// Default is [FontSizeScale.width]. Other options: height, radius,
+  /// diameter, diagonal.
+  final FontSizeScale fontSizeScale;
 
   /// Builder function that returns the widget tree.
   ///
@@ -81,6 +82,14 @@ class AppScreenUtilInit extends StatelessWidget {
   /// Optional child widget to pass through the builder.
   final Widget? child;
 
+  FontSizeResolver get _fontSizeResolver => switch (fontSizeScale) {
+    FontSizeScale.width => FontSizeResolvers.width,
+    FontSizeScale.height => FontSizeResolvers.height,
+    FontSizeScale.radius => FontSizeResolvers.radius,
+    FontSizeScale.diameter => FontSizeResolvers.diameter,
+    FontSizeScale.diagonal => FontSizeResolvers.diagonal,
+  };
+
   @override
   Widget build(BuildContext context) {
     if (useInheritedMediaQuery) {
@@ -89,7 +98,7 @@ class AppScreenUtilInit extends StatelessWidget {
         designSize: designSize,
         minTextAdapt: minTextAdapt,
         splitScreenMode: splitScreenMode,
-        fontSizeResolver: fontSizeResolver,
+        fontSizeResolver: _fontSizeResolver,
       );
       return builder?.call(context, child) ?? child ?? const SizedBox.shrink();
     }
@@ -98,7 +107,7 @@ class AppScreenUtilInit extends StatelessWidget {
       designSize: designSize,
       minTextAdapt: minTextAdapt,
       splitScreenMode: splitScreenMode,
-      fontSizeResolver: fontSizeResolver,
+      fontSizeResolver: _fontSizeResolver,
       builder: (context, child) {
         return builder?.call(context, child) ?? const SizedBox.shrink();
       },

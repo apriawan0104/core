@@ -5,6 +5,11 @@
 ///
 /// ## Available Helpers
 ///
+/// ### Date and time
+///
+/// [DateTimeHelper] formats a [DateTime] and checks the morning window.
+/// Callers use [DateTimeFormatType] and never see the intl formatter.
+///
 /// ### Error Handler
 ///
 /// [ErrorHandler] - Unified error handling with automatic crash reporting
@@ -67,6 +72,7 @@
 /// - ✅ Testable and mockable
 library;
 
+export 'date_time.helper.dart';
 export 'error_handler.helper.dart';
 export 'repository_error_handler.dart';
 export 'single_flight.dart';

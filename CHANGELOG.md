@@ -2,6 +2,7 @@
 
 ### Added
 
+- **DateTimeHelper**: formatting and morning/evening checks moved from `buma_core`. Patterns stay behind `DateTimeFormatType`, so callers never see `DateFormat`. `getTransactionDate`, `isMorning`, and `isEvening` accept an optional clock so tests do not depend on the current time.
 - **Push engine**: optional audience, sound channel, and tap-callback helpers under the notification module. Payload-to-route resolution stays in each app. `PushNotificationService.initialize` takes `onOpened(Map<String, dynamic> data)`. Existing `FirebaseMessagingService` and `LocalNotificationService` contracts are unchanged. An app uses either the new `PushNotificationService` or `FirebaseMessagingService.initialize`, not both, because each attaches its own FCM listeners.
 
 ### Changed
@@ -9,6 +10,8 @@
 - **Locator ownership**: `app_core` no longer exports `getIt` or `configureDependencies()`, and no longer generates registrations. The app creates its own `GetIt` and registers the implementations it uses. The public contracts and implementations are unchanged.
 - **Screen adaptation**: `.w`, `.h`, `.r`, `.sp`, and the related extensions read `ScreenUtil` directly and no longer resolve `ResponsiveService` from a locator.
 - **`AppScreenUtilInit`**: new `useInheritedMediaQuery` option. When true, it scales against the `MediaQuery` above the widget instead of the Flutter view. Use it when a web frame constrains the query.
+- **`AppScreenUtilInit.fontSizeResolver` renamed to `fontSizeScale`**: the parameter takes the new `FontSizeScale` enum (`width`, `height`, `radius`, `diameter`, `diagonal`) instead of `flutter_screenutil`'s `FontSizeResolver`. Default is still `FontSizeScale.width`. The screen-util type no longer appears in the public API.
+  - Migration: replace `fontSizeResolver: FontSizeResolvers.height` with `fontSizeScale: FontSizeScale.height`. Custom resolver functions are no longer supported.
 
 ### Removed
 
