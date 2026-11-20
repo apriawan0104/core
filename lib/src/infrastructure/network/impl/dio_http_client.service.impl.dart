@@ -17,8 +17,11 @@ import '../contract/contracts.dart';
 /// Can be easily replaced with other HTTP client implementations
 /// (e.g., http package, Chopper) without affecting consumer code.
 class DioHttpClient implements HttpClient {
+  static const _retriedKey = 'bspaceAuthRetried';
+
   final dio.Dio _dio;
   final List<RequestInterceptor> _requestInterceptors = [];
+  UnauthorizedRecovery? _recoverUnauthorized;
   final List<ResponseInterceptor> _responseInterceptors = [];
   final List<ErrorInterceptor> _errorInterceptors = [];
 
@@ -250,6 +253,11 @@ class DioHttpClient implements HttpClient {
   }
 
   @override
+  void setUnauthorizedRecovery(UnauthorizedRecovery? recover) {
+    _recoverUnauthorized = recover;
+  }
+
+  @override
   void addRequestInterceptor(RequestInterceptor interceptor) {
     _requestInterceptors.add(interceptor);
   }
@@ -285,6 +293,37 @@ class DioHttpClient implements HttpClient {
 
   // ============== Private Helper Methods ==============
 
+  Future<dio.Response<dynamic>?> _retryUnauthorized(
+      dio.Response response) async {
+    final recover = _recoverUnauthorized;
+    final options = response.requestOptions;
+    if (recover == null ||
+        response.statusCode != 401 ||
+        options.extra[_retriedKey] == true) {
+      return null;
+    }
+
+    options.extra[_retriedKey] = true;
+    final nextToken = await recover(
+      options.uri.toString(),
+      _bearerToken(options.headers),
+    );
+    if (nextToken == null || nextToken.isEmpty) return null;
+
+    options.headers['Authorization'] = 'Bearer $nextToken';
+    return _dio.fetch<dynamic>(options);
+  }
+
+  String? _bearerToken(Map<String, dynamic> headers) {
+    final value = headers['Authorization'] ?? headers['authorization'];
+    final header =
+        value is List ? value.firstOrNull?.toString() : value?.toString();
+    if (header == null || !header.startsWith('Bearer ')) return null;
+    final token = header.substring('Bearer '.length);
+    if (token.isEmpty) return null;
+    return token;
+  }
+
   Future<void> _onRequest(
     dio.RequestOptions options,
     dio.RequestInterceptorHandler handler,
@@ -314,6 +353,11 @@ class DioHttpClient implements HttpClient {
     dio.Response response,
     dio.ResponseInterceptorHandler handler,
   ) async {
+    final retried = await _retryUnauthorized(response);
+    if (retried != null) {
+      return handler.resolve(retried);
+    }
+
     var httpResponse = _convertToHttpResponse(response);
 
     // Apply custom interceptors

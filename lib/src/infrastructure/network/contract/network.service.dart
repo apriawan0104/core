@@ -18,7 +18,7 @@ import '../../../foundation/domain/entities/network/entities.dart';
 /// Example:
 /// ```dart
 /// import 'package:get_it/get_it.dart';
-/// 
+///
 /// final getIt = GetIt.instance;
 ///
 /// final client = getIt<HttpClient>();
@@ -174,6 +174,12 @@ abstract class HttpClient {
     Map<String, dynamic>? headers,
   });
 
+  /// After a 401, refresh and return a new access token to send the same
+  /// request once more. Return null to keep the 401.
+  ///
+  /// The default does nothing. [DioHttpClient] performs the single retry.
+  void setUnauthorizedRecovery(UnauthorizedRecovery? recover) {}
+
   /// Add request interceptor
   ///
   /// Interceptors can modify requests before they are sent.
@@ -207,6 +213,15 @@ abstract class HttpClient {
 /// Return modified options or original options.
 typedef RequestInterceptor = Future<RequestOptionsEntity> Function(
   RequestOptionsEntity options,
+);
+
+/// Recovers an access token after the server rejects a request with 401.
+///
+/// [url] is the request that was rejected. [rejectedAccessToken] is the bearer
+/// token that was sent, or null when the request had none.
+typedef UnauthorizedRecovery = Future<String?> Function(
+  String url,
+  String? rejectedAccessToken,
 );
 
 /// Response interceptor function type

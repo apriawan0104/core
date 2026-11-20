@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 
 import '../../../errors/errors.dart';
+import '../../../helpers/single_flight.dart';
 import '../../secure_storage/contract/contracts.dart';
 import '../contract/contracts.dart';
 import '../models/models.dart';
@@ -63,6 +64,8 @@ class TokenProviderServiceImpl implements TokenProviderService {
   /// Buffer time before token expiry to trigger refresh
   /// Tokens are considered expired if less than this time remaining
   static const Duration _expiryBufferTime = Duration(minutes: 5);
+
+  final _refreshFlight = SingleFlight<Either<Failure, AuthToken>>();
 
   TokenProviderServiceImpl({
     required AuthenticationService authService,
@@ -178,14 +181,17 @@ class TokenProviderServiceImpl implements TokenProviderService {
   }
 
   @override
-  Future<Either<Failure, AuthToken>> refreshToken() async {
+  Future<Either<Failure, AuthToken>> refreshToken() {
+    return _refreshFlight.run(_refreshOnce);
+  }
+
+  Future<Either<Failure, AuthToken>> _refreshOnce() async {
     try {
       final refreshResult = await _authService.refreshToken();
 
       return refreshResult.fold(
         (failure) => Left(failure),
         (token) async {
-          // Cache refreshed token
           await _cacheToken(token);
           return Right(token);
         },
@@ -230,17 +236,10 @@ class TokenProviderServiceImpl implements TokenProviderService {
     );
   }
 
-  /// Refresh token and cache it
+  /// Refresh token and cache it. Concurrent callers share [refreshToken].
   Future<Either<Failure, String>> _refreshAndCacheToken() async {
-    final refreshResult = await _authService.refreshToken();
-
-    return refreshResult.fold(
-      (failure) => Left(failure),
-      (token) async {
-        await _cacheToken(token);
-        return Right(token.accessToken);
-      },
-    );
+    final refreshed = await refreshToken();
+    return refreshed.map((token) => token.accessToken);
   }
 
   /// Cache token to secure storage
