@@ -422,11 +422,19 @@ class DioHttpClient implements HttpClient {
 
   NetworkFailure _handleError(dynamic error) {
     if (error is dio.DioException) {
+      // `transformTimeout` only exists in dio >= 5.10. Match by name so this
+      // compiles against both older and newer dio versions.
+      if (error.type.name == 'transformTimeout') {
+        return TimeoutFailure(
+          message: error.message ?? 'Request timeout',
+          details: error,
+        );
+      }
+
       switch (error.type) {
         case dio.DioExceptionType.connectionTimeout:
         case dio.DioExceptionType.sendTimeout:
         case dio.DioExceptionType.receiveTimeout:
-        case dio.DioExceptionType.transformTimeout:
           return TimeoutFailure(
             message: error.message ?? 'Request timeout',
             details: error,
@@ -458,7 +466,10 @@ class DioHttpClient implements HttpClient {
             details: error,
           );
 
+        // `default` (not `unknown`) keeps the switch exhaustive on dio versions
+        // that add new enum values (e.g. transformTimeout).
         case dio.DioExceptionType.unknown:
+        default:
           if (error.error is SocketException) {
             return ConnectionFailure(
               message: 'No internet connection',
