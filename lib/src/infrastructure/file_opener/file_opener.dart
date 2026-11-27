@@ -58,7 +58,7 @@
 /// 
 /// ## Setup
 /// 
-/// See `doc/FILE_OPENER_SETUP.md` for detailed setup instructions.
+/// See `docs/setup/file-opener.md` for detailed setup instructions.
 library file_opener;
 
 export 'constants/constants.dart';

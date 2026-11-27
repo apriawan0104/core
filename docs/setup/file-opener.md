@@ -613,10 +613,10 @@ await downloadAndOpenFile(
 
 ## Next Steps
 
-- 📖 Read [QUICK_START.md](lib/src/infrastructure/file_opener/doc/QUICK_START.md) for quick examples
-- 📚 See [README.md](lib/src/infrastructure/file_opener/doc/README.md) for complete API documentation
-- 💼 Check [example app](example/file_opener_example.dart) for full working examples
-- 🏗️ Learn [Architecture](ARCHITECTURE.md) to understand the design
+- 📖 Read [QUICK_START.md](../../lib/src/infrastructure/file_opener/doc/QUICK_START.md) for quick examples
+- 📚 See [README.md](../../lib/src/infrastructure/file_opener/doc/README.md) for complete API documentation
+- 💼 Check [example app](../../example/file_opener_example.dart) for full working examples
+- 🏗️ Learn [Architecture](../architecture.md) to understand the design
 
 ## Support
 

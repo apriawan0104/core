@@ -534,10 +534,10 @@ Main interface for connectivity checking.
 
 ## 🔗 Related Documentation
 
-- [Full README](lib/src/infrastructure/connectivity/doc/README.md)
-- [Quick Start Guide](lib/src/infrastructure/connectivity/doc/QUICK_START.md)
-- [Example Code](example/connectivity_example.dart)
-- [API Documentation](lib/src/infrastructure/connectivity/contract/connectivity.service.dart)
+- [Full README](../../lib/src/infrastructure/connectivity/doc/README.md)
+- [Quick Start Guide](../../lib/src/infrastructure/connectivity/doc/QUICK_START.md)
+- [Example Code](../../example/connectivity_example.dart)
+- [API Documentation](../../lib/src/infrastructure/connectivity/contract/connectivity.service.dart)
 
 ## 🔄 Changing Implementation
 
@@ -570,14 +570,14 @@ getIt.registerLazySingleton<ConnectivityService>(
 ## 📝 Examples
 
 See complete working examples in:
-- [example/connectivity_example.dart](example/connectivity_example.dart)
+- [example/connectivity_example.dart](../../example/connectivity_example.dart)
 
 ## 🆘 Need Help?
 
-- Check the [README.md](lib/src/infrastructure/connectivity/doc/README.md)
-- Review [QUICK_START.md](lib/src/infrastructure/connectivity/doc/QUICK_START.md)
-- See working [examples](example/connectivity_example.dart)
-- Check [API documentation](lib/src/infrastructure/connectivity/contract/connectivity.service.dart)
+- Check the [README.md](../../lib/src/infrastructure/connectivity/doc/README.md)
+- Review [QUICK_START.md](../../lib/src/infrastructure/connectivity/doc/QUICK_START.md)
+- See working [examples](../../example/connectivity_example.dart)
+- Check [API documentation](../../lib/src/infrastructure/connectivity/contract/connectivity.service.dart)
 
 ---
 

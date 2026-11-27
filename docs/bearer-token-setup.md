@@ -727,8 +727,8 @@ client.addErrorInterceptor((failure) async {
 
 - **Example Code**: `example/bearer_token_example.dart`
 - **API Documentation**: See inline dartdoc comments
-- **Architecture Guide**: `ARCHITECTURE.md`
-- **Migration Guide**: `MIGRATION_GUIDE.md`
+- **Architecture Guide**: `architecture.md`
+- **Migration Guide**: `migration.md`
 
 ---
 

@@ -727,10 +727,10 @@ class UserRepository {
 
 ## 📚 Additional Resources
 
-- [Full API Documentation](lib/src/infrastructure/network/doc/README.md)
-- [Example Code](example/network_example.dart)
-- [Project Guidelines](GUIDELINES.md)
-- [Architecture Documentation](ARCHITECTURE.md)
+- [Full API Documentation](../../lib/src/infrastructure/network/doc/README.md)
+- [Example Code](../../example/network_example.dart)
+- [Project Guidelines](../architecture.md)
+- [Architecture Documentation](../architecture.md)
 
 ## 🆘 Troubleshooting
 

@@ -87,7 +87,7 @@ This document summarizes the complete implementation of the File Opener service 
   - Error handling examples
   - Troubleshooting guide
 
-- `FILE_OPENER_SETUP.md` (root)
+- `docs/setup/file-opener.md`
   - Comprehensive setup guide
   - Step-by-step platform configuration
   - DI registration guide
@@ -305,7 +305,7 @@ exists.fold(
 ## 🚀 Next Steps for Consumers
 
 1. Add dependency: `open_file: ^3.5.10`
-2. Follow setup guide: `FILE_OPENER_SETUP.md`
+2. Follow setup guide: `docs/setup/file-opener.md`
 3. Register service in DI
 4. Use `FileOpenerService` interface in code
 5. Handle errors appropriately
@@ -315,9 +315,9 @@ exists.fold(
 
 - **API Reference**: `lib/src/infrastructure/file_opener/doc/README.md`
 - **Quick Start**: `lib/src/infrastructure/file_opener/doc/QUICK_START.md`
-- **Setup Guide**: `FILE_OPENER_SETUP.md`
+- **Setup Guide**: `docs/setup/file-opener.md`
 - **Example App**: `example/file_opener_example.dart`
-- **Architecture**: `ARCHITECTURE.md`
+- **Architecture**: `docs/architecture.md`
 
 ## 🏆 Quality Metrics
 

@@ -543,7 +543,7 @@ GetIt.instance.registerSingleton<NotificationHandler>(
 
 ### 6. Clean - Separation of Concerns
 
-**Follow layered architecture dari ARCHITECTURE.md:**
+**Follow layered architecture dari docs/architecture.md:**
 
 ```
 foundation/domain/     → Pure business entities & use cases
@@ -836,7 +836,7 @@ Meskipun `Result` adalah naming standard di industry (Rust, Swift, Kotlin), kita
 
 ## 📂 Architecture Structure
 
-Ikuti struktur dari `ARCHITECTURE.md`:
+Ikuti struktur dari `docs/architecture.md`:
 
 ```
 lib/src/
@@ -855,7 +855,7 @@ lib/src/
 └── helpers/          → Pure utility functions
 ```
 
-**Lihat ARCHITECTURE.md untuk detail lengkap setiap folder!**
+**Lihat docs/architecture.md untuk detail lengkap setiap folder!**
 
 ---
 
@@ -1183,10 +1183,10 @@ If migration takes longer, your abstraction needs improvement.
 
 ## 📚 Key References
 
-- **ARCHITECTURE.md** - Complete architecture documentation
+- **docs/architecture.md** - Complete architecture documentation
 - **README.md** - Package overview and setup
 - **CHANGELOG.md** - Version history
-- **MIGRATION_GUIDE.md** - Migration guides for breaking changes
+- **docs/migration.md** - Migration guides for breaking changes
 
 ---
 

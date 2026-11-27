@@ -56,7 +56,7 @@ Implementasi lengkap Use Case pattern untuk BUMA Core library telah selesai dibu
   - Positioned correctly dalam structure
 
 #### 6. Architecture Documentation
-- **`ARCHITECTURE.md`**
+- **`docs/architecture.md`**
   - Updated section tentang `foundation/domain/usecases/`
   - Added examples untuk semua use case types
   - Added reference ke documentation

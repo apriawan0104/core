@@ -26,7 +26,7 @@ Future<ValueGuard<void>> signOut() async {
 - ✅ 70% code reduction in repositories
 - ✅ Reusable across all BUMA apps
 
-📖 **[Read Full Guide](REPOSITORY_ERROR_HANDLER.md)**
+📖 **[Read Full Guide](docs/repository-error-handler.md)**
 
 ---
 
@@ -224,14 +224,12 @@ class UserRepository {
 
 ## 📚 Documentation
 
-- **[Background Service Setup Guide](BACKGROUND_SERVICE_SETUP.md)** - Background task execution
-- **[Network Setup Guide](NETWORK_SETUP.md)** - Complete guide for HTTP networking
-- **[Error Reporting Setup Guide](lib/src/infrastructure/analytics/doc/ERROR_REPORTING_SETUP.md)** - Automatic error reporting and crash tracking
-- **[Logging Setup Guide](LOGGING_SETUP.md)** - Logging service configuration
-- **[Storage Setup Guide](STORAGE_SETUP.md)** - Local storage usage
-- **[URL Launcher Setup Guide](URL_LAUNCHER_SETUP.md)** - URL launching, emails, phone calls, and SMS
-- **[Architecture](ARCHITECTURE.md)** - Architecture overview and principles
-- **[Project Guidelines](PROJECT_GUIDELINES.md)** - Development guidelines and best practices
+Full index: **[docs/README.md](docs/README.md)**
+
+- **[Architecture](docs/architecture.md)** - Architecture overview and principles
+- **[Migration guide](docs/migration.md)** - Breaking changes and migrations
+- **[Background Service](docs/setup/background-service.md)** · **[Network](docs/setup/network.md)** · **[Logging](docs/setup/logging.md)** · **[Storage](docs/setup/storage.md)** · **[URL Launcher](docs/setup/url-launcher.md)**
+- **[Error Reporting](lib/src/infrastructure/analytics/doc/ERROR_REPORTING_SETUP.md)** - Automatic error reporting and crash tracking
 
 ## 📖 Examples
 
@@ -313,7 +311,7 @@ See `pubspec.yaml` for complete list.
 
 ## 🤝 Contributing
 
-This is an internal library for BUMA applications. Follow the guidelines in `GUIDELINES.md` when contributing.
+This is an internal library for BUMA applications. Follow `.cursorrules` and [docs/architecture.md](docs/architecture.md) when contributing.
 
 ### Before Committing
 

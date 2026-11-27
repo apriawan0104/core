@@ -495,7 +495,7 @@ test('should return Left(Failure) when repository fails', () async {
 - [Use Case Pattern README](./README.md) - Complete documentation
 - [Quick Start Guide](./QUICK_START.md) - Get started quickly
 - [Examples](../../../example/usecases/usecase_example.dart) - Working examples
-- [Architecture Guide](../../../../ARCHITECTURE.md) - Project architecture
+- [Architecture Guide](../../../../../docs/architecture.md) - Project architecture
 
 ---
 

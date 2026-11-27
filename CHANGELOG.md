@@ -80,10 +80,10 @@
 ### Documentation
 
 - Complete project guidelines (GUIDELINES.md)
-- Architecture documentation (ARCHITECTURE.md)
-- Logging setup guide (LOGGING_SETUP.md)
-- Storage setup guide (STORAGE_SETUP.md)
-- Network setup guide (NETWORK_SETUP.md)
+- Architecture documentation (`docs/architecture.md`)
+- Logging setup guide (`docs/setup/logging.md`)
+- Storage setup guide (`docs/setup/storage.md`)
+- Network setup guide (`docs/setup/network.md`)
 - Migration guides
 
 ### Examples

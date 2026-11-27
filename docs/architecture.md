@@ -209,7 +209,7 @@ class GetCurrentUserUseCase implements UseCaseAsync<User, NoParams> {
 - ❌ UI logic (tempatkan di controller/cubit)
 - ❌ Direct infrastructure access (use repository abstraction)
 
-**Documentation**: See [Use Case Pattern README](../lib/src/foundation/domain/usecases/README.md) for complete guide
+**Documentation**: See [Use Case Pattern README](../../lib/src/foundation/domain/usecases/README.md) for complete guide
 
 ---
 

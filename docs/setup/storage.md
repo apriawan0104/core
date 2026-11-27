@@ -699,11 +699,11 @@ await storage.save('key', 'value');  // Don't forget await!
 
 ## 📚 Additional Resources
 
-- [Storage Service Documentation](lib/src/infrastructure/storage/doc/README.md)
-- [API Reference](lib/src/infrastructure/storage/contract/storage.service.dart)
-- [Example Code](example/storage_example.dart)
+- [Storage Service Documentation](../../lib/src/infrastructure/storage/doc/README.md)
+- [API Reference](../../lib/src/infrastructure/storage/contract/storage.service.dart)
+- [Example Code](../../example/storage_example.dart)
 - [Hive Documentation](https://docs.hivedb.dev/)
-- [Architecture Guide](ARCHITECTURE.md)
+- [Architecture Guide](../architecture.md)
 
 ---
 

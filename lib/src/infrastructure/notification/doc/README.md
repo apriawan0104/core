@@ -400,7 +400,7 @@ Di jalur service generik, implementasi bawaan tidak memproses pesan background. 
 
 - [Firebase Messaging Documentation](https://pub.dev/packages/firebase_messaging)
 - [Flutter Local Notifications Documentation](https://pub.dev/packages/flutter_local_notifications)
-- [Project Architecture Guidelines](../../../ARCHITECTURE.md)
+- [Project Architecture Guidelines](../../../../../docs/architecture.md)
 
 ## 🆘 Troubleshooting
 

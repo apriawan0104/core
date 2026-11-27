@@ -736,7 +736,7 @@ See [StorageService](/lib/src/infrastructure/storage/contract/storage.service.da
 
 - [Hive Documentation](https://docs.hivedb.dev/)
 - [Flutter Secure Storage](https://pub.dev/packages/flutter_secure_storage)
-- [BUMA Core Architecture](../../../ARCHITECTURE.md)
+- [BUMA Core Architecture](../../../../../docs/architecture.md)
 - [Project Guidelines](../../../README.md)
 
 ---

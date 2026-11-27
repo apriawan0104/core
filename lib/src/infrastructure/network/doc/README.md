@@ -531,8 +531,7 @@ result.fold(
 
 ## Related Documentation
 
-- [Project Architecture](../../../ARCHITECTURE.md)
-- [Project Guidelines](../../../GUIDELINES.md)
+- [Project Architecture](../../../../../docs/architecture.md)
 - [Error Handling](../../../errors/README.md)
 
 ## Support

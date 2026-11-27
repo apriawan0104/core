@@ -742,6 +742,6 @@ See [LICENSE](../../../../LICENSE) file in root project.
 
 - 📖 [Quick Start Guide](QUICK_START.md)
 - 💼 [Example App](/example/file_opener_example.dart)
-- 🏗️ [Architecture Guide](/ARCHITECTURE.md)
+- 🏗️ [Architecture Guide](../../../../../docs/architecture.md)
 - 📝 [Main README](/README.md)
 

@@ -507,9 +507,9 @@ await isSupported.fold(
 
 ## 📚 Additional Resources
 
-- [URL Launcher README](lib/src/infrastructure/url_launcher/doc/README.md) - Complete API documentation
-- [Quick Start Guide](lib/src/infrastructure/url_launcher/doc/QUICK_START.md) - Quick reference
-- [Example Code](example/url_launcher_example.dart) - Complete examples
+- [URL Launcher README](../../lib/src/infrastructure/url_launcher/doc/README.md) - Complete API documentation
+- [Quick Start Guide](../../lib/src/infrastructure/url_launcher/doc/QUICK_START.md) - Quick reference
+- [Example Code](../../example/url_launcher_example.dart) - Complete examples
 - [url_launcher package](https://pub.dev/packages/url_launcher) - Original package documentation
 
 ## 🔄 Migration Guide

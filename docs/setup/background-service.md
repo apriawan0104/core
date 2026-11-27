@@ -392,7 +392,7 @@ class _BackgroundServicePageState extends State<BackgroundServicePage> {
 
 ## 🔥 Advanced Usage
 
-See [infrastructure/background_service/doc/README.md](/lib/src/infrastructure/background_service/doc/README.md) for:
+See [infrastructure/background_service/doc/README.md](../../lib/src/infrastructure/background_service/doc/README.md) for:
 - Custom notifications with flutter_local_notifications
 - Background mode (no notification)
 - Socket.io integration
@@ -454,9 +454,9 @@ See [infrastructure/background_service/doc/README.md](/lib/src/infrastructure/ba
 
 ## 📚 Next Steps
 
-- Read [Background Service Documentation](/lib/src/infrastructure/background_service/doc/README.md)
-- Check [Example Implementation](/example/background_service_example.dart)
-- Review [Project Guidelines](/PROJECT_GUIDELINES.md) for dependency independence principles
+- Read [Background Service Documentation](../../lib/src/infrastructure/background_service/doc/README.md)
+- Check [Example Implementation](../../example/background_service_example.dart)
+- Review [Project Guidelines](../architecture.md) for dependency independence principles
 
 ## 🆘 Support
 

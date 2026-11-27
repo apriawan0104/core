@@ -25,7 +25,7 @@ import '../models/models.dart';
 ///
 /// ### Setup Required
 ///
-/// See FILE_OPENER_SETUP.md for platform-specific setup instructions.
+/// See docs/setup/file-opener.md for platform-specific setup instructions.
 ///
 /// ### Example Usage
 ///

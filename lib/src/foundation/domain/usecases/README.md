@@ -497,7 +497,7 @@ Lihat file lengkap di: [`example/usecases/usecase_example.dart`](../../example/u
 ## References
 
 - [Clean Architecture by Robert C. Martin](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [BUMA Core Architecture](../../../ARCHITECTURE.md)
+- [BUMA Core Architecture](../../../../../docs/architecture.md)
 - [ValueGuard Documentation](../typedef/value_guard.typedef.dart)
 - [Failure Classes](../../../errors/failures.dart)
 

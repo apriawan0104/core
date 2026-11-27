@@ -165,7 +165,7 @@ expect(mock.errorLogs, isEmpty);
 
 ### Detailed Docs
 
-Lihat [doc/README.md](lib/src/infrastructure/logging/doc/README.md) untuk:
+Lihat [doc/README.md](../../lib/src/infrastructure/logging/doc/README.md) untuk:
 - Complete API reference
 - Advanced configuration
 - Best practices
@@ -174,7 +174,7 @@ Lihat [doc/README.md](lib/src/infrastructure/logging/doc/README.md) untuk:
 
 ### Examples
 
-Lihat [example/logging_example.dart](example/logging_example.dart) untuk:
+Lihat [example/logging_example.dart](../../example/logging_example.dart) untuk:
 - Setup examples
 - Usage patterns
 - Testing strategies
@@ -315,8 +315,8 @@ No changes needed in business logic! ✨
 
 ## 🆘 Need Help?
 
-- Read [doc/README.md](lib/src/infrastructure/logging/doc/README.md) for complete documentation
-- Check [example/logging_example.dart](example/logging_example.dart) for usage examples
+- Read [doc/README.md](../../lib/src/infrastructure/logging/doc/README.md) for complete documentation
+- Check [example/logging_example.dart](../../example/logging_example.dart) for usage examples
 - Look at existing implementations for reference
 
 ---

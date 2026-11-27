@@ -478,9 +478,9 @@ final result = await pathProvider.getTemporaryDirectory();
 
 ## 📚 Additional Resources
 
-- [Quick Start Guide](lib/src/infrastructure/path_provider/doc/QUICK_START.md)
-- [Full Documentation](lib/src/infrastructure/path_provider/doc/README.md)
-- [Example App](example/path_provider_example.dart)
+- [Quick Start Guide](../../lib/src/infrastructure/path_provider/doc/QUICK_START.md)
+- [Full Documentation](../../lib/src/infrastructure/path_provider/doc/README.md)
+- [Example App](../../example/path_provider_example.dart)
 - [path_provider Package](https://pub.dev/packages/path_provider)
 
 ## 📋 Platform Support Matrix
@@ -503,9 +503,9 @@ final result = await pathProvider.getTemporaryDirectory();
 2. ✅ Test the service in your app
 3. ✅ Implement file operations using the service
 4. ✅ Add error handling and platform checks
-5. ✅ Review the [example app](example/path_provider_example.dart) for more use cases
+5. ✅ Review the [example app](../../example/path_provider_example.dart) for more use cases
 
 ---
 
-**Need Help?** Check the [Quick Start Guide](lib/src/infrastructure/path_provider/doc/QUICK_START.md) or see the [full documentation](lib/src/infrastructure/path_provider/doc/README.md).
+**Need Help?** Check the [Quick Start Guide](../../lib/src/infrastructure/path_provider/doc/QUICK_START.md) or see the [full documentation](../../lib/src/infrastructure/path_provider/doc/README.md).
 

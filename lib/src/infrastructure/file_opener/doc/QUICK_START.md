@@ -438,7 +438,7 @@ void main() {
 
 - See [README.md](README.md) for detailed documentation
 - Check [example app](/example/file_opener_example.dart) for more examples
-- Read about [architecture patterns](/ARCHITECTURE.md)
+- Read about [architecture patterns](../../../../../docs/architecture.md)
 
 ## 🆘 Common Issues
 

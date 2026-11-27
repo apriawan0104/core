@@ -573,9 +573,9 @@ await _urlLauncher.launchUrl(uri.toString());
 ## 📖 Additional Resources
 
 - [Quick Start Guide](QUICK_START.md)
-- [Architecture Documentation](/ARCHITECTURE.md)
+- [Architecture Documentation](../../../../../docs/architecture.md)
 - [url_launcher package](https://pub.dev/packages/url_launcher)
-- [Migration Guide](/MIGRATION_GUIDE.md)
+- [Migration Guide](../../../../../docs/migration.md)
 
 ## 🤝 Contributing
 

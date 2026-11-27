@@ -933,13 +933,13 @@ final result = await pathProvider.getTemporaryDirectory();
 - [Quick Start Guide](QUICK_START.md)
 - [Example App](../../../../example/path_provider_example.dart)
 - [path_provider Package](https://pub.dev/packages/path_provider)
-- [BUMA Core Architecture](../../../ARCHITECTURE.md)
+- [BUMA Core Architecture](../../../../../docs/architecture.md)
 
 ## 🤝 Contributing
 
 When contributing to the Path Provider service:
 
-1. ✅ Follow the [Project Guidelines](../../../../PROJECT_GUIDELINES.md)
+1. ✅ Follow the [architecture & guidelines](../../../../../docs/architecture.md)
 2. ✅ Maintain dependency independence
 3. ✅ Never expose `path_provider` types in the interface
 4. ✅ Add comprehensive documentation

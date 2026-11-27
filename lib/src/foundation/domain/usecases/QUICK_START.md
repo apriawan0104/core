@@ -295,7 +295,7 @@ Before implementing a use case, check these:
 
 1. **Read Full Documentation**: [README.md](./README.md)
 2. **See Complete Examples**: [example/usecases/usecase_example.dart](../../../example/usecases/usecase_example.dart)
-3. **Understand Architecture**: [ARCHITECTURE.md](../../../../ARCHITECTURE.md)
+3. **Understand Architecture**: [architecture.md](../../../../../docs/architecture.md)
 4. **Learn Error Handling**: [ValueGuard Documentation](../typedef/value_guard.typedef.dart)
 
 ---

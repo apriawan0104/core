@@ -264,7 +264,7 @@ final mockLauncher = MockUrlLauncherService();
 
 - See [README.md](README.md) for detailed documentation
 - Check [example app](/example) for more examples
-- Read about [architecture patterns](/ARCHITECTURE.md)
+- Read about [architecture patterns](../../../../../docs/architecture.md)
 
 ## 🆘 Common Issues
 

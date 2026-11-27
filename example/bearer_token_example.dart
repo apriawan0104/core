@@ -14,7 +14,7 @@ import 'package:get_it/get_it.dart';
 /// 5. Clear tokens on logout
 ///
 /// For more details, see:
-/// - BEARER_TOKEN_SETUP.md
+/// - docs/bearer-token-setup.md
 /// - lib/src/infrastructure/authentication/doc/
 /// - lib/src/infrastructure/network/doc/
 
