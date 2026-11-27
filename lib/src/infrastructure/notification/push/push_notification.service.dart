@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/widgets.dart';
 
@@ -87,12 +88,15 @@ class PushNotificationService {
     FirebaseMessaging.instance.onTokenRefresh.listen((token) {
       deviceToken = token;
       debugPrint('FCM token refreshed');
+      // ponytail: re-applies every topic on each token event. subscribeToTopic
+      // is idempotent, so no diffing is needed for the late-APNs case.
+      unawaited(_applyAudience());
     });
 
     await _loadAudience();
     _firebaseReady = true;
     _started = true;
-    deviceToken = await FirebaseMessaging.instance.getToken();
+    deviceToken = await _fetchToken() ?? deviceToken;
     await _applyAudience();
     await _openInitialMessages();
   }
@@ -136,6 +140,28 @@ class PushNotificationService {
       if (token != null) return;
       await Future<void>.delayed(const Duration(seconds: 1));
     }
+    // Not fatal: onTokenRefresh delivers the token once APNs becomes ready.
+    debugPrint('APNs token not ready after 5 attempts');
+  }
+
+  /// Returns null instead of throwing, so a missing APNs token (simulator,
+  /// denied permission, slow network) does not stop app startup.
+  Future<String?> _fetchToken() async {
+    try {
+      return await FirebaseMessaging.instance.getToken();
+    } catch (error, stackTrace) {
+      _logFailure('Get FCM token', error, stackTrace);
+      return null;
+    }
+  }
+
+  /// One short line for the expected missing-APNs case, full trace otherwise.
+  void _logFailure(String action, Object error, StackTrace stackTrace) {
+    if (error is FirebaseException && error.code == 'apns-token-not-set') {
+      debugPrint('$action skipped: APNs token not set yet');
+      return;
+    }
+    debugPrint('$action failed: $error\n$stackTrace');
   }
 
   Future<void> _loadAudience() async {
@@ -183,7 +209,7 @@ class PushNotificationService {
       await FirebaseMessaging.instance.subscribeToTopic(topic);
       return true;
     } catch (error, stackTrace) {
-      debugPrint('Subscribe $topic failed: $error\n$stackTrace');
+      _logFailure('Subscribe $topic', error, stackTrace);
       return false;
     }
   }
@@ -193,7 +219,7 @@ class PushNotificationService {
       await FirebaseMessaging.instance.unsubscribeFromTopic(topic);
       return true;
     } catch (error, stackTrace) {
-      debugPrint('Unsubscribe $topic failed: $error\n$stackTrace');
+      _logFailure('Unsubscribe $topic', error, stackTrace);
       return false;
     }
   }
